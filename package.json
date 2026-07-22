@@ -1,0 +1,16 @@
+{
+  "name": "literary-atlas",
+  "version": "3.0.0",
+  "private": true,
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev": "npm run dev -w @literary-atlas/api & npm run dev -w @literary-atlas/web",
+    "build": "npm run build -w @literary-atlas/api && npm run build -w @literary-atlas/web",
+    "typecheck": "npm run typecheck -w @literary-atlas/api && npm run typecheck -w @literary-atlas/web",
+    "test": "npm run test -w @literary-atlas/api && npm run test -w @literary-atlas/web",
+    "db:migrate": "npm run db:migrate -w @literary-atlas/api",
+    "db:seed": "npm run db:seed -w @literary-atlas/api"
+  },
+  "engines": { "node": ">=22" }
+}
+
