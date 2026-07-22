@@ -9,6 +9,9 @@
     "typecheck": "npm run typecheck -w @literary-atlas/api && npm run typecheck -w @literary-atlas/web",
     "test": "npm run test -w @literary-atlas/api && npm run test -w @literary-atlas/web",
     "verify:postgis": "bash scripts/verify_postgis.sh",
+    "start:local": "bash scripts/start_local.sh --no-open",
+    "stop:local": "bash scripts/stop_local.sh",
+    "test:start-command": "bash scripts/test_start_command.sh",
     "db:migrate": "npm run db:migrate -w @literary-atlas/api",
     "db:seed": "npm run db:seed -w @literary-atlas/api"
   },

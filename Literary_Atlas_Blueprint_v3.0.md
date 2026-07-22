@@ -37,6 +37,8 @@ PostgreSQL 16 + PostGIS 3.4
 
 Monorepo 使用 npm workspaces。`apps/web` 和 `apps/api` 各自独立构建；数据库迁移和 seed 是可审阅 SQL。Docker Compose 提供 DB、API、Web 一键环境。
 
+macOS 交付包含 `Start-Literary-Atlas.command` 与 `Stop-Literary-Atlas.command`。启动 command 负责环境检查、必要依赖安装、Docker Engine 就绪等待、Compose 构建、API/Web 健康检查和访问说明；停止 command 默认保留数据库卷。
+
 ## 3. 数据库 schema
 
 ### 3.1 枚举

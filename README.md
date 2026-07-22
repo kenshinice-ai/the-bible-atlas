@@ -2,7 +2,44 @@
 
 一个 React + TypeScript、Node.js TypeScript、PostgreSQL + PostGIS 的双语文学地图原型。v3.0 覆盖四部作品，并以《双城记》完成端到端数据闭环。世界名著选择器支持单选和最多三部的对照多选，地图只渲染所选作品。
 
-## 快速启动
+## 一键启动（macOS）
+
+在 Finder 中双击：
+
+```text
+Start-Literary-Atlas.command
+```
+
+启动器会依次：
+
+1. 检查 macOS、Homebrew、Docker Desktop、Docker Engine、Compose 和 curl；
+2. 自动安装缺失的 Homebrew 或 Docker Desktop，启动 Docker Engine 并等待就绪；
+3. 创建缺失的 `.env`，但绝不覆盖已有配置；
+4. 构建并启动 PostGIS、API 和 Web，执行真实健康检查；
+5. 输出访问网址、功能简介和停止方法，并打开 `http://localhost:8080`。
+
+首次安装 Docker Desktop 时，macOS 可能要求确认许可。完成确认后启动器会继续等待；若超过三分钟仍未就绪，会明确报错并给出重试说明。
+
+停止服务且保留数据库：
+
+```text
+Stop-Literary-Atlas.command
+```
+
+也可以在终端运行：
+
+```bash
+npm run start:local
+npm run stop:local
+```
+
+仅检查启动计划，不安装或启动：
+
+```bash
+bash scripts/start_local.sh --dry-run --no-open
+```
+
+## 手动 Docker 启动
 
 要求：Node.js 22+、npm 11+；完整环境另需 Docker Desktop。
 
@@ -53,6 +90,7 @@ npm test
 npm run build
 docker-compose config --quiet
 npm run verify:postgis
+npm run test:start-command
 ```
 
 `verify:postgis` 会在 `/private/tmp` 创建隔离的 PostgreSQL/PostGIS 实例，执行原始 migration 和 seed，验证空间约束、四部作品完整性、双语搜索、实体级 fallback、历史日期与 API smoke，然后自动停止并删除临时实例。它要求本机已有与 PostgreSQL 匹配的 PostGIS 扩展。
