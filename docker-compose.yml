@@ -11,22 +11,33 @@ services:
     volumes:
       - atlas_pgdata:/var/lib/postgresql/data
       - ./db/migrations/001_initial.sql:/docker-entrypoint-initdb.d/10-initial.sql:ro
+      - ./db/migrations/002_v3_1_complex_atlas.sql:/docker-entrypoint-initdb.d/15-v3-1-complex-atlas.sql:ro
       - ./db/seeds/001_four_works.sql:/docker-entrypoint-initdb.d/20-four-works.sql:ro
+      - ./db/seeds/002_bible_v3_1.sql:/docker-entrypoint-initdb.d/30-bible-v3-1.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 20
-  api:
+  migrate:
+    image: literary-atlas-api
     build:
       context: .
       dockerfile: apps/api/Dockerfile
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-atlas}:${POSTGRES_PASSWORD:-atlas_local_only}@db:5432/${POSTGRES_DB:-literary_atlas}
+      ATLAS_PROJECT_ROOT: /app
+    command: ["node", "dist/db-cli.js", "bootstrap"]
+    depends_on:
+      db: { condition: service_healthy }
+  api:
+    image: literary-atlas-api
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-atlas}:${POSTGRES_PASSWORD:-atlas_local_only}@db:5432/${POSTGRES_DB:-literary_atlas}
       API_PORT: 4000
     ports: ["4000:4000"]
     depends_on:
-      db: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
   web:
     build:
       context: .

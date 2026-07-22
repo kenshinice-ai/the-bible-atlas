@@ -29,17 +29,25 @@ initdb -D "$ATLAS_TEMP/data" -A trust --no-locale >/dev/null
 pg_ctl -D "$ATLAS_TEMP/data" -o "-F -p $ATLAS_DB_PORT -c listen_addresses=127.0.0.1" -w start >/dev/null
 
 psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres -f "$ATLAS_ROOT/db/migrations/001_initial.sql" >/dev/null
+psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres -f "$ATLAS_ROOT/db/migrations/002_v3_1_complex_atlas.sql" >/dev/null
 psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres -f "$ATLAS_ROOT/db/seeds/001_four_works.sql" >/dev/null
+psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres -f "$ATLAS_ROOT/db/seeds/002_bible_v3_1.sql" >/dev/null
 
 psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres <<'SQL' >/dev/null
 DO $$
 BEGIN
-  IF (SELECT count(*) FROM works) <> 4 THEN RAISE EXCEPTION 'expected four works'; END IF;
+  IF (SELECT count(*) FROM works) <> 5 THEN RAISE EXCEPTION 'expected five works'; END IF;
   IF EXISTS (SELECT 1 FROM works w LEFT JOIN work_translations z ON z.work_id=w.id AND z.locale='zh-CN' AND z.status='published' LEFT JOIN work_translations e ON e.work_id=w.id AND e.locale='en' AND e.status='published' WHERE z.work_id IS NULL OR e.work_id IS NULL) THEN RAISE EXCEPTION 'missing published work translation'; END IF;
   IF EXISTS (SELECT 1 FROM locations l JOIN works w ON w.id=l.work_id WHERE w.slug='the-hobbit' AND (l.geom IS NOT NULL OR l.canvas_x IS NULL OR l.canvas_y IS NULL)) THEN RAISE EXCEPTION 'Hobbit location violates fictional canvas'; END IF;
   IF EXISTS (SELECT 1 FROM locations l JOIN works w ON w.id=l.work_id WHERE w.slug<>'the-hobbit' AND (l.geom IS NULL OR l.canvas_x IS NOT NULL OR l.canvas_y IS NOT NULL)) THEN RAISE EXCEPTION 'real work location violates PostGIS layer'; END IF;
   IF EXISTS (SELECT 1 FROM events e JOIN works w ON w.id=e.work_id LEFT JOIN event_locations el ON el.event_id=e.id LEFT JOIN event_sources es ON es.event_id=e.id WHERE w.slug='a-tale-of-two-cities' GROUP BY e.id HAVING count(DISTINCT el.location_id)=0 OR count(DISTINCT es.source_id)=0) THEN RAISE EXCEPTION 'Tale event is missing location or source'; END IF;
   IF EXISTS (SELECT 1 FROM characters c JOIN works w ON w.id=c.work_id LEFT JOIN event_characters ec ON ec.character_id=c.id WHERE w.slug='a-tale-of-two-cities' GROUP BY c.id HAVING count(ec.event_id)=0) THEN RAISE EXCEPTION 'Tale character is not connected to an event'; END IF;
+  IF (SELECT count(*) FROM characters c JOIN works w ON w.id=c.work_id WHERE w.slug='the-bible') < 10 THEN RAISE EXCEPTION 'Bible needs at least ten people'; END IF;
+  IF (SELECT count(*) FROM events e JOIN works w ON w.id=e.work_id WHERE w.slug='the-bible') < 12 THEN RAISE EXCEPTION 'Bible needs at least twelve events'; END IF;
+  IF (SELECT count(*) FROM character_relations r JOIN works w ON w.id=r.work_id WHERE w.slug='the-bible') < 15 THEN RAISE EXCEPTION 'Bible needs at least fifteen relationships'; END IF;
+  IF EXISTS (SELECT 1 FROM events e JOIN works w ON w.id=e.work_id LEFT JOIN event_locations el ON el.event_id=e.id LEFT JOIN event_characters ec ON ec.event_id=e.id LEFT JOIN event_sources es ON es.event_id=e.id WHERE w.slug='the-bible' GROUP BY e.id HAVING count(DISTINCT el.location_id)=0 OR count(DISTINCT ec.character_id)=0 OR count(DISTINCT es.source_id)=0) THEN RAISE EXCEPTION 'Bible event closure failed'; END IF;
+  IF EXISTS (SELECT 1 FROM events e JOIN works w ON w.id=e.work_id WHERE w.slug='the-bible' AND (e.time_type IN ('approximate','range') AND e.start_date IS NOT NULL)) THEN RAISE EXCEPTION 'uncertain Bible time was stored as exact SQL date'; END IF;
+  IF EXISTS (SELECT 1 FROM locations l JOIN works w ON w.id=l.work_id WHERE w.slug='the-bible' AND (l.layer<>'real' OR l.geom IS NULL OR l.coordinate_accuracy='fictional')) THEN RAISE EXCEPTION 'Bible geography layer failed'; END IF;
 END $$;
 SQL
 
@@ -67,6 +75,8 @@ if [[ "$ATLAS_HTTP_STATUS" != "200" ]]; then
   sed -n '1,80p' "$ATLAS_TEMP/atlas.json" >&2
   exit 1
 fi
+echo "API smoke: Bible atlas"
+curl -fsS "http://127.0.0.1:$ATLAS_API_PORT/api/works/the-bible/atlas?locale=zh-CN" >"$ATLAS_TEMP/bible.json"
 echo "API smoke: Chinese search"
 curl -fsS "http://127.0.0.1:$ATLAS_API_PORT/api/search?locale=zh-CN&q=%E5%B7%B4%E9%BB%8E" >"$ATLAS_TEMP/search-zh.json"
 echo "API smoke: English search"
@@ -81,15 +91,18 @@ const health=read('health');
 const locales=read('locales');
 const works=read('works');
 const atlas=read('atlas');
-assert(health.status==='ok'&&health.version==='3.0.0','health contract failed');
+const bible=read('bible');
+assert(health.status==='ok'&&health.version==='3.1.0','health contract failed');
 assert(JSON.stringify(locales.locales)===JSON.stringify(['zh-CN','en']),'locale contract failed');
-assert(works.items.length===4&&works.items.every((item)=>item.translationStatus==='published'&&item.resolvedLocale==='zh-CN'&&item.fallbackUsed===false),'work locale metadata failed');
+assert(works.items.length===5&&works.items.every((item)=>item.translationStatus==='published'&&item.resolvedLocale==='zh-CN'&&item.fallbackUsed===false),'work locale metadata failed');
 assert(atlas.characters.length===8&&atlas.events.length===6&&atlas.locations.length===6&&atlas.routes.length===1,'Tale atlas counts failed');
 assert(atlas.characters.every((item)=>item.eventSlugs.length>0&&item.translationStatus==='published'),'character closure or locale metadata failed');
 assert(atlas.events.every((item)=>item.locationSlugs.length>0&&item.sourceTitles.length>0&&item.translationStatus==='published'),'event location/source closure failed');
 assert(atlas.events.find((item)=>item.slug==='bastille-falls')?.startDate==='1789-07-14','historical date must remain an exact calendar date');
 assert(atlas.locations.every((item)=>item.layer==='real'&&Number.isFinite(item.lat)&&Number.isFinite(item.lng)),'PostGIS coordinates failed');
 assert(atlas.relations.length>=3&&atlas.relations.every((item)=>item.translationStatus==='published'),'relation contract failed');
+assert(bible.characters.length===13&&bible.events.length===14&&bible.locations.length===12&&bible.routes.length===3&&bible.relations.length===15,'Bible atlas counts failed');
+assert(bible.events.every((item)=>item.locationSlugs.length>0&&item.sourceTitles.length>0),'Bible event closure failed');
 assert(read('search-zh').items.some((item)=>item.label.includes('巴黎')),'Chinese search failed');
 assert(read('search-en').items.some((item)=>item.label.includes('Paris')),'English search failed');
 NODE
@@ -106,4 +119,4 @@ const paris=atlas.locations.find((item)=>item.slug==='paris');
 if(!paris||paris.resolvedLocale!=='en'||paris.fallbackUsed!==true||paris.translationStatus!=='published')throw new Error('explicit entity fallback contract failed');
 NODE
 
-echo "PostGIS migration, seed, integrity, fallback, bilingual search and API smoke: PASS"
+echo "PostGIS v3.1 migration, five-work seed, Bible closure, fallback, bilingual search and API smoke: PASS"

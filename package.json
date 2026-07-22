@@ -1,6 +1,6 @@
 {
   "name": "literary-atlas",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "private": true,
   "workspaces": ["apps/*"],
   "scripts": {
@@ -13,7 +13,8 @@
     "stop:local": "bash scripts/stop_local.sh",
     "test:start-command": "bash scripts/test_start_command.sh",
     "db:migrate": "npm run db:migrate -w @literary-atlas/api",
-    "db:seed": "npm run db:seed -w @literary-atlas/api"
+    "db:seed": "npm run db:seed -w @literary-atlas/api",
+    "db:bootstrap": "npm run db:bootstrap -w @literary-atlas/api"
   },
   "engines": { "node": ">=22" }
 }

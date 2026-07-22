@@ -15,7 +15,7 @@ export function createApp(db: Database) {
   app.use(express.json({ limit: "100kb" }));
 
   app.get("/health", async (_request, response, next) => {
-    try { await db.query("SELECT 1"); response.json({ status: "ok", version: "3.0.0" }); } catch (error) { next(error); }
+    try { await db.query("SELECT 1"); response.json({ status: "ok", version: "3.1.0" }); } catch (error) { next(error); }
   });
 
   app.get("/api/locales", (_request, response) => response.json({ locales: supportedLocales, defaultLocale: "zh-CN", fallbackPolicy: "requested published translation, then the work default locale; never silently substitute" }));
