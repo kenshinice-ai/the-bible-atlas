@@ -6,4 +6,4 @@ coverage/
 *.log
 *.tsbuildinfo
 *.zip
-!release/*.sha256
+release/*.sha256
