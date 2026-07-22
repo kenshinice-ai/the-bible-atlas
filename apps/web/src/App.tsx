@@ -26,6 +26,13 @@ export default function App(){
 
   function commit(next:ExploreState,push=false){if(push)history.pushState(null,"",serializeAtlasState(next));setExplore(next)}
   useEffect(()=>{const restore=()=>setExplore(parseAtlasState(location.search));window.addEventListener("popstate",restore);return()=>window.removeEventListener("popstate",restore)},[]);
+  useEffect(()=>{
+    if(!explore.selectedEntity)return;
+    const dismissOutside=(event:PointerEvent)=>{const drawer=document.querySelector(".entity-drawer");if(event.target instanceof Element&&event.target.closest("button,a,input,select,summary,label,[role='button'],.browser,.map-shell,.world-timeline"))return;if(event.target instanceof Node&&drawer&&!drawer.contains(event.target))setExplore((current)=>({...current,selectedEntity:null}))};
+    const dismissWithKeyboard=(event:KeyboardEvent)=>{if(event.key==="Escape")setExplore((current)=>({...current,selectedEntity:null}))};
+    document.addEventListener("pointerdown",dismissOutside);document.addEventListener("keydown",dismissWithKeyboard);
+    return()=>{document.removeEventListener("pointerdown",dismissOutside);document.removeEventListener("keydown",dismissWithKeyboard)};
+  },[explore.selectedEntity]);
   useEffect(()=>{history.replaceState(null,"",serializeAtlasState(explore))},[explore]);
   useEffect(()=>{let current=true;setError(null);void getWorks(explore.locale).then((response)=>{if(current)setWorks(response.items)}).catch((cause:unknown)=>{if(current)setError(cause instanceof Error?cause.message:String(cause))});return()=>{current=false}},[explore.locale]);
   useEffect(()=>{
@@ -52,7 +59,7 @@ export default function App(){
   function toggleLayer(layer:MapContentLayer){const mapLayers=explore.mapLayers.includes(layer)?explore.mapLayers.filter((item)=>item!==layer):[...explore.mapLayers,layer];commit({...explore,mapLayers})}
   function setTimelineMode(timelineMode:TimelineMode){commit({...explore,timelineMode},true)}
 
-  return <main>
+  return <main className={explore.selectedEntity?"has-drawer":undefined}>
     <header className="topbar"><div><p className="eyebrow">Blueprint v3.1 · Bible complexity sample</p><h1>{t.title}</h1></div><div className="controls"><WorkControlCenter works={works} selected={explore.works} active={explore.active} mode={explore.mode} locale={explore.locale} error={selectionError} onMode={changeMode} onToggle={chooseWork} onActive={(active)=>commit({...explore,active,selectedEntity:null,until:999},true)}/><div className="locale" aria-label="language"><button className={explore.locale==="zh-CN"?"active":""} onClick={()=>commit({...explore,locale:"zh-CN"},true)}>中文</button><button className={explore.locale==="en"?"active":""} onClick={()=>commit({...explore,locale:"en"},true)}>EN</button></div></div></header>
     {error?<section className="error"><strong>{t.error}</strong><p>{error}</p></section>:!activeAtlas?<p>{t.loading}…</p>:<>
       <section className="compare-bar"><span>{t.active}:</span>{atlases.map((atlas)=><button key={atlas.work.slug} style={{borderColor:atlas.work.themeColor}} className={atlas.work.slug===activeAtlas.work.slug?"active":""} onClick={()=>commit({...explore,active:atlas.work.slug,selectedEntity:null,until:999},true)}><i style={{background:atlas.work.themeColor}}/>{atlas.work.title}</button>)}<p>{t.multiHint}</p></section>
