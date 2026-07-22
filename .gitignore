@@ -4,6 +4,6 @@ dist/
 .DS_Store
 coverage/
 *.log
+*.tsbuildinfo
 *.zip
 !release/*.sha256
-
