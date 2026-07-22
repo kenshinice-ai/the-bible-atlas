@@ -77,6 +77,20 @@ docker_desktop_installed() {
   [[ -d /Applications/Docker.app || -d "$HOME/Applications/Docker.app" ]]
 }
 
+configure_docker_desktop_path() {
+  # Homebrew may copy Docker.app successfully before an administrator-owned
+  # /usr/local/bin prevents its helper symlinks from being created. Docker's
+  # own Resources/bin directory remains authoritative and contains both the
+  # CLI and credential helper needed for authenticated image pulls.
+  local docker_app
+  for docker_app in /Applications/Docker.app "$HOME/Applications/Docker.app"; do
+    if [[ -x "$docker_app/Contents/Resources/bin/docker-credential-desktop" ]]; then
+      export PATH="$docker_app/Contents/Resources/bin:$PATH"
+      return
+    fi
+  done
+}
+
 install_docker_desktop_if_needed() {
   if docker_desktop_installed; then return; fi
   [[ "$(uname -s)" == "Darwin" ]] || fail "未检测到可用 Docker 服务。请安装并启动 Docker Engine。"
@@ -150,6 +164,7 @@ if command -v node >/dev/null 2>&1; then
 else
   printf 'Node.js: 未安装（Docker 会提供项目所需 Node.js）\n'
 fi
+configure_docker_desktop_path
 wait_for_docker
 detect_compose
 if [[ "$ATLAS_DRY_RUN" -eq 0 ]]; then
@@ -166,7 +181,12 @@ fi
 
 log "2/3" "构建并启动 PostgreSQL/PostGIS、API 与 Web"
 run "${ATLAS_COMPOSE[@]}" config --quiet
-run "${ATLAS_COMPOSE[@]}" up --detach --build --remove-orphans
+# Compose v5 BuildKit/Bake can emit an invalid gRPC session header when the
+# project lives in an iCloud path containing non-ASCII characters. The classic
+# builder avoids that upstream path-encoding failure and produces the same
+# Dockerfile-defined runtime images.
+printf 'Docker 构建：启用 iCloud/中文路径兼容模式\n'
+run env DOCKER_BUILDKIT=0 "${ATLAS_COMPOSE[@]}" up --detach --build --remove-orphans
 
 if [[ "$ATLAS_DRY_RUN" -eq 0 ]]; then
   log "健康检查" "等待 API 与网页就绪"
