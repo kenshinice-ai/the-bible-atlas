@@ -1,0 +1,13 @@
+.git
+.gitignore
+.env
+.DS_Store
+node_modules
+**/node_modules
+**/dist
+**/*.tsbuildinfo
+coverage
+release
+*.zip
+*.log
+

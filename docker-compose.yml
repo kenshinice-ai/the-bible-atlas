@@ -1,3 +1,5 @@
+name: literary-atlas
+
 services:
   db:
     image: postgis/postgis:16-3.4

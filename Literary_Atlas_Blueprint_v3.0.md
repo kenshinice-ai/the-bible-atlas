@@ -80,9 +80,9 @@ other launch works => work.map_layer = real
 2. 所有可见作品、人物、地点、事件、路线和关系文字位于翻译表。
 3. 内容发布只读取 `status = published`。
 4. 读取顺序：请求语言的 published 翻译 → 作品默认语言的 published 翻译。
-5. 响应携带 `requestedLocale`、`resolvedLocale`、`fallbackUsed`；若两者都不存在，该实体不进入公开结果，内容后台应报告缺口。
+5. 作品、人物、事件、地点、路线和关系均携带 `resolvedLocale`、`fallbackUsed`、`translationStatus`；顶层响应另带 `requestedLocale`。若两种语言都不存在 published 翻译，该实体不进入公开结果，内容后台应报告缺口。
 6. 不接受未知 locale；返回 `400 INVALID_REQUEST`，不猜测语言。
-7. 切换语言只改变 `locale`，保留 work、tab、selected、until。
+7. 切换语言只改变 `locale`，保留 mode、works、active、tab、selected、until。
 
 ## 5. API v1
 
@@ -206,6 +206,7 @@ URL 是可分享状态的唯一来源：
 - 多选的侧栏与时间轴只展示用户指定的当前作品。
 - 语言切换保持 mode/works/active/tab/selected/until。
 - 时间轴筛选事件，地图点位与地点卡联动。
+- 点击人物进入其关联事件并定位首个地点；点击事件或路线会定位对应地图地点。
 - 现实与虚构作品切换时使用不同渲染器。
 - URL 可复制并恢复状态。
 - 1440px 桌面与 390px 基础移动布局无水平溢出，控件有可访问名称。

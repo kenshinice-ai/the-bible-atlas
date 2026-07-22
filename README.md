@@ -17,7 +17,7 @@ docker compose up --build
 
 ```bash
 docker compose down
-docker volume rm 世界文学名著时空地图_atlas_pgdata
+docker volume rm literary-atlas_atlas_pgdata
 docker compose up --build
 ```
 
@@ -51,8 +51,11 @@ Seed 不是幂等更新脚本；只应对新数据库执行一次。若重复执
 npm run typecheck
 npm test
 npm run build
-docker compose config
+docker-compose config --quiet
+npm run verify:postgis
 ```
+
+`verify:postgis` 会在 `/private/tmp` 创建隔离的 PostgreSQL/PostGIS 实例，执行原始 migration 和 seed，验证空间约束、四部作品完整性、双语搜索、实体级 fallback、历史日期与 API smoke，然后自动停止并删除临时实例。它要求本机已有与 PostgreSQL 匹配的 PostGIS 扩展。
 
 Docker 环境启动后可 smoke test：
 
@@ -77,7 +80,7 @@ Literary_Atlas_Blueprint_v3.0.md
 
 ## 语言与 fallback
 
-公开语言为 `zh-CN` 和 `en`。读取顺序是“请求语言的 published 翻译 → 作品默认语言的 published 翻译”。API 返回 `resolvedLocale` 和 `fallbackUsed`；不支持的 locale 直接报错。搜索只搜索用户明确请求的语言。
+公开语言为 `zh-CN` 和 `en`。读取顺序是“请求语言的 published 翻译 → 作品默认语言的 published 翻译”。作品、人物、事件、地点、路线和关系都返回 `resolvedLocale`、`fallbackUsed` 与 `translationStatus`；不支持的 locale 直接报错。搜索只搜索用户明确请求的语言。
 
 ## 地图数据规则
 
