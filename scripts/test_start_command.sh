@@ -17,6 +17,8 @@ ATLAS_DRY_OUTPUT=$(bash scripts/start_local.sh --dry-run --no-open)
 [[ "$ATLAS_DRY_OUTPUT" == *"2/3"* ]] || { echo "dry-run missed startup step" >&2; exit 1; }
 [[ "$ATLAS_DRY_OUTPUT" == *"DOCKER_BUILDKIT=0"* ]] || { echo "dry-run missed Unicode path build compatibility" >&2; exit 1; }
 [[ "$ATLAS_DRY_OUTPUT" == *"http://localhost:8080"* ]] || { echo "dry-run missed access URL" >&2; exit 1; }
+[[ "$ATLAS_DRY_OUTPUT" == *"最多选择五部同层作品"* ]] || { echo "dry-run missed v3.1 work selection guidance" >&2; exit 1; }
+[[ "$ATLAS_DRY_OUTPUT" == *"《圣经》复杂样本"* ]] || { echo "dry-run missed v3.1 Bible guidance" >&2; exit 1; }
 [[ ! -f .env ]] || [[ -s .env ]]
 
 printf 'One-click command syntax, help and dry-run: PASS\n'

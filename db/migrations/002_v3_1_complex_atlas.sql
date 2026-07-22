@@ -67,13 +67,14 @@ ALTER TABLE locations
   ADD COLUMN modern_country_code char(2),
   ADD COLUMN is_inferred boolean NOT NULL DEFAULT false,
   ADD COLUMN still_exists boolean,
-  ADD CONSTRAINT locations_zoom_range CHECK (preferred_zoom BETWEEN 2 AND 18),
-  ADD CONSTRAINT locations_accuracy_matches_layer CHECK ((layer='fictional' AND coordinate_accuracy='fictional') OR (layer='real' AND coordinate_accuracy<>'fictional'));
+  ADD CONSTRAINT locations_zoom_range CHECK (preferred_zoom BETWEEN 2 AND 18);
 
 UPDATE locations SET
   location_type = CASE WHEN layer='fictional' THEN 'fictional_place'::location_type ELSE 'city'::location_type END,
   coordinate_accuracy = CASE WHEN layer='fictional' THEN 'fictional'::coordinate_accuracy ELSE 'city_centroid'::coordinate_accuracy END,
   preferred_zoom = CASE WHEN layer='fictional' THEN 8 ELSE 10 END;
+
+ALTER TABLE locations ADD CONSTRAINT locations_accuracy_matches_layer CHECK ((layer='fictional' AND coordinate_accuracy='fictional') OR (layer='real' AND coordinate_accuracy<>'fictional'));
 
 ALTER TABLE characters
   ADD COLUMN gender person_gender NOT NULL DEFAULT 'unknown',

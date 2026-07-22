@@ -15,7 +15,7 @@
 ## Compatibility strategy
 
 - Existing work slugs and `/api/works/:slug/atlas` remain stable.
-- Existing v3.0 seed remains untouched; v3.1 migration supplies safe defaults for its rows.
+- Existing v3.0 entity identifiers and content remain stable. Its seed gains explicit v3.1 location metadata plus a seed-history marker so fresh installs and upgrades converge.
 - New Bible seed is separate and ordered after the migration.
 - Existing `locale`, `mode`, `works`, `active`, `tab`, `selected`, and `until` URLs continue to parse. New links add typed entity, timeline, range, and layer parameters.
 - Real/fictional same-map exclusion remains. Up to five works may be selected within one layer.

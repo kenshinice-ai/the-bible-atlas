@@ -1,86 +1,91 @@
-# 世界文学名著时空地图
+# 世界文学名著时空地图 v3.1
 
-一个 React + TypeScript、Node.js TypeScript、PostgreSQL + PostGIS 的双语文学地图原型。v3.0 覆盖四部作品，并以《双城记》完成端到端数据闭环。世界名著选择器支持单选和最多三部的对照多选，地图只渲染所选作品。
+一个可本地一键启动的双语文学探索应用：React + strict TypeScript 前端、Node.js TypeScript API、PostgreSQL + PostGIS、Docker Compose、版本化 migrations 与 seeds。v3.1 以《圣经》作为复杂数据主样本，同时保留《双城记》《安妮日记》《牧羊少年奇幻之旅》和《霍比特人》。
 
-## 一键启动（macOS）
+## 最快启动（macOS）
 
-在 Finder 中双击：
-
-```text
-Start-Literary-Atlas.command
-```
-
-启动器会依次：
-
-1. 检查 macOS、Homebrew、Docker Desktop、Docker Engine、Compose 和 curl；
-2. 自动安装缺失的 Homebrew 或 Docker Desktop，启动 Docker Engine 并等待就绪；
-3. 创建缺失的 `.env`，但绝不覆盖已有配置；
-4. 构建并启动 PostGIS、API 和 Web，执行真实健康检查；
-5. 输出访问网址、功能简介和停止方法，并打开 `http://localhost:8080`。
-
-首次安装 Docker Desktop 时，macOS 可能要求确认许可。完成确认后启动器会继续等待；若超过三分钟仍未就绪，会明确报错并给出重试说明。
-
-停止服务且保留数据库：
-
-```text
-Stop-Literary-Atlas.command
-```
-
-也可以在终端运行：
+在 Finder 双击 `Start-Literary-Atlas.command`，或在终端运行：
 
 ```bash
-npm run start:local
-npm run stop:local
+./Start-Literary-Atlas.command
 ```
 
-仅检查启动计划，不安装或启动：
+启动器会：
+
+1. 检查 macOS、curl、Homebrew、Docker Desktop、Docker Engine 和 Compose；
+2. 经用户可见的官方流程安装缺失的 Homebrew/Docker Desktop，启动 Docker 并等待；
+3. 创建缺失的 `.env`（不覆盖已有配置）；
+4. 构建并启动 PostGIS、迁移/seed runner、API 和 Web；
+5. 完成真实健康检查，输出网址和功能介绍，并默认打开浏览器。
+
+访问：
+
+- Web：`http://localhost:8080`
+- API：`http://localhost:4000`
+- API 健康检查：`http://localhost:4000/health`
+- PostgreSQL：`localhost:5432`
+
+停止服务且保留数据库：双击 `Stop-Literary-Atlas.command`，或运行 `npm run stop:local`。
+
+只检查启动计划、不安装或启动：
 
 ```bash
 bash scripts/start_local.sh --dry-run --no-open
 ```
 
-## 手动 Docker 启动
+## v3.1 能力
 
-要求：Node.js 22+、npm 11+；完整环境另需 Docker Desktop。
+- 《圣经》双语复杂闭环：13 人物、14 事件、12 地点、3 路线、15 关系及来源链接。
+- 世界名著控制中心：单选或最多五部同地图层作品对照；地图只请求和显示选中内容。
+- 现实/虚构地图分层：四部现实地理作品使用 PostGIS；《霍比特人》使用独立虚构画布，不伪造经纬度。
+- 统一 Explore State：语言、作品、主作品、标签页、实体、时间模式/范围、图层写入深链接。
+- BCE–CE 历史时间轴与叙事顺序模式；支持密度、缩放、平移和事件联动。
+- 人物身份卡、关系图、关系生命周期、地点类型/精度、事件现实性/置信度及来源详情。
+- 中文/English 切换保留上下文；明确 published fallback 和双语搜索。
+- 桌面及基础移动端、键盘焦点、减少动态效果适配。
+
+同层规则是硬约束：现实作品与虚构作品不能混在一张地图。当前目录中只有一部虚构作品，因此现实层最多可同时对照四部；系统容量仍为五，未来新增同层作品无需改状态模型。
+
+## 手动 Docker 启动
 
 ```bash
 cp .env.example .env
-docker compose up --build
+docker compose up --detach --build
 ```
 
-打开 `http://localhost:8080`。API 位于 `http://localhost:4000`，健康检查为 `GET /health`。首次创建数据库卷时，Postgres 会按文件名执行 `db/migrations` 和 `db/seeds`。
+Compose 的 `migrate` 服务会先执行尚未应用的 migrations/seeds，成功后才启动 API。已有 v3.0 数据卷会增量升级；不会依赖 Postgres init 目录重放。
 
-重置本地演示数据库会删除 Compose 数据卷，因此必须明确执行：
+重置演示数据库会删除本地数据，只有确认无需保留时才执行：
 
 ```bash
 docker compose down
 docker volume rm literary-atlas_atlas_pgdata
-docker compose up --build
+docker compose up --detach --build
 ```
-
-请先确认卷名；不要在有需要保留的数据时运行。
 
 ## 本地开发
 
-先启动数据库，再运行 API 和 Web：
+要求 Node.js 22+、npm 11+、PostgreSQL/PostGIS（或 Docker）。
 
 ```bash
 cp .env.example .env
 docker compose up -d db
 npm install
+npm run db:bootstrap
 npm run dev
 ```
 
-默认 Web 为 `http://localhost:5173`。本机运行 API 时从 `.env` 或 shell 提供 `DATABASE_URL` 和 `API_PORT`。项目不对缺失配置做静默默认。
+Vite 开发站点默认为 `http://localhost:5173`。缺失配置、无效 locale、未知实体与 SQL 错误都会显式返回，不做静默回退。
 
-已有空数据库可手动执行：
+数据库命令：
 
 ```bash
 npm run db:migrate
 npm run db:seed
+npm run db:bootstrap
 ```
 
-Seed 不是幂等更新脚本；只应对新数据库执行一次。若重复执行，唯一约束会明确报错。
+Runner 通过 `schema_migrations` 和 `seed_history` 跳过已应用版本。Seed 文件仍按版本增量管理，不应手工重复灌入。
 
 ## 验证
 
@@ -88,44 +93,42 @@ Seed 不是幂等更新脚本；只应对新数据库执行一次。若重复执
 npm run typecheck
 npm test
 npm run build
-docker-compose config --quiet
 npm run verify:postgis
 npm run test:start-command
+docker compose config --quiet
 ```
 
-`verify:postgis` 会在 `/private/tmp` 创建隔离的 PostgreSQL/PostGIS 实例，执行原始 migration 和 seed，验证空间约束、四部作品完整性、双语搜索、实体级 fallback、历史日期与 API smoke，然后自动停止并删除临时实例。它要求本机已有与 PostgreSQL 匹配的 PostGIS 扩展。
+`verify:postgis` 在 `/private/tmp` 创建隔离实例，验证 v3.0→v3.1 升级、全新建库、五部作品、圣经闭环、PostGIS/虚构坐标约束、fallback、双语搜索和 API 负例，结束后清理临时实例。详细流程见 [测试计划](docs/TEST_PLAN_v3.1.md)。
 
-Docker 环境启动后可 smoke test：
+API smoke：
 
 ```bash
 curl -fsS http://localhost:4000/health
 curl -fsS 'http://localhost:4000/api/works?locale=zh-CN'
-curl -fsS 'http://localhost:4000/api/works/a-tale-of-two-cities/atlas?locale=en'
-curl -fsS 'http://localhost:4000/api/search?locale=zh-CN&q=巴黎'
+curl -fsS 'http://localhost:4000/api/works/the-bible/atlas?locale=en'
+curl -fsS 'http://localhost:4000/api/search?locale=zh-CN&q=耶路撒冷'
 ```
 
-负例：`locale=fr` 应返回 HTTP 400；未知作品应返回 HTTP 404。
+`locale=fr` 返回 400，未知作品返回 404。
 
-## 目录
+## 语言、时间与地图规则
+
+- 公开 locale：`zh-CN`、`en`。
+- 读取顺序：请求语言 published → 作品默认语言 published。响应明确包含 `resolvedLocale`、`fallbackUsed`、`translationStatus`。
+- 搜索只搜索明确请求的语言，不暗中跨语言混合。
+- BCE 使用负整数、CE 使用正整数，不存在 year 0；近似/范围日期不伪装成 SQL 精确日期。
+- 圣经地点在现实层但带 coordinate accuracy 和解释；坐标不是事件真实性证明。
+- 文学与圣经内容只存原创摘要、结构化事件和短引用标识，不收录大段受版权保护文本。
+
+## 结构与文档
 
 ```text
-apps/api       Express + pg + Zod API
-apps/web       React + Leaflet + SVG fictional canvas
-db/migrations  PostGIS schema
-db/seeds       bilingual four-work seed
-Literary_Atlas_Blueprint_v3.0.md
+apps/api        Express + pg + Zod API
+apps/web        React + Leaflet + SVG timeline/graph/fictional canvas
+db/migrations   forward-only PostGIS schema
+db/seeds        bilingual versioned sample data
+docs            v3.1 audit, plan, source, interaction and test policies
+release         generated delivery ZIP (not used at runtime)
 ```
 
-## 语言与 fallback
-
-公开语言为 `zh-CN` 和 `en`。读取顺序是“请求语言的 published 翻译 → 作品默认语言的 published 翻译”。作品、人物、事件、地点、路线和关系都返回 `resolvedLocale`、`fallbackUsed` 与 `translationStatus`；不支持的 locale 直接报错。搜索只搜索用户明确请求的语言。
-
-## 地图数据规则
-
-- 《双城记》《安妮日记》《牧羊少年奇幻之旅》使用 PostGIS 现实点位。
-- 《霍比特人》只使用 0–100 的虚构画布坐标，不写现实经纬度。
-- 多选上限为三部且必须属于同一地图层；现实和虚构作品不能在一张图中混选。
-- 多选时地图叠加所选作品，人物、事件、路线详情与时间轴跟随用户指定的当前作品。
-- 文学事件摘要为原创结构化描述，不保存作品大段原文。
-
-完整架构、schema、Sprint 和验收条件见 `Literary_Atlas_Blueprint_v3.0.md`。
+架构、schema、API、页面状态、地图分层、seed、Sprint、验收标准和后续 Codex prompts 见 [Blueprint v3.1](Literary_Atlas_Blueprint_v3.1.md)。

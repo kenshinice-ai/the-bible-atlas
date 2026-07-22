@@ -1,3 +1,23 @@
-import{describe,expect,it}from"vitest";import{parseAtlasState,validateWorkSelection,withLocale}from"./state";
-describe("atlas deep-link state",()=>{it("restores a limited multi-work selection",()=>{expect(parseAtlasState("?locale=en&mode=multi&works=a-tale-of-two-cities,the-alchemist&active=the-alchemist&tab=locations&selected=the-alchemist:tangier&until=2")).toEqual({locale:"en",mode:"multi",works:["a-tale-of-two-cities","the-alchemist"],active:"the-alchemist",tab:"locations",selected:"the-alchemist:tangier",until:2})});it("changes language without losing navigation state",()=>{const before=parseAtlasState("?mode=multi&works=a-tale-of-two-cities,the-alchemist&active=the-alchemist&tab=routes&selected=a-tale-of-two-cities:paris&until=4");expect(withLocale(before,"en")).toEqual({...before,locale:"en"})});it("rejects malformed tab and time into explicit defaults",()=>{const state=parseAtlasState("?tab=oops&until=-1");expect(state.tab).toBe("events");expect(state.until).toBe(999)});it("caps URL selection at three works",()=>expect(parseAtlasState("?mode=multi&works=a,b,c,d").works).toEqual(["a","b","c"]));it("keeps only one work in single mode",()=>expect(parseAtlasState("?mode=single&works=a,b").works).toEqual(["a"]))});
-describe("work selection validation",()=>{const catalog=[{slug:"real-a",mapLayer:"real" as const},{slug:"real-b",mapLayer:"real" as const},{slug:"fiction",mapLayer:"fictional" as const}];it("accepts up to three works on one layer",()=>expect(validateWorkSelection(catalog,"multi",["real-a","real-b"])).toBeNull());it("rejects mixed layers restored from a URL",()=>expect(validateWorkSelection(catalog,"multi",["real-a","fiction"])).toBe("mixed_layers"));it("rejects unknown works explicitly",()=>expect(validateWorkSelection(catalog,"single",["missing"])).toBe("unknown_work"))});
+import{describe,expect,it}from"vitest";
+import{formatHistoricalYear,historicalSortValue,parseAtlasState,relationVisibleAtSequence,serializeAtlasState,validateWorkSelection,withLocale,zoomForLocation}from"./state";
+
+describe("v3.1 Explore State deep links",()=>{
+  it("restores five works, a primary work, typed entity, and timeline",()=>{const state=parseAtlasState("?locale=en&mode=compare&works=a,b,c,d,e&primary=c&tab=relationships&entity=character:c:moses&timeline=history&from=-1400&to=100");expect(state).toMatchObject({locale:"en",mode:"multi",works:["a","b","c","d","e"],active:"c",tab:"relationships",selectedEntity:{type:"character",workSlug:"c",id:"moses"},timelineMode:"history",rangeStart:-1400,rangeEnd:100})});
+  it("caps a malformed sixth work without silently replacing the first five",()=>expect(parseAtlasState("?mode=multi&works=a,b,c,d,e,f").works).toEqual(["a","b","c","d","e"]));
+  it("keeps only one work in single mode",()=>expect(parseAtlasState("?mode=single&works=a,b").works).toEqual(["a"]));
+  it("restores a legacy location selection",()=>expect(parseAtlasState("?work=a&selected=a:london").selectedEntity).toEqual({type:"location",workSlug:"a",id:"london"}));
+  it("changes language without losing exploration state",()=>{const before=parseAtlasState("?mode=multi&works=a,b&active=b&entity=event:b:e1&from=-500&to=500");expect(withLocale(before,"en")).toEqual({...before,locale:"en"})});
+  it("round trips the shareable state",()=>{const state=parseAtlasState("?mode=multi&works=a,b&active=b&entity=route:b:r1&tab=routes&layers=places,routes&timeline=narrative&until=4");expect(parseAtlasState(serializeAtlasState(state))).toEqual(state)});
+});
+
+describe("selection and complex chronology helpers",()=>{
+  const catalog:Array<{slug:string;mapLayer:"real"|"fictional"}>=[...["a","b","c","d","e"].map((slug)=>({slug,mapLayer:"real" as const})),{slug:"fiction",mapLayer:"fictional"}];
+  it("accepts five same-layer works",()=>expect(validateWorkSelection(catalog,"multi",["a","b","c","d","e"])).toBeNull());
+  it("rejects a sixth work",()=>expect(validateWorkSelection(catalog,"multi",["a","b","c","d","e","missing"])).toBe("too_many"));
+  it("rejects mixed real and fictional layers",()=>expect(validateWorkSelection(catalog,"multi",["a","fiction"])).toBe("mixed_layers"));
+  it("sorts BCE before CE and keeps unknown last",()=>expect([-4,null,-1300,62].sort((a,b)=>historicalSortValue(a)-historicalSortValue(b))).toEqual([-1300,-4,62,null]));
+  it("formats BCE without a false year zero",()=>expect(formatHistoricalYear(-1300,"en")).toBe("1300 BCE"));
+  it("labels the BCE/CE boundary instead of inventing year zero",()=>expect(formatHistoricalYear(0,"en")).toBe("BCE/CE boundary"));
+  it("uses building and regional zoom levels when no preference is valid",()=>{expect(zoomForLocation("building",99)).toBe(15);expect(zoomForLocation("region",0)).toBe(7)});
+  it("filters relationship lifecycle by narrative sequence",()=>{const events=[{slug:"start",sequence:2},{slug:"end",sequence:5}];const relation={startEventSlug:"start",endEventSlug:"end"};expect(relationVisibleAtSequence(relation,events,1)).toBe(false);expect(relationVisibleAtSequence(relation,events,3)).toBe(true);expect(relationVisibleAtSequence(relation,events,6)).toBe(false)});
+});

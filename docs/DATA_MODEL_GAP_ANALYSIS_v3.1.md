@@ -34,8 +34,8 @@ The original `start_date` and `end_date` columns remain for backward compatibili
 
 The first v3.1 Bible seed is an intentionally bounded, source-closed pressure sample rather than a claim to encode the entire biblical corpus:
 
-- 10 core people spanning patriarchal, Exodus, monarchy, prophetic, and New Testament narratives.
-- 12 representative events with approximate/range time metadata and explicit reality/confidence labels.
+- 13 core people spanning patriarchal, Exodus, monarchy, prophetic, and New Testament narratives.
+- 14 representative events with approximate/range time metadata and explicit reality/confidence labels.
 - 12 real-world locations with location types, coordinate accuracy, preferred zoom, historical context, and modern-country codes.
 - 3 routes with ordered waypoints.
 - at least 15 directed or bidirectional relationships with bilingual summaries and lifecycle event links where relevant.

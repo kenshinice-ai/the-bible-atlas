@@ -20,13 +20,26 @@ cleanup() {
 }
 trap cleanup EXIT
 
-for command in initdb pg_ctl psql curl node npm; do
+for command in initdb pg_ctl psql createdb curl node npm; do
   command -v "$command" >/dev/null || { echo "Missing required command: $command" >&2; exit 1; }
 done
 test -f "$(pg_config --sharedir)/extension/postgis.control" || { echo "PostGIS extension is not installed for $(pg_config --version)" >&2; exit 1; }
 
 initdb -D "$ATLAS_TEMP/data" -A trust --no-locale >/dev/null
 pg_ctl -D "$ATLAS_TEMP/data" -o "-F -p $ATLAS_DB_PORT -c listen_addresses=127.0.0.1" -w start >/dev/null
+
+# Reproduce the v3.0 -> v3.1 upgrade path with a pre-existing fictional row.
+# This catches migration ordering bugs that a fresh install cannot expose.
+createdb -h 127.0.0.1 -p "$ATLAS_DB_PORT" atlas_upgrade
+psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d atlas_upgrade -f "$ATLAS_ROOT/db/migrations/001_initial.sql" >/dev/null
+psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d atlas_upgrade <<'SQL' >/dev/null
+INSERT INTO works(id,slug,author_name,publication_year,content_mode,map_layer,default_locale,launch_rank,mode_reason)
+VALUES ('90000000-0000-4000-8000-000000000001','the-hobbit','J. R. R. Tolkien',1937,'literary_narrative','fictional','en',1,'upgrade fixture');
+INSERT INTO locations(id,work_id,slug,layer,canvas_x,canvas_y)
+VALUES ('90000000-0000-4000-8000-000000000002','90000000-0000-4000-8000-000000000001','bag-end','fictional',50,50);
+SQL
+psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d atlas_upgrade -f "$ATLAS_ROOT/db/migrations/002_v3_1_complex_atlas.sql" >/dev/null
+test "$(psql -At -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d atlas_upgrade -c "SELECT coordinate_accuracy FROM locations WHERE slug='bag-end'")" = "fictional"
 
 psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres -f "$ATLAS_ROOT/db/migrations/001_initial.sql" >/dev/null
 psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres -f "$ATLAS_ROOT/db/migrations/002_v3_1_complex_atlas.sql" >/dev/null
@@ -119,4 +132,4 @@ const paris=atlas.locations.find((item)=>item.slug==='paris');
 if(!paris||paris.resolvedLocale!=='en'||paris.fallbackUsed!==true||paris.translationStatus!=='published')throw new Error('explicit entity fallback contract failed');
 NODE
 
-echo "PostGIS v3.1 migration, five-work seed, Bible closure, fallback, bilingual search and API smoke: PASS"
+echo "PostGIS v3.0 upgrade, v3.1 migration, five-work seed, Bible closure, fallback, bilingual search and API smoke: PASS"
