@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# 世界文学名著时空地图停止脚本：
+# 圣经舆图 The Bible Atlas 停止脚本：
 # 1. 按 release/logs/*.pid 结束本地 API / Web 进程（含子进程）；
 # 2. 兜底清理仍占用 API/Web 端口的本用户 node 进程；
 # 3. 如旧 Docker 栈仍在运行，一并 docker compose down（数据库卷保留）。
@@ -82,5 +82,5 @@ if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
   fi
 fi
 
-printf '\n世界文学名著时空地图已停止。本机 PostgreSQL 与数据均保留。\n'
-printf '重新启动：双击 Start-Literary-Atlas.command\n'
+printf '\n圣经舆图 The Bible Atlas 已停止。本机 PostgreSQL 与数据均保留。\n'
+printf '重新启动：双击 Start-Bible-Atlas.command\n'

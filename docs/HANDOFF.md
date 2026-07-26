@@ -42,7 +42,7 @@ v4 Bible-first 架构已落地并提交(commit `9b47ea0`):以「时代 → 人�
    - 经文题词:新建 `epigraphs.ts`(13 时代题词 + 欢迎诗 119:18 + 加载轮换 ×3 + 页脚赛 40:8,和合本 1919/KJV 逐字录入);`App.tsx` 集成(选中时代显示题词、未选显示欢迎节、骨架屏 4s 轮换、页脚版本声明)
    - Bible-only 前端锁定:`state.ts` BIBLE_ONLY 常量,旧深链接静默归正;WorkControlCenter/compare-bar 条件隐藏(代码保留);搜索过滤作品类结果;`state.test.ts` 同步改为断言归正行为
    - 静态验证:typecheck 0 错误、25/25 测试通过;**浏览器实测未做**(待启动链路代理释放端口后进行,项目目录已改名为 The Bible Atlas)
-   - 并行进行中:一键启动链路体检代理(scripts/*.command/README/DEPLOYMENT 的改名适配与实测,完成后另行提交)
+   - 一键启动链路体检已完成并实测全通:唯一因目录改名失效的是 DEPLOYMENT.md 里硬编码的 `cd 世界文学名著时空地图`(已修);其余脚本均相对定位不受影响;`Start/Stop-Literary-Atlas.command` → `Start/Stop-Bible-Atlas.command`(git mv);6 文件 18 处旧品牌文案清零;真实起停验证:API health ok、web 200、stop 后 PID/端口全清;DEPLOYMENT.md 顶部重写「快速启动」(文件清单 + 三种启动方式);数据库名/npm 包名/Docker 项目名属历史遗留命名,保持不变(P2 再议)
 
 0. **重大方向调整(2026-07-27,用户决定)**:项目**只服务于圣经**,进行品牌重塑 + 神圣内容融入 + UI/UX 完善
    - 已新增可复用代理定义 `.claude/agents/liturgical-design-director.md`(神职人员 × UI/UX 设计总监双重人格,用于圣经内容呈现与神圣氛围设计的评审)

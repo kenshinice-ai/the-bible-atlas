@@ -1,13 +1,13 @@
-# 世界文学名著时空地图 v3.1
+# 圣经舆图 · The Bible Atlas
 
 一个可本地一键启动的双语文学探索应用：React + strict TypeScript 前端、Node.js TypeScript API、PostgreSQL + PostGIS、Docker Compose、版本化 migrations 与 seeds。v3.1 以《圣经》作为复杂数据主样本，同时保留《双城记》《安妮日记》《牧羊少年奇幻之旅》和《霍比特人》。
 
 ## 最快启动（macOS）
 
-在 Finder 双击 `Start-Literary-Atlas.command`，或在终端运行：
+在 Finder 双击 `Start-Bible-Atlas.command`，或在终端运行：
 
 ```bash
-./Start-Literary-Atlas.command
+./Start-Bible-Atlas.command
 ```
 
 启动器基于本机 Homebrew PostgreSQL（非 Docker），会：
@@ -26,7 +26,7 @@
 - API 健康检查：`http://localhost:4000/health`
 - PostgreSQL：`localhost:5432`
 
-停止服务且保留数据库：双击 `Stop-Literary-Atlas.command`，或运行 `npm run stop:local`。从零安装与故障排查见 [部署指南](docs/DEPLOYMENT.md)。
+停止服务且保留数据库：双击 `Stop-Bible-Atlas.command`，或运行 `npm run stop:local`。从零安装与故障排查见 [部署指南](docs/DEPLOYMENT.md)。
 
 只检查启动计划、不安装或启动：
 

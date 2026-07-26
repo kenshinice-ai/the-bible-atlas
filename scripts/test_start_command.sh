@@ -6,8 +6,8 @@ cd "$ATLAS_ROOT"
 
 bash -n scripts/start_local.sh
 bash -n scripts/stop_local.sh
-zsh -n Start-Literary-Atlas.command
-zsh -n Stop-Literary-Atlas.command
+zsh -n Start-Bible-Atlas.command
+zsh -n Stop-Bible-Atlas.command
 
 ATLAS_HELP=$(bash scripts/start_local.sh --help)
 [[ "$ATLAS_HELP" == *"--dry-run"* ]] || { echo "help output is incomplete" >&2; exit 1; }

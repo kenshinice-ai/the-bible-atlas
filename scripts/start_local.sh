@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# 世界文学名著时空地图一键启动器（本地栈：Homebrew Postgres + tsx API + Vite Web）
+# 圣经舆图 The Bible Atlas 一键启动器（本地栈：Homebrew Postgres + tsx API + Vite Web）
 #
 # 用法：
-#   ./Start-Literary-Atlas.command
+#   ./Start-Bible-Atlas.command
 #   bash scripts/start_local.sh [选项]
 #
 # 选项：
@@ -18,7 +18,7 @@ set -Eeuo pipefail
 #   DB:  localhost:5432（本机 Homebrew PostgreSQL）
 #
 # 日志与 PID 文件：release/logs/
-# 停止服务：双击 Stop-Literary-Atlas.command 或 bash scripts/stop_local.sh
+# 停止服务：双击 Stop-Bible-Atlas.command 或 bash scripts/stop_local.sh
 
 ATLAS_PROJECT_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 ATLAS_DRY_RUN=0
@@ -141,7 +141,7 @@ if pidfile_running "$ATLAS_WEB_PID_FILE"; then ATLAS_WEB_RUNNING=1; fi
 if [[ "$ATLAS_API_RUNNING" -eq 1 && "$ATLAS_WEB_RUNNING" -eq 1 ]]; then
   log "提示" "服务已在运行，无需重复启动。"
   printf '  Web  %s\n  API  %s\n' "$ATLAS_WEB_URL" "$ATLAS_API_HEALTH_URL"
-  printf '如需重启：先双击 Stop-Literary-Atlas.command。\n'
+  printf '如需重启：先双击 Stop-Bible-Atlas.command。\n'
   if [[ "$ATLAS_DRY_RUN" -eq 0 && "$ATLAS_OPEN_BROWSER" -eq 1 && "$(uname -s)" == "Darwin" ]]; then
     open "$ATLAS_WEB_URL"
   fi
@@ -282,11 +282,11 @@ log "4/4" "启动完成"
 cat <<INFO
 
 访问网址：
-  世界文学地图  ${ATLAS_WEB_URL}
-  API 健康检查  ${ATLAS_API_HEALTH_URL}
+  圣经舆图 The Bible Atlas  ${ATLAS_WEB_URL}
+  API 健康检查              ${ATLAS_API_HEALTH_URL}
 
 日志：release/logs/api.log、release/logs/web.log
-停止服务：双击 Stop-Literary-Atlas.command，或 bash scripts/stop_local.sh
+停止服务：双击 Stop-Bible-Atlas.command，或 bash scripts/stop_local.sh
 重复双击本启动器不会重复起进程（已运行时仅打开浏览器）。
 INFO
 
