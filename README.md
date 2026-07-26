@@ -10,22 +10,23 @@
 ./Start-Literary-Atlas.command
 ```
 
-启动器会：
+启动器基于本机 Homebrew PostgreSQL（非 Docker），会：
 
-1. 检查 macOS、curl、Homebrew、Docker Desktop、Docker Engine 和 Compose；
-2. 经用户可见的官方流程安装缺失的 Homebrew/Docker Desktop，启动 Docker 并等待；
-3. 创建缺失的 `.env`（不覆盖已有配置）；
-4. 构建并启动 PostGIS、迁移/seed runner、API 和 Web；
-5. 完成真实健康检查，输出网址和功能介绍，并默认打开浏览器。
+1. 检查 Node.js（>= 22）、npm 与本机 PostgreSQL（未运行则尝试 `brew services start`）；
+2. `literary_atlas` 库不存在时自动 `createdb` + `CREATE EXTENSION postgis` + 迁移与种子（幂等）；
+3. `node_modules` 缺失时自动 `npm install`；
+4. 检测端口冲突（旧 Docker 栈占用 4000/5432 时可一键 `docker compose down`）；
+5. 启动 API（4000）与 Web（Vite 5173），日志与 PID 写入 `release/logs/`；
+6. 健康检查通过后自动打开浏览器；重复双击不会重复起进程。
 
 访问：
 
-- Web：`http://localhost:8080`
+- Web：`http://localhost:5173`
 - API：`http://localhost:4000`
 - API 健康检查：`http://localhost:4000/health`
 - PostgreSQL：`localhost:5432`
 
-停止服务且保留数据库：双击 `Stop-Literary-Atlas.command`，或运行 `npm run stop:local`。
+停止服务且保留数据库：双击 `Stop-Literary-Atlas.command`，或运行 `npm run stop:local`。从零安装与故障排查见 [部署指南](docs/DEPLOYMENT.md)。
 
 只检查启动计划、不安装或启动：
 
