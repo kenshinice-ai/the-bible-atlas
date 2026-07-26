@@ -2,7 +2,9 @@
   "name": "literary-atlas",
   "version": "3.1.0",
   "private": true,
-  "workspaces": ["apps/*"],
+  "workspaces": [
+    "apps/*"
+  ],
   "scripts": {
     "dev": "npm run dev -w @literary-atlas/api & npm run dev -w @literary-atlas/web",
     "dev:api": "npm run dev -w @literary-atlas/api",
@@ -16,7 +18,11 @@
     "test:start-command": "bash scripts/test_start_command.sh",
     "db:migrate": "npm run db:migrate -w @literary-atlas/api",
     "db:seed": "npm run db:seed -w @literary-atlas/api",
-    "db:bootstrap": "npm run db:bootstrap -w @literary-atlas/api"
+    "db:bootstrap": "npm run db:bootstrap -w @literary-atlas/api",
+    "bake:static": "npm run bake:static -w @literary-atlas/api",
+    "build:static": "npm run bake:static -w @literary-atlas/api && VITE_DATA_MODE=static npm run build -w @literary-atlas/web -- --base=./"
   },
-  "engines": { "node": ">=22" }
+  "engines": {
+    "node": ">=22"
+  }
 }

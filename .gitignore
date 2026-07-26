@@ -9,3 +9,4 @@ coverage/
 release/*.sha256
 .claude/settings.local.json
 release/logs/
+apps/web/public/data/

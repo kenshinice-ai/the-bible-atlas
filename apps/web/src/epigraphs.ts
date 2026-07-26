@@ -3,6 +3,13 @@
  * docs/design/sacred-rebrand-plan.md (section 2). Chinese: Union Version
  * (和合本, 1919); English: King James Version. Both public domain.
  * "(节选)" / "(excerpt)" marks a shortened quotation.
+ *
+ * Text conventions (audited 2026-07, see docs/CLERGY_AUDIT.md):
+ * - Chinese follows the Shen (「神」) edition wording with modern punctuation
+ *   (新标点和合本 conventions, e.g. 不致/哪里); the traditional full-width
+ *   space before 神 is not reproduced in UI copy.
+ * - Standalone quotations end with terminal punctuation even where the
+ *   KJV verse ends mid-sentence (e.g. Gen 12:2 ":"); wording is untouched.
  */
 
 export interface Epigraph {

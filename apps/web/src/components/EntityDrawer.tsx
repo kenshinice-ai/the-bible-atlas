@@ -83,8 +83,8 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
         <span>{label(person.realityType, locale)}</span>
       </div>
       <p>{person.summary}</p>
-      {detail.detail && <p>{detail.detail}</p>}
-      {detail.motivation && <section><h3>{t("motivation", locale)}</h3><p>{detail.motivation}</p></section>}
+      {(detail.detail || person.detail) && <p>{detail.detail || person.detail}</p>}
+      {(detail.motivation || person.motivation) && <section><h3>{t("motivation", locale)}</h3><p>{detail.motivation || person.motivation}</p></section>}
       <dl>
         <dt>{t("lifeRange", locale)}</dt>
         <dd>{person.birthYear !== null ? formatYear(person.birthYear, locale) : "—"} — {person.deathYear !== null ? formatYear(person.deathYear, locale) : "—"}</dd>
@@ -145,8 +145,8 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
         <span>#{event.sequence}</span>
       </div>
       <p>{event.summary}</p>
-      {detail.detail && <p>{detail.detail}</p>}
-      {detail.significance && <section><h3>{t("significance", locale)}</h3><p>{detail.significance}</p></section>}
+      {(detail.detail || event.detail) && <p>{detail.detail || event.detail}</p>}
+      {(detail.significance || event.significance) && <section><h3>{t("significance", locale)}</h3><p>{detail.significance || event.significance}</p></section>}
       <div className="drawer-nav">
         <button type="button" disabled={!previous} title={previous?.title} onClick={() => previous && onSelect({ type: "event", workSlug: atlas.work.slug, id: previous.slug }, "list")}>← {previous ? previous.title : t("prevEvent", locale)}</button>
         <button type="button" disabled={!following} title={following?.title} onClick={() => following && onSelect({ type: "event", workSlug: atlas.work.slug, id: following.slug }, "list")}>{following ? following.title : t("nextEvent", locale)} →</button>
@@ -191,10 +191,10 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
         {place.modernCountryCode && <span>{place.modernCountryCode}</span>}
       </div>
       <p>{place.summary}</p>
-      {detail.detail && <p>{detail.detail}</p>}
-      {detail.literarySignificance && <section><h3>{t("literarySignificance", locale)}</h3><p>{detail.literarySignificance}</p></section>}
-      {detail.historicalBackground && <section><h3>{t("historicalBackground", locale)}</h3><p>{detail.historicalBackground}</p></section>}
-      {detail.modernStatus && <section><h3>{t("modernStatus", locale)}</h3><p>{detail.modernStatus}</p></section>}
+      {(detail.detail || place.detail) && <p>{detail.detail || place.detail}</p>}
+      {(detail.literarySignificance || place.literarySignificance) && <section><h3>{t("literarySignificance", locale)}</h3><p>{detail.literarySignificance || place.literarySignificance}</p></section>}
+      {(detail.historicalBackground || place.historicalBackground) && <section><h3>{t("historicalBackground", locale)}</h3><p>{detail.historicalBackground || place.historicalBackground}</p></section>}
+      {(detail.modernStatus || place.modernStatus) && <section><h3>{t("modernStatus", locale)}</h3><p>{detail.modernStatus || place.modernStatus}</p></section>}
       <dl>
         <dt>{t("coordinates", locale)}</dt><dd>{place.lat?.toFixed(4) ?? "—"}, {place.lng?.toFixed(4) ?? "—"}</dd>
         <dt>{t("coordinateQuality", locale)}</dt><dd>{label(place.coordinateAccuracy, locale)}{place.isInferred ? ` · ${t("uncertainCoordinate", locale)}` : ""}</dd>

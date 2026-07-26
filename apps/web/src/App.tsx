@@ -189,6 +189,7 @@ export default function App() {
         <GlobalSearch
           locale={locale}
           activeWork={explore.active}
+          atlases={atlases}
           onSelectEntity={(entity) => selectEntity(entity, "search")}
           onSelectWork={chooseWork}
         />

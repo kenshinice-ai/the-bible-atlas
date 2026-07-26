@@ -128,7 +128,7 @@ curl -fsS 'http://localhost:4000/api/works?locale=zh-CN'
 | --- | --- | --- | --- | --- |
 | **A. VPS Docker 全栈(推荐)** | 一台 VPS + Docker Compose(db/api/web/Caddy),`deploy/deploy.sh` 一键部署 | 约 $4–6/月(1–2GB 内存 VPS) | 正式上线首选,完整保留全文检索与 API | 工件齐备,已实测 |
 | B. PaaS(Render / Fly.io) | api 容器 + 托管 Postgres(启用 PostGIS)+ 静态站点托管 | 免费档可起步,数据库常需付费档 | 不想管服务器;注意冷启动与 PostGIS 支持 | 仅提示,见 6.9 |
-| C. 静态化(远期) | 数据 bake 成静态 JSON,托管 Cloudflare Pages / GitHub Pages,零服务器 | $0 | 数据只读且更新频率低时的终极形态 | 设计见第九节,未实现 |
+| C. 静态化(**已实现,推荐**) | 数据 bake 成静态 JSON,托管 Cloudflare Pages / GitHub Pages,零服务器 | $0 | 数据只读且更新频率低时的终极形态 | 操作见第九节 |
 
 架构要点(方案 A):浏览器只访问 `https://站点域名`,由反向代理(Caddy 或主机 nginx)分流——`/api/*` 与 `/health` 转发 api 容器(4000),其余走 web 容器(nginx 静态文件)。**前后端同源**,因此生产构建把 `VITE_API_URL` 置空、前端用相对路径请求;`CORS_ORIGIN` 同时收紧为站点域名做纵深防御。数据库 5432 不对公网发布,api/web 端口只绑定 127.0.0.1。
 
@@ -262,7 +262,24 @@ api/web 容器只发布在 `127.0.0.1:4000` / `127.0.0.1:8080`,由主机 nginx �
 | 首次部署健康检查超时 | 低配机器上 PostGIS 首次初始化 + 全量种子较慢 | `docker compose ... logs -f migrate` 观察进度;完成后 api 会自动启动 |
 | 更新后页面还是旧的 | 浏览器缓存了 index.html | 反代已对 index.html 发 `no-cache`,强刷一次;若自建 CDN 需对 `/`、`/index.html` 关闭缓存 |
 
-## 九、备选方案 C:静态化路线(设计,未实现)
+## 九、方案 C:静态化路线(已实现)
+
+**一条命令产出完全自包含的静态站点**(前置:本地栈在运行,见第一部分快速启动):
+
+```bash
+bash deploy/deploy-static.sh                # 烘焙 + 构建 → apps/web/dist(约 2.3MB)
+bash deploy/deploy-static.sh --publish cf   # 可选:wrangler 直发 Cloudflare Pages
+```
+
+实现构成:`apps/api/src/bake-static.ts` 把 works 与 the-bible 的 **detail=full** atlas(中英双语)烘焙到 `apps/web/public/data/`(gitignored,构建时随 Vite 进入 dist);前端 `VITE_DATA_MODE=static` 切换 `api.ts` 到 /data 静态路径、抽屉 prose 直接取 full atlas 字段、搜索改为内存图集子串检索(与服务端 ILIKE 行为一致);`--base=./` 相对路径使产物可托管在任意路径下(含 GitHub Pages 子路径)。产物冒烟断言:index.html 与 data 文件存在、assets 中无 localhost 残留。
+
+数据更新流程:改种子 → `db-cli seed` → 重跑 `deploy-static.sh` → 重新发布。
+
+托管选择:Cloudflare Pages(推荐,自动 HTTPS + 全球 CDN + `wrangler pages deploy`)、Netlify(`--publish netlify`)、GitHub Pages(把 dist 推到 gh-pages 分支或用 Actions)。SPA 仅用查询参数路由,无需 rewrite 规则。
+
+以下为原设计记录(工作量评估与取舍分析,已按上述实现落地):
+
+### 原设计(存档)
 
 数据完全只读且更新频率低,理论上可去掉整个后端:
 

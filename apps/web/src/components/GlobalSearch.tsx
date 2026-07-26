@@ -1,8 +1,8 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { search } from "../api";
+import { STATIC_DATA, search } from "../api";
 import { t, type UIKey } from "../i18n";
 import { BIBLE_ONLY, type SelectedEntity } from "../state";
-import type { Locale, SearchResponse } from "../types";
+import type { Atlas, Locale, SearchResponse } from "../types";
 
 const KIND_KEY: Record<SearchResponse["items"][number]["kind"], UIKey> = {
   work: "kindWork", character: "kindCharacter", event: "kindEvent", location: "kindLocation",
@@ -11,8 +11,26 @@ const KIND_KEY: Record<SearchResponse["items"][number]["kind"], UIKey> = {
 interface Props {
   locale: Locale;
   activeWork: string;
+  atlases: Atlas[];
   onSelectEntity: (entity: SelectedEntity) => void;
   onSelectWork: (slug: string) => void;
+}
+
+/**
+ * The static build has no /api/search, but it holds the whole atlas in memory —
+ * a substring scan over a few hundred rows mirrors the server's ILIKE exactly.
+ */
+function searchAtlases(atlases: Atlas[], query: string): SearchResponse["items"] {
+  const needle = query.toLocaleLowerCase();
+  const hit = (...haystack: (string | null | undefined)[]) => haystack.some((value) => value?.toLocaleLowerCase().includes(needle));
+  const items: SearchResponse["items"] = [];
+  for (const atlas of atlases) {
+    const workSlug = atlas.work.slug;
+    for (const person of atlas.characters) if (hit(person.name, person.summary, ...person.aliases)) items.push({ kind: "character", slug: person.slug, label: person.name, context: person.summary, workSlug });
+    for (const event of atlas.events) if (hit(event.title, event.summary, event.detail)) items.push({ kind: "event", slug: event.slug, label: event.title, context: event.summary, workSlug });
+    for (const place of atlas.locations) if (hit(place.name, place.summary, ...place.aliases)) items.push({ kind: "location", slug: place.slug, label: place.name, context: place.summary, workSlug });
+  }
+  return items.slice(0, 200);
 }
 
 /**
@@ -22,7 +40,7 @@ interface Props {
  * reach an entity was to scroll a list. With 136 events and 79 people that is no
  * longer viable, and it stops being viable at all beyond a few hundred.
  */
-export function GlobalSearch({ locale, activeWork, onSelectEntity, onSelectWork }: Props) {
+export function GlobalSearch({ locale, activeWork, atlases, onSelectEntity, onSelectWork }: Props) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResponse["items"]>([]);
   const [open, setOpen] = useState(false);
@@ -33,6 +51,11 @@ export function GlobalSearch({ locale, activeWork, onSelectEntity, onSelectWork 
   useEffect(() => {
     const trimmed = query.trim();
     if (trimmed.length < 2) { setResults([]); setPending(false); return; }
+    if (STATIC_DATA) {
+      const timer = window.setTimeout(() => { setResults(searchAtlases(atlases, trimmed)); setOpen(true); setPending(false); }, 160);
+      setPending(true);
+      return () => window.clearTimeout(timer);
+    }
     const controller = new AbortController();
     setPending(true);
     const timer = window.setTimeout(() => {
@@ -43,7 +66,7 @@ export function GlobalSearch({ locale, activeWork, onSelectEntity, onSelectWork 
         .finally(() => setPending(false));
     }, 220);
     return () => { window.clearTimeout(timer); controller.abort(); };
-  }, [locale, query]);
+  }, [atlases, locale, query]);
 
   useEffect(() => {
     if (!open) return;
