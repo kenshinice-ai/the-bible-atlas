@@ -5,6 +5,8 @@ COPY apps/api/package.json apps/api/package.json
 RUN npm install --workspace @literary-atlas/api
 COPY apps/api apps/api
 RUN npm run build -w @literary-atlas/api
+# Drop devDependencies (typescript, vitest, tsx, ...) from the runtime image.
+RUN npm prune --omit=dev
 FROM node:22-alpine
 WORKDIR /app
 ENV NODE_ENV=production

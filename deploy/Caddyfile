@@ -1,0 +1,39 @@
+# =============================================================
+# 圣经舆图 The Bible Atlas — Caddy 反向代理(推荐,自动 HTTPS)
+#
+# 由 deploy/docker-compose.prod.yml 的 caddy 服务挂载使用。
+# 站点地址来自 .env 的 SITE_ADDRESS(如 atlas.example.com);
+# 未设置时默认 localhost(本机自签证书,便于上线前演练)。
+# 域名 A 记录解析到服务器后,Caddy 自动向 Let's Encrypt 签发并续期 TLS。
+# =============================================================
+
+{$SITE_ADDRESS:localhost} {
+	# 压缩所有文本响应(JSON / HTML / JS / CSS)
+	encode zstd gzip
+
+	# ---- API:/api/* 与 /health 转发到 api 容器 ----
+	@api path /api/* /health
+	handle @api {
+		# 只读 JSON,禁止中间层缓存陈旧数据以外的意外行为
+		header Cache-Control "no-store"
+		reverse_proxy api:4000
+	}
+
+	# ---- 静态站点:其余请求转发到 web 容器(nginx) ----
+	handle {
+		# Vite 产物带内容 hash(/assets/index-XXXX.js),可永久缓存
+		@hashed path /assets/*
+		header @hashed Cache-Control "public, max-age=31536000, immutable"
+		# index.html 不缓存,保证发版后浏览器立即拿到新入口
+		@entry not path /assets/*
+		header @entry Cache-Control "no-cache"
+		reverse_proxy web:80
+	}
+
+	# 基础安全响应头
+	header {
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+}

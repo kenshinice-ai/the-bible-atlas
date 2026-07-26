@@ -1,0 +1,88 @@
+# =============================================================
+# 生产覆盖文件 — 与根 docker-compose.yml 叠加使用(不要单独 up)
+#
+#   docker compose -f docker-compose.yml -f deploy/docker-compose.prod.yml \
+#     --profile caddy up -d
+#
+# 推荐直接使用 deploy/deploy.sh,它封装了上面这条命令。
+# 需要 Docker Compose v2.24+(`!reset` 语法)。
+#
+# 两种反向代理方式:
+#   1. Caddy(推荐,自动 HTTPS):加 --profile caddy,配 deploy/Caddyfile;
+#   2. 主机 nginx:不加 profile,api/web 只发布到 127.0.0.1,
+#      配 deploy/nginx.conf + certbot。
+# =============================================================
+
+x-prod-logging: &prod-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  db:
+    restart: unless-stopped
+    # 生产绝不把 5432 发布到公网;容器网络内部仍可访问
+    ports: !reset []
+    environment:
+      # 强制要求 .env 提供密码;deploy.sh 会另外拒绝默认弱密码
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?生产必须在 .env 中设置 POSTGRES_PASSWORD 强密码}
+    logging: *prod-logging
+
+  migrate:
+    logging: *prod-logging
+
+  api:
+    restart: unless-stopped
+    # 只发布到本机回环:Caddy 走容器网络,主机 nginx 走 127.0.0.1:4000
+    ports: !override ["127.0.0.1:4000:4000"]
+    environment:
+      # 生产请在 .env 设置为站点源,例:CORS_ORIGIN=https://atlas.example.com
+      # 同源反代部署下浏览器请求本来就同源,收紧 CORS 不影响功能
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:4000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    logging: *prod-logging
+
+  web:
+    restart: unless-stopped
+    ports: !override ["127.0.0.1:8080:80"]
+    build:
+      args:
+        # 默认空字符串 → 前端用相对路径请求 /api/*,由反代转发(同源,无 CORS)。
+        # 如 API 部署在独立域名,才需要在 .env 设置 VITE_API_URL=https://api.example.com
+        VITE_API_URL: ${VITE_API_URL-}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:80/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging: *prod-logging
+
+  caddy:
+    image: caddy:2-alpine
+    profiles: ["caddy"]
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # HTTP/3
+    environment:
+      # .env 中设置 SITE_ADDRESS=atlas.example.com(域名解析到本机后自动签发 TLS)
+      SITE_ADDRESS: ${SITE_ADDRESS:-localhost}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+      - web
+    logging: *prod-logging
+
+volumes:
+  caddy_data:
+  caddy_config:

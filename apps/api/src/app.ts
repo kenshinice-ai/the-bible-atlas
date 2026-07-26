@@ -27,10 +27,15 @@ function textColumn(table: "character" | "location" | "event", column: string, a
   return omit ? `'' AS "${alias}"` : `COALESCE(t.${column},f.${column},'') AS "${alias}"`;
 }
 
-/** Build the HTTP application around an injected database for testability. */
-export function createApp(db: Database) {
+/**
+ * Build the HTTP application around an injected database for testability.
+ * `corsOrigin` defaults to `*` for local development; production sets
+ * CORS_ORIGIN to the site origin (comma-separated list allowed).
+ */
+export function createApp(db: Database, corsOrigin: string = process.env.CORS_ORIGIN ?? "*") {
   const app = express();
-  app.use(cors());
+  const origins = corsOrigin.split(",").map((origin) => origin.trim()).filter(Boolean);
+  app.use(cors(origins.length === 0 || origins.includes("*") ? {} : { origin: origins }));
   app.use(express.json({ limit: "100kb" }));
 
   app.get("/health", async (_request, response, next) => {

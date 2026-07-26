@@ -39,7 +39,7 @@ v4 Bible-first 架构已落地并提交(commit `9b47ea0`):以「时代 → 人�
 -6. **上线三部曲(2026-07-27,进行中)**:目标 = ① 神职人员标准内容审计 ② 双语默认英文 ③ 完整部署方案。
    - ② 已完成并浏览器验证:默认 locale 改为 en(state.ts,`?lang=zh-CN`/`?locale=zh-CN` 仍可直达中文),index.html lang="en",新增默认语言测试
    - ① 审计代理进行中:epigraphs 逐字对照和合本1919/KJV、i18n 称谓、库内翻译抽样 → docs/CLERGY_AUDIT.md + 027 修正种子
-   - ③ 部署代理进行中:验证生产构建/镜像、CORS 收敛、deploy/(compose.prod + Caddyfile/nginx + deploy.sh)、DEPLOYMENT.md 生产篇(VPS Docker 推荐 + PaaS + 静态化远期)
+   - ③ 部署方案已完成(2026-07-27,未提交):新建 `deploy/`(docker-compose.prod.yml 生产覆盖 + Caddyfile + nginx.conf + deploy.sh 一键脚本,均已验证语法/配置);API 增加 `CORS_ORIGIN` 环境变量(app.ts 一处,默认 `*` 保持兼容,已实测收紧生效);api Dockerfile 增加 `npm prune --omit=dev`;`.env.example` 增生产四项清单;DEPLOYMENT.md 新增第二部分生产篇(五~十节:方案总览 / VPS 逐步操作含备份回滚 / 监控 / 排查 / 静态化设计 / 安全清单)。实测:`npm run build` 通过(web dist:js 605.7KB→gzip 188.0KB,css 49.6KB→14.3KB);镜像 api 244MB / web 77MB;prod 覆盖栈冒烟通过(health/works/atlas/CORS);api 测试 5/5;npm audit 0 漏洞
 
 -5. **关系页签分行布局 + 关系标签精修(2026-07-27,浏览器已验证)**:
    - 布局:关系页签激活时 `.workspace.graph-wide` 切换为纵向堆叠——地图缩为 380px 全宽一行,关系图独占其下全宽一行(画布约 1390×600),其他页签保持地图+侧栏并排;新增 MapResizeController(ResizeObserver → invalidateSize)解决容器尺寸切换后 Leaflet 失measure;画布尺寸剧变时若用户未持有镜头则自动重取景(220ms)

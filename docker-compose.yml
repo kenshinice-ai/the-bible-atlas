@@ -35,6 +35,8 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-atlas}:${POSTGRES_PASSWORD:-atlas_local_only}@db:5432/${POSTGRES_DB:-literary_atlas}
       API_PORT: 4000
+      # 本地默认全放开;生产在 .env 里设为站点域名,如 https://atlas.example.com
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
     ports: ["4000:4000"]
     depends_on:
       migrate: { condition: service_completed_successfully }
