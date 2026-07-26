@@ -7,3 +7,4 @@ coverage/
 *.tsbuildinfo
 *.zip
 release/*.sha256
+.claude/settings.local.json
