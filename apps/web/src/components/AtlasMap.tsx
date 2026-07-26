@@ -61,6 +61,22 @@ function locationForEntity(atlas: Atlas, entity: SelectedEntity): AtlasLocation 
   return undefined;
 }
 
+/** Leaflet only measures its container once; re-measure whenever layout changes it. */
+function MapResizeController() {
+  const map = useMap();
+  useEffect(() => {
+    const container = map.getContainer();
+    let frame = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => map.invalidateSize());
+    });
+    observer.observe(container);
+    return () => { observer.disconnect(); cancelAnimationFrame(frame); };
+  }, [map]);
+  return null;
+}
+
 function MapFocusController({ target, keyValue, source }: { target: Place | undefined; keyValue: string; source: SelectionSource }) {
   const map = useMap();
   const lastKey = useRef("");
@@ -318,6 +334,7 @@ function RealMap(props: Props) {
         maxZoom={19}
       />
       <ZoomControl position="bottomright" />
+      <MapResizeController />
       <AutoFitController places={shown.length > 0 ? shown : places} fitKey={fitKey} />
       <MapFocusController target={target} keyValue={targetKey} source={props.selectionSource} />
 

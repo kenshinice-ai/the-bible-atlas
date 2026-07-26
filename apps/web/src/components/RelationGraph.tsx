@@ -335,6 +335,17 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
 
   useEffect(() => { draw(); }, [draw, size]);
 
+  // When the canvas itself is reshaped (sidebar ↔ full-width row, window
+  // resize), re-frame the constellation — unless the user holds the camera.
+  useEffect(() => {
+    if (gestureSinceFitRef.current) return;
+    const fitted = fitTransformFor(model.nodes, size.width, size.height);
+    baselineKRef.current = fitted.k;
+    animateTo(fitted, 220);
+    // Refitting is a viewport concern only; the model is untouched here.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [size.width, size.height]);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;

@@ -324,6 +324,15 @@ main { max-width: 1560px; margin: auto; padding: var(--gap-l); }
 .workspace { display: flex; gap: var(--gap-l); min-height: 600px; }
 .map-shell { position: relative; flex: 1; min-width: 0; }
 
+/* Relations tab: the graph leaves the sidebar and takes a full-width row of
+   its own beneath a shortened map, so a few hundred nodes have room to read. */
+.workspace.graph-wide { flex-direction: column; min-height: 0; }
+.graph-wide .map-shell { flex: 0 0 auto; }
+.graph-wide .map-stage { height: 380px; }
+.graph-wide .browser { width: 100%; flex: 1 1 auto; }
+.graph-wide .graph-canvas-wrap { min-height: 600px; }
+.graph-wide .adjacency-scroll { max-height: 640px; }
+
 .browser {
   width: 440px; flex: 0 0 440px; background: var(--panel);
   border: 1px solid var(--line-soft); border-radius: var(--radius-l);

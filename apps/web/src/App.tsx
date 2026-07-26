@@ -276,7 +276,10 @@ export default function App() {
             <button type="button" onClick={clearFilters}>{t("clearFilters", locale)}</button>
           </div>}
 
-          <section className="workspace">
+          {/* The relation graph is the one panel that outgrows a sidebar: with
+              hundreds of people it needs the full page width, so the relations
+              tab stacks map and graph as parallel rows instead of columns. */}
+          <section className={explore.tab === "relations" ? "workspace graph-wide" : "workspace"}>
             <div className="map-shell">
               <AtlasMap
                 atlases={atlases}
