@@ -36,6 +36,8 @@ v4 Bible-first 架构已落地并提交(commit `9b47ea0`):以「时代 → 人�
 
 ## 正在进行
 
+-8. **已同步 GitHub(2026-07-27)**:远程 `https://github.com/kenshinice-ai/the-bible-atlas`(public,默认分支 main);本地 master 跟踪 origin/main。远程原有的 stub 初始提交用 `-s ours` 合并吸收(未强推)。后续发布:`git push` 即同步;静态站发布可走 `deploy/deploy-static.sh --publish cf` 或 GitHub Pages/Actions。
+
 -7. **方案 C 全静态化已实现并验证(2026-07-27)**:`bake-static.ts` 烘焙 works + full atlas 双语 JSON(4 文件 1.56MB 原始)→ `VITE_DATA_MODE=static` 构建(api.ts 切 /data、抽屉 prose 取 full atlas 兜底、搜索改内存检索、--base=./ 相对路径)→ dist 约 2.3MB 完全自包含。`deploy/deploy-static.sh` 一键(含产物断言:无 localhost 残留),支持 --publish cf/netlify。浏览器实测:零 /api 请求、搜索 41 结果、抽屉 prose 完整。DEPLOYMENT.md 第九节改为「已实现」操作指南。**神职审计(027)已落库后重新烘焙**,静态数据即审计后数据。
 
 -6.5. **神职标准内容审计完成(2026-07-27,seed 027 已装载)**:19/19 经文引文逐字通过(对照信望爱/维基文库 CUV 与 KJV,零改动);i18n 通过零改动;数据层 24 处修复(该撒利亚拼法 8 实体、流便/亚他利雅/米利大和合本拼法、语体与全角括号等);报告 `docs/CLERGY_AUDIT.md`(含待人工核对 4 项:现代地名主名策略、波斯君主主名、神版全角空格、KJV 句末标点;神学中立性三级建议:faith_narrative 枚举/显示文案/免责句)。**结论:整体可呈现给神职读者。**
