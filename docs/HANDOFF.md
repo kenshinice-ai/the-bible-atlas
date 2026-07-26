@@ -36,6 +36,11 @@ v4 Bible-first 架构已落地并提交(commit `9b47ea0`):以「时代 → 人�
 
 ## 正在进行
 
+-6. **上线三部曲(2026-07-27,进行中)**:目标 = ① 神职人员标准内容审计 ② 双语默认英文 ③ 完整部署方案。
+   - ② 已完成并浏览器验证:默认 locale 改为 en(state.ts,`?lang=zh-CN`/`?locale=zh-CN` 仍可直达中文),index.html lang="en",新增默认语言测试
+   - ① 审计代理进行中:epigraphs 逐字对照和合本1919/KJV、i18n 称谓、库内翻译抽样 → docs/CLERGY_AUDIT.md + 027 修正种子
+   - ③ 部署代理进行中:验证生产构建/镜像、CORS 收敛、deploy/(compose.prod + Caddyfile/nginx + deploy.sh)、DEPLOYMENT.md 生产篇(VPS Docker 推荐 + PaaS + 静态化远期)
+
 -5. **关系页签分行布局 + 关系标签精修(2026-07-27,浏览器已验证)**:
    - 布局:关系页签激活时 `.workspace.graph-wide` 切换为纵向堆叠——地图缩为 380px 全宽一行,关系图独占其下全宽一行(画布约 1390×600),其他页签保持地图+侧栏并排;新增 MapResizeController(ResizeObserver → invalidateSize)解决容器尺寸切换后 Leaflet 失measure;画布尺寸剧变时若用户未持有镜头则自动重取景(220ms)
    - 数据:seed 026 已装载——183 条泛型关系标签全部精修为具体双语角色对(父子/婆媳/王与先知/弑主的臣仆…)+ 经文口吻摘要,另修 3 条 en 泛型;两种语言泛型标签清零

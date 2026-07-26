@@ -92,7 +92,8 @@ export function parseAtlasState(search: string): ExploreState {
   const rangeStart = optionalYear(q.get("from"));
   const rangeEnd = optionalYear(q.get("to"));
   return {
-    locale: LocaleSchema.catch("zh-CN").parse(q.get("locale") ?? (q.get("lang") === "en" ? "en" : "zh-CN")),
+    // English is the default presentation language; Chinese stays one tap away.
+    locale: LocaleSchema.catch("en").parse(q.get("locale") ?? (q.get("lang") === "zh-CN" ? "zh-CN" : "en")),
     mode,
     works: normalizedWorks,
     active: requestedActive && normalizedWorks.includes(requestedActive) ? requestedActive : normalizedWorks[0]!,

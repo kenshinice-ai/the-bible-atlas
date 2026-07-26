@@ -17,6 +17,11 @@ describe("v4 Explore State deep links (Bible-only)", () => {
     expect(state.works).toEqual(["the-bible"]);
     expect(state.mode).toBe("single");
   });
+  it("defaults to English while keeping Chinese one switch away", () => {
+    expect(parseAtlasState("").locale).toBe("en");
+    expect(parseAtlasState("?locale=zh-CN").locale).toBe("zh-CN");
+    expect(parseAtlasState("?lang=zh-CN").locale).toBe("zh-CN");
+  });
   it("defaults to the Bible when no work is requested", () => expect(parseAtlasState("").works).toEqual(["the-bible"]));
   it("restores a legacy location selection", () =>
     expect(parseAtlasState("?work=a&selected=a:london").selectedEntity).toEqual({ type: "location", workSlug: "a", id: "london" }));
