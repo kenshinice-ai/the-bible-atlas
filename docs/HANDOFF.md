@@ -21,7 +21,8 @@ v4 Bible-first 架构已落地并提交(commit `9b47ea0`):以「时代 → 人�
    - 第一批(commit `d9bd0d5`):`010` primeval(50 事件)、`013` wilderness-and-conquest(33)、`017` prophetic-narrative(23)、`021` acts(24);另有 `023_bible_global_sequence_rebands.sql` 把所有圣经事件重排进 `K*1000` 时代区间(对未扩充时代也生效,幂等安全)
    - 第二批(小步走):`011` patriarchs(时代共 40 事件,新增 21)、`012` exodus-and-sinai(共 26,新增 16;并回填了 013 装载时因 `eleazar-son-of-aaron` 缺失被丢弃的参与者记录)
    - 第三批(2026-07-27):`014` judges 已装载并登记 `seed_history`(时代共 29 事件,sequence 5001–5057;孤儿检查零行)
-   - 当前库内:**163 人物 / 313 事件 / 99 地点**,13 个时代 sequence 全部单调、无重复;浏览器已验证渲染正常(014 装载后未重验)
+   - 第四批(2026-07-27):`015` united-monarchy(时代共 31 事件,新增 16;新增 13 人物/6 地点)、`016` divided-kingdoms(共 28,新增 18;新增 15 人物/4 地点)已装载并登记,孤儿检查零行
+   - 当前库内:**191 人物 / 347 事件 / 109 地点**,13 个时代 sequence 全部单调、无重复;浏览器已验证渲染正常(第三/四批装载后未重验)
    - 手动装载的种子已登记 `seed_history`
 3. **UI 修复**(commit `08ff5b5`),浏览器已验证:
    - 标题层衬线字体(`--font-display`,离线系统栈)
@@ -35,8 +36,8 @@ v4 Bible-first 架构已落地并提交(commit `9b47ea0`):以「时代 → 人�
 
 1. ~~架构维护~~ 已完成(commit `a14c130` / `2cb3349`):一键启动脚本改为本地栈(前置检查/自动建库/端口冲突/PID 幂等)、`.env.example` 集中配置、`docs/DEPLOYMENT.md` 部署指南、README 快速启动更新;依赖体检 `npm audit` 0 漏洞,过期项均为跨大版本仅记录未升级
 2. 种子扩充已于 2026-07-27 **恢复**:
-   - `014` judges 已装载并登记(见「最近完成」)
-   - 剩余 6 个时代种子(`015/016/018/019/020/022`)尚未生成;按小步走每批 2 个:下一批为 `015` united-monarchy(KK=06)+ `016` divided-kingdoms(KK=07)
+   - `014` judges、`015` united-monarchy、`016` divided-kingdoms 已装载并登记(见「最近完成」)
+   - 剩余 4 个时代种子(`018` judah-and-exile / `019` return-and-restoration / `020` gospels / `022` pauline-mission)生成代理正在并行运行(用户要求全部同时执行);完成后按编号顺序装载(保证跨时代人物引用不丢行)、验证、提交
    - 共享规范文档已固化进仓库:`db/seeds/bible-seed-spec.md`(原件在旧会话 scratchpad,已复制),包含 UUID 前缀、sequence 区间、时间标注规范、跨时代人物归属规则;注意其中自测命令里的 SCRATCH 路径属于旧会话,使用时替换为当前可写临时目录
    - 如需重新生成,可参考 `010/013/017/021` 作为模板
 
