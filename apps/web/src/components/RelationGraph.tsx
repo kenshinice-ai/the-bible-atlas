@@ -24,17 +24,40 @@ const EDGE_COLOR: Record<GraphEdge["sentiment"], string> = { positive: "#5fbf9c"
 /**
  * Canvas scale ↔ hierarchy tier.
  *
- * Zooming *is* the level-of-detail control the brief asked for: scrolling out
- * collapses people into groups and then into eras; scrolling in expands them
- * again. The tier is shared state, so the map's clustering and the timeline
- * follow the same movement.
+ * Zooming *is* the level-of-detail control: scrolling out collapses people
+ * into groups and then into eras; scrolling in expands them again. v4.1
+ * replaces the old fixed per-tier scales with fit-based logic — every tier
+ * *enters* fitted and centred regardless of how many nodes it holds, and the
+ * wheel switches tier at multiples of that fitted baseline (in past 1.9×,
+ * out past 0.5×), so the thresholds adapt to the data instead of assuming
+ * a layout extent.
  */
-const TIER_SCALE: Record<ZoomLevel, number> = { era: 0.55, group: 1, major: 1.9, all: 3.1 };
-function tierForScale(scale: number): ZoomLevel {
-  if (scale < 0.8) return "era";
-  if (scale < 1.55) return "group";
-  if (scale < 2.6) return "major";
-  return "all";
+const TIERS: readonly ZoomLevel[] = ["era", "group", "major", "all"];
+const DRILL_IN_FACTOR = 1.9;
+const DRILL_OUT_FACTOR = 0.5;
+
+type ViewIntent =
+  | { kind: "fit" }
+  | { kind: "drill"; x: number; y: number }
+  | { kind: "wheel-in" }
+  | { kind: "keep" };
+
+function easeCubicOut(t: number): number { return 1 - (1 - t) ** 3; }
+
+/** The transform that shows every node with padding, centred in the canvas. */
+function fitTransformFor(nodes: readonly GraphNode[], width: number, height: number): ZoomTransform {
+  const placed = nodes.filter((node) => node.x !== undefined && node.y !== undefined);
+  if (placed.length === 0) return zoomIdentity.translate(width / 2, height / 2);
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const node of placed) {
+    const radius = radiusFor(node);
+    minX = Math.min(minX, node.x! - radius); maxX = Math.max(maxX, node.x! + radius);
+    minY = Math.min(minY, node.y! - radius); maxY = Math.max(maxY, node.y! + radius);
+  }
+  const padding = 48;
+  const k = Math.max(0.15, Math.min(3.5,
+    Math.min((width - padding * 2) / Math.max(1, maxX - minX), (height - padding * 2) / Math.max(1, maxY - minY))));
+  return zoomIdentity.translate(width / 2 - ((minX + maxX) / 2) * k, height / 2 - ((minY + maxY) / 2) * k).scale(k);
 }
 
 function radiusFor(node: GraphNode): number {
@@ -47,9 +70,18 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const simulationRef = useRef<Simulation<GraphNode, GraphEdge> | null>(null);
-  const transformRef = useRef<ZoomTransform>(zoomIdentity.scale(TIER_SCALE[zoomLevel]));
+  const transformRef = useRef<ZoomTransform>(zoomIdentity);
   const zoomRef = useRef<ZoomBehavior<HTMLCanvasElement, unknown> | null>(null);
+  /** The fitted scale of the current tier; wheel thresholds are relative to it. */
+  const baselineKRef = useRef(1);
+  const intentRef = useRef<ViewIntent>({ kind: "fit" });
+  const animationRef = useRef<number | null>(null);
+  const zoomLevelRef = useRef(zoomLevel);
+  /** A gesture after the last programmatic fit means the user owns the camera. */
+  const gestureSinceFitRef = useRef(false);
   const [size, setSize] = useState({ width: 640, height: 460 });
+  const sizeRef = useRef(size);
+  useEffect(() => { sizeRef.current = size; }, [size]);
   const [hover, setHover] = useState<{ node: GraphNode; x: number; y: number } | null>(null);
   const [asTable, setAsTable] = useState(false);
   const dragRef = useRef<{ node: GraphNode; startX: number; startY: number; moved: boolean } | null>(null);
@@ -65,6 +97,32 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
   // Keep node positions across tier changes so expanding a group does not
   // teleport everything; nodes that already exist resume from where they were.
   const positions = useRef(new Map<string, { x: number; y: number }>());
+
+  useEffect(() => { zoomLevelRef.current = zoomLevel; }, [zoomLevel]);
+
+  /** Route every programmatic viewport move through d3 so its state stays true. */
+  const applyTransform = useCallback((next: ZoomTransform) => {
+    const canvas = canvasRef.current;
+    const behaviour = zoomRef.current;
+    transformRef.current = next;
+    if (canvas && behaviour) select(canvas).call(behaviour.transform, next);
+  }, []);
+
+  /** Ease the viewport to a target transform; user gestures cancel it. */
+  const animateTo = useCallback((target: ZoomTransform, duration = 280) => {
+    if (animationRef.current !== null) cancelAnimationFrame(animationRef.current);
+    const from = transformRef.current;
+    if (duration <= 0 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) { applyTransform(target); return; }
+    const started = performance.now();
+    const step = (now: number) => {
+      const progress = easeCubicOut(Math.min(1, (now - started) / duration));
+      applyTransform(zoomIdentity
+        .translate(from.x + (target.x - from.x) * progress, from.y + (target.y - from.y) * progress)
+        .scale(from.k + (target.k - from.k) * progress));
+      animationRef.current = progress < 1 ? requestAnimationFrame(step) : null;
+    };
+    animationRef.current = requestAnimationFrame(step);
+  }, [applyTransform]);
 
   useEffect(() => {
     const element = wrapRef.current;
@@ -226,9 +284,54 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
       draw();
     });
     simulationRef.current = simulation;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { simulation.tick(160); simulation.stop(); draw(); }
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Pre-settle far enough that the layout's real extent is known, so the
+    // viewport policy below fits to where nodes will be, not where they spawn.
+    simulation.tick(reduce ? 160 : Math.min(90, 30 + model.nodes.length));
+    if (reduce) simulation.stop();
+    draw();
+
+    // Viewport policy on model change — the "most reasonable" centring logic:
+    // enter a tier fitted and centred; drill towards the clicked parent; keep
+    // the viewport still when only filters changed or a wheel gesture is mid-dive.
+    const intent = intentRef.current;
+    intentRef.current = { kind: "keep" };
+    const fitted = fitTransformFor(model.nodes, sizeRef.current.width, sizeRef.current.height);
+    if (intent.kind === "fit" || intent.kind === "drill") gestureSinceFitRef.current = false;
+    // The layout keeps relaxing after the pre-tick, so once it settles, ease the
+    // frame around wherever the nodes ended up — unless the user took the camera.
+    if (intent.kind === "fit") {
+      simulation.on("end", () => {
+        if (!gestureSinceFitRef.current) {
+          const settled = fitTransformFor(model.nodes, sizeRef.current.width, sizeRef.current.height);
+          baselineKRef.current = settled.k;
+          animateTo(settled, 240);
+        }
+      });
+    }
+    if (intent.kind === "fit") {
+      animateTo(fitted);
+      baselineKRef.current = fitted.k;
+    } else if (intent.kind === "drill") {
+      // Same scale as a full fit, but centred where the user drilled.
+      const next = zoomIdentity
+        .translate(sizeRef.current.width / 2 - intent.x * fitted.k, sizeRef.current.height / 2 - intent.y * fitted.k)
+        .scale(fitted.k);
+      animateTo(next);
+      baselineKRef.current = fitted.k;
+    } else if (intent.kind === "wheel-in") {
+      // The gesture already put the viewport where the user wants it; the finer
+      // tier simply materialises in place. Re-baseline so the next threshold
+      // needs another deliberate zoom.
+      baselineKRef.current = transformRef.current.k;
+    } else {
+      // Filters or data changed under the same tier: hold the camera still but
+      // keep the wheel thresholds meaningful for the new extent.
+      baselineKRef.current = Math.min(transformRef.current.k, fitted.k);
+    }
+
     return () => { simulation.stop(); };
-  }, [draw, model]);
+  }, [animateTo, draw, model]);
 
   useEffect(() => { draw(); }, [draw, size]);
 
@@ -236,7 +339,7 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
     const canvas = canvasRef.current;
     if (!canvas) return;
     const behaviour = d3zoom<HTMLCanvasElement, unknown>()
-      .scaleExtent([0.3, 6])
+      .scaleExtent([0.12, 8])
       // A press that lands on a node starts a node drag, not a pan.
       .filter((event: MouseEvent | TouchEvent | WheelEvent) => {
         if (event.type === "wheel") return true;
@@ -247,32 +350,28 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
       .on("zoom", (event: D3ZoomEvent<HTMLCanvasElement, unknown>) => {
         transformRef.current = event.transform;
         draw();
-        const tier = tierForScale(event.transform.k);
-        if (tier !== zoomLevel) onZoomLevel(tier);
+        // Programmatic moves (animateTo) also land here; only real gestures
+        // may cancel animations or trip the tier thresholds.
+        if (!event.sourceEvent) return;
+        gestureSinceFitRef.current = true;
+        if (animationRef.current !== null) { cancelAnimationFrame(animationRef.current); animationRef.current = null; }
+        const tierIndex = TIERS.indexOf(zoomLevelRef.current);
+        const magnification = event.transform.k / Math.max(0.01, baselineKRef.current);
+        if (magnification > DRILL_IN_FACTOR && tierIndex < TIERS.length - 1) {
+          intentRef.current = { kind: "wheel-in" };
+          onZoomLevel(TIERS[tierIndex + 1]!);
+        } else if (magnification < DRILL_OUT_FACTOR && tierIndex > 0) {
+          // Zooming out asks for the overview, so the coarser tier arrives fitted.
+          intentRef.current = { kind: "fit" };
+          onZoomLevel(TIERS[tierIndex - 1]!);
+        }
       });
     zoomRef.current = behaviour;
     const selection = select(canvas);
     selection.call(behaviour);
     selection.call(behaviour.transform, transformRef.current.translate(0, 0));
     return () => { selection.on(".zoom", null); };
-    // `zoomLevel` is read inside the handler but re-binding on every tier change
-    // would cancel an in-flight gesture, so the behaviour is bound once per canvas.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [draw]);
-
-  // Centre the view whenever the canvas resizes or the tier changes externally.
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const behaviour = zoomRef.current;
-    if (!canvas || !behaviour) return;
-    const wanted = TIER_SCALE[zoomLevel];
-    const current = transformRef.current;
-    const needsScale = tierForScale(current.k) !== zoomLevel;
-    const next = zoomIdentity.translate(size.width / 2, size.height / 2).scale(needsScale ? wanted : current.k);
-    transformRef.current = next;
-    select(canvas).call(behaviour.transform, next);
-    draw();
-  }, [draw, size.height, size.width, zoomLevel]);
+  }, [draw, onZoomLevel]);
 
   const toGraphSpace = useCallback((clientX: number, clientY: number): { x: number; y: number } | null => {
     const canvas = canvasRef.current;
@@ -318,20 +417,30 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
   useEffect(() => { nodeAtRef.current = nodeAt; }, [nodeAt]);
 
   function resetView() {
-    const canvas = canvasRef.current;
-    const behaviour = zoomRef.current;
-    if (!canvas || !behaviour) return;
-    const next = zoomIdentity.translate(size.width / 2, size.height / 2).scale(TIER_SCALE[zoomLevel]);
-    transformRef.current = next;
-    select(canvas).call(behaviour.transform, next);
     for (const node of model.nodes) { node.fx = null; node.fy = null; }
-    simulationRef.current?.alpha(0.4).restart();
-    draw();
+    const simulation = simulationRef.current;
+    if (simulation) { simulation.alpha(0.5).restart(); simulation.tick(60); }
+    baselineKRef.current = fitTransformFor(model.nodes, sizeRef.current.width, sizeRef.current.height).k;
+    animateTo(fitTransformFor(model.nodes, sizeRef.current.width, sizeRef.current.height));
+  }
+
+  function changeTier(level: ZoomLevel) {
+    if (level === zoomLevel) { animateTo(fitTransformFor(model.nodes, sizeRef.current.width, sizeRef.current.height)); return; }
+    intentRef.current = { kind: "fit" };
+    onZoomLevel(level);
   }
 
   function activate(node: GraphNode) {
-    if (node.kind === "era") { onChapter(node.slug); onZoomLevel("group"); return; }
+    // Drilling down keeps the story spatial: the finer tier opens centred on
+    // the node that was clicked, whose children fan out from that same spot.
+    if (node.kind === "era") {
+      if (node.x !== undefined && node.y !== undefined) intentRef.current = { kind: "drill", x: node.x, y: node.y };
+      onChapter(node.slug);
+      onZoomLevel("group");
+      return;
+    }
     if (node.kind === "group") {
+      if (node.x !== undefined && node.y !== undefined) intentRef.current = { kind: "drill", x: node.x, y: node.y };
       onZoomLevel("major");
       const anchor = atlas.groups.find((group) => group.slug === node.slug)?.anchorCharacterSlug;
       if (anchor) onSelect({ type: "character", workSlug: atlas.work.slug, id: anchor });
@@ -339,6 +448,23 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
     }
     onSelect({ type: "character", workSlug: atlas.work.slug, id: node.slug });
   }
+
+  // A selection arriving from the list, search or drawer pans the camera to the
+  // person; a click inside the canvas is already under the cursor and only gets
+  // a gentle correction if the node sits near the edge of the view.
+  useEffect(() => {
+    if (!focusSlug) return;
+    const node = model.nodes.find((item) => item.id === `person:${focusSlug}`);
+    if (!node || node.x === undefined || node.y === undefined) return;
+    const { width, height } = sizeRef.current;
+    const transform = transformRef.current;
+    const screenX = node.x * transform.k + transform.x;
+    const screenY = node.y * transform.k + transform.y;
+    const margin = 0.18;
+    const offCentre = screenX < width * margin || screenX > width * (1 - margin) || screenY < height * margin || screenY > height * (1 - margin);
+    if (!offCentre) return;
+    animateTo(zoomIdentity.translate(width / 2 - node.x * transform.k, height / 2 - node.y * transform.k).scale(transform.k));
+  }, [animateTo, focusSlug, model.nodes]);
 
   const adjacency = useMemo(() => relations.map((relation) => ({
     relation,
@@ -354,7 +480,7 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
           type="button"
           className={level === zoomLevel ? "active" : ""}
           aria-pressed={level === zoomLevel}
-          onClick={() => onZoomLevel(level)}
+          onClick={() => changeTier(level)}
         >{t(level === "era" ? "graphLevelEra" : level === "group" ? "graphLevelGroup" : level === "major" ? "graphLevelMajor" : "graphLevelAll", locale)}</button>)}
       </div>
       <p className="graph-count">{model.nodes.length} {t("nodes", locale)} · {model.edges.filter((edge) => edge.kind !== "succession").length} {t("edges", locale)}</p>
@@ -453,7 +579,7 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
       </div>}
     {!asTable && model.hiddenCount > 0 && <p className="hidden-note">
       {model.hiddenCount} {t("hiddenAtTier", locale)}
-      {zoomLevel !== "all" && <button type="button" onClick={() => onZoomLevel("all")}>{t("showEveryone", locale)}</button>}
+      {zoomLevel !== "all" && <button type="button" onClick={() => changeTier("all")}>{t("showEveryone", locale)}</button>}
     </p>}
   </section>;
 }
