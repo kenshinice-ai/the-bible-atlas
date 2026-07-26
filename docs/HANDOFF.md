@@ -36,6 +36,12 @@ v4 Bible-first 架构已落地并提交(commit `9b47ea0`):以「时代 → 人�
 
 ## 正在进行
 
+-2. **动效与地图渲染打磨(2026-07-27,浏览器已验证)**:
+   - 地图:半级缩放(zoomSnap/Delta 0.5 + wheelPxPerZoomLevel 90)让滚轮/捏合更细腻;标记与聚合入场用 marker-in 缩放动画 + 26ms 级联交错(封顶 10 个);标记名标签常驻 DOM,低缩放下悬停即显(labeled 类控制常显);弹窗/tooltip 浮现动画;题词随时代切换重放 rise-in(keyed);列表切页整体 fade-in;时代轨道选中项自动 scrollIntoView(平滑,reduced-motion 降级)
+   - 关系图:层级切换空间连续性——新节点从父层级(人物←群体←时代)最后位置扇形展开,不再从原点跳入;悬停节点画烛光光环;画布散点色统一为靛蓝令牌
+   - **数据修复(seed 024,已装载)**:发现 010–022 扩充种子的关系没有 relation_translations,API 因缺已发布 label 过滤掉 170/272 条关系;024 按 relation_type 回填基线双语标签(WHERE NOT EXISTS 幂等,不碰既有精修行)。浏览器确认:关系图 224 节点 · 272 连线全量;后续内容批次可用更具体的标签覆盖(直接 UPDATE 或删除基线行再插)
+   - 教训已记:后续扩充种子必须包含 relation_translations(规范文件 db/seeds/bible-seed-spec.md 待补该节)
+
 -1. **P0 神圣品牌重塑已执行(2026-07-27,三代理并行完成,静态验证通过)**:
    - 命名落地:《圣经舆图 · The Bible Atlas》/「从起初,直到地极」——`i18n.ts` 共 20 key 圣化(含 ENUMS 称谓:王/勇士/圣所/敬拜与立约等)+ 新增 `epigraphSourceSuffix`/`scriptureNote`;`index.html` 标题/描述/og/theme-color #0B1120
    - 视觉令牌靛蓝化:`styles.css` 89 行(4.1 核心令牌 + 4.2 散点值 + 页底烛光渐变 + `.epigraph` 组件样式;金色统一为 --accent 三级制)

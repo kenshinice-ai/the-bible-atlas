@@ -155,7 +155,10 @@ function ClusteredMarkers({ places, target, selectionSource, locale, zoomLevel, 
   }, [index, view]);
 
   return <>
-    {clusters.map((feature) => {
+    {clusters.map((feature, order) => {
+      // A short cascade as markers materialise after a zoom or filter change;
+      // capped so late markers never feel like they are lagging.
+      const stagger = Math.min(order, 10) * 26;
       const [lng, lat] = feature.geometry.coordinates as [number, number];
       const clusterId = (feature.properties as { cluster_id?: number }).cluster_id;
       if (clusterId !== undefined) {
@@ -168,7 +171,7 @@ function ClusteredMarkers({ places, target, selectionSource, locale, zoomLevel, 
           position={[lat, lng]}
           icon={divIcon({
             className: "atlas-cluster",
-            html: `<span style="--accent:${accent};width:${diameter}px;height:${diameter}px">${count}</span>`,
+            html: `<span style="--accent:${accent};--stagger:${stagger}ms;width:${diameter}px;height:${diameter}px">${count}</span>`,
             iconSize: [diameter, diameter], iconAnchor: [diameter / 2, diameter / 2],
           })}
           eventHandlers={{ click: () => map.flyTo([lat, lng], Math.min(16, index.getClusterExpansionZoom(clusterId)), { duration: 0.5 }) }}
@@ -187,6 +190,7 @@ function ClusteredMarkers({ places, target, selectionSource, locale, zoomLevel, 
         selected={target?.slug === place.slug && target.atlas.work.slug === place.atlas.work.slug}
         dimmed={Boolean(target) && target?.slug !== place.slug}
         showLabel={view.zoom >= 7}
+        stagger={stagger}
         source={selectionSource}
         locale={locale}
         onSelect={onSelect}
@@ -195,8 +199,8 @@ function ClusteredMarkers({ places, target, selectionSource, locale, zoomLevel, 
   </>;
 }
 
-function PlaceMarker({ place, selected, dimmed, showLabel, source, locale, onSelect }: {
-  place: Place; selected: boolean; dimmed: boolean; showLabel: boolean; source: SelectionSource; locale: Locale; onSelect: Props["onSelect"];
+function PlaceMarker({ place, selected, dimmed, showLabel, stagger, source, locale, onSelect }: {
+  place: Place; selected: boolean; dimmed: boolean; showLabel: boolean; stagger: number; source: SelectionSource; locale: Locale; onSelect: Props["onSelect"];
 }) {
   const markerRef = useRef<LeafletMarker | null>(null);
   useEffect(() => {
@@ -206,7 +210,9 @@ function PlaceMarker({ place, selected, dimmed, showLabel, source, locale, onSel
   }, [selected, source]);
   const size = sizeFor(place.activity);
   const uncertain = place.isInferred || place.coordinateAccuracy === "inferred" || place.coordinateAccuracy === "approximate";
-  const classNames = ["atlas-marker", `type-${place.locationType}`, uncertain ? "uncertain" : "surveyed", selected ? "selected" : "", dimmed ? "dimmed" : "", place.visible ? "" : "out-of-range"].filter(Boolean).join(" ");
+  // The label markup is always present so hovering can reveal a name at any
+  // zoom; "labeled" only decides whether it is shown without hovering.
+  const classNames = ["atlas-marker", `type-${place.locationType}`, uncertain ? "uncertain" : "surveyed", showLabel ? "labeled" : "", selected ? "selected" : "", dimmed ? "dimmed" : "", place.visible ? "" : "out-of-range"].filter(Boolean).join(" ");
   return <Marker
     ref={markerRef}
     title={place.name}
@@ -215,7 +221,7 @@ function PlaceMarker({ place, selected, dimmed, showLabel, source, locale, onSel
     zIndexOffset={selected ? 1000 : Math.round(place.activity)}
     icon={divIcon({
       className: classNames,
-      html: `<span style="--accent:${place.accent};width:${size}px;height:${size}px"><svg viewBox="0 0 20 20" aria-hidden="true">${markerGlyph(place.locationType)}</svg></span>${showLabel ? `<b class="atlas-marker-label">${place.name}</b>` : ""}`,
+      html: `<span style="--accent:${place.accent};--stagger:${stagger}ms;width:${size}px;height:${size}px"><svg viewBox="0 0 20 20" aria-hidden="true">${markerGlyph(place.locationType)}</svg></span><b class="atlas-marker-label">${place.name}</b>`,
       iconSize: [size, size], iconAnchor: [size / 2, size / 2],
     })}
     eventHandlers={{ click: () => onSelect({ type: "location", workSlug: place.atlas.work.slug, id: place.slug }, "map") }}
@@ -300,7 +306,9 @@ function RealMap(props: Props) {
   const centre: [number, number] = places[0] ? [places[0].lat, places[0].lng] : [31.8, 35.2];
 
   return <div className="map-stage">
-    <MapContainer className="map" center={centre} zoom={5} scrollWheelZoom zoomControl={false} worldCopyJump>
+    {/* Half-step zoom keeps wheel and pinch gestures gentle: the viewport glides
+        between levels instead of leaping whole octaves of scale. */}
+    <MapContainer className="map" center={centre} zoom={5} scrollWheelZoom zoomControl={false} worldCopyJump zoomSnap={0.5} zoomDelta={0.5} wheelPxPerZoomLevel={90}>
       {/* A dark basemap so the map belongs to the same surface as the rest of the
           interface; the light default tiles fought every panel around them. */}
       <TileLayer

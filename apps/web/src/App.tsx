@@ -240,6 +240,7 @@ export default function App() {
           {/* Scripture epigraph: the selected era's verse, or the welcome verse
               (Psalm 119:18) while no era is chosen. */}
           <EpigraphBlock
+            key={explore.chapter ?? "welcome"}
             epigraph={(explore.chapter !== null ? ERA_EPIGRAPHS[explore.chapter] : undefined) ?? WELCOME_EPIGRAPH}
             locale={locale}
           />
@@ -254,6 +255,11 @@ export default function App() {
               className={explore.chapter === chapter.slug ? "active" : ""}
               style={{ "--era": chapter.accentColor } as React.CSSProperties}
               aria-pressed={explore.chapter === chapter.slug}
+              ref={(element) => {
+                // Keep the active era chip in view when selection comes from
+                // the timeline, the graph or a deep link rather than the rail.
+                if (element && explore.chapter === chapter.slug) element.scrollIntoView({ block: "nearest", inline: "nearest", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+              }}
               onClick={() => setChapter(explore.chapter === chapter.slug ? null : chapter.slug)}
             >
               <i />{chapter.title}<small>{chapter.eventCount}</small>
@@ -317,6 +323,7 @@ export default function App() {
                   onChapter={setChapter}
                 />
                 : <EntityList
+                  key={explore.tab}
                   atlas={activeAtlas}
                   tab={explore.tab}
                   locale={locale}

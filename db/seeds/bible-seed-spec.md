@@ -117,3 +117,22 @@ SELECT c.slug FROM characters c WHERE c.id::text LIKE '43000000-0000-4000-80KK%'
 1. 文件写入 `db/seeds/`,命名 `0NN_bible_full_KK_<slug>.sql`
 2. 自测零错误、孤儿检查零行(除注明的预期缺失)
 3. 最终答复只需报告:新增人物数/地点数/事件数/关系数、测试结果、预期缺失的跨时代引用列表
+
+### 关系(character_relations)必须同时写 relation_translations
+
+API 只返回带已发布 label 翻译的关系(`relation_translations.status='published'`),漏写翻译的关系在界面上不可见。每条关系都要配 zh-CN 与 en 两行:
+
+```sql
+INSERT INTO relation_translations(relation_id, locale, label, summary, status)
+SELECT r.id, v.locale::locale_code, v.label, v.summary, 'published'
+FROM character_relations r JOIN (VALUES
+  ('from-slug','to-slug','family','zh-CN','父子','一句摘要'),
+  ('from-slug','to-slug','family','en','Father and son','One-line summary')
+) AS v(fslug,tslug,rtype,locale,label,summary)
+  ON r.relation_type=v.rtype
+ JOIN characters fc ON fc.id=r.from_character_id AND fc.slug=v.fslug
+ JOIN characters tc ON tc.id=r.to_character_id AND tc.slug=v.tslug
+WHERE r.work_id='10000000-0000-4000-8000-000000000005';
+```
+
+(历史缺口已由 `024_relation_translation_backfill.sql` 按 relation_type 回填基线标签;新种子不要依赖回填,直接写具体标签。)

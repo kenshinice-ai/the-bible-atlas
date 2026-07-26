@@ -19,7 +19,7 @@ interface Props {
   onChapter: (chapter: string | null) => void;
 }
 
-const EDGE_COLOR: Record<GraphEdge["sentiment"], string> = { positive: "#5fbf9c", negative: "#e0656f", mixed: "#d9a55f", neutral: "#7d7789" };
+const EDGE_COLOR: Record<GraphEdge["sentiment"], string> = { positive: "#5fbf9c", negative: "#e0656f", mixed: "#d9a55f", neutral: "#8B8FA3" };
 
 /**
  * Canvas scale ↔ hierarchy tier.
@@ -117,7 +117,7 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
       context.beginPath();
       context.moveTo(source.x!, source.y!);
       context.lineTo(target.x!, target.y!);
-      context.strokeStyle = edge.kind === "succession" ? "#4c4560" : EDGE_COLOR[edge.sentiment];
+      context.strokeStyle = edge.kind === "succession" ? "#3A4560" : EDGE_COLOR[edge.sentiment];
       context.globalAlpha = dimming ? (active ? 0.95 : 0.08) : (edge.kind === "succession" ? 0.35 : 0.5);
       context.lineWidth = (edge.kind === "succession" ? 1.2 : 0.7 + Math.min(4, edge.weight) * 0.5) / Math.max(1, transform.k * 0.55);
       if (edge.sentiment === "negative") context.setLineDash([5 / transform.k, 4 / transform.k]); else context.setLineDash([]);
@@ -131,9 +131,9 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
         context.font = `${11 / transform.k}px system-ui, sans-serif`;
         context.textAlign = "center"; context.textBaseline = "middle";
         const metrics = context.measureText(edge.label);
-        context.fillStyle = "#12131cdd";
+        context.fillStyle = "#0B1120dd";
         context.fillRect(midX - metrics.width / 2 - 3 / transform.k, midY - 7 / transform.k, metrics.width + 6 / transform.k, 14 / transform.k);
-        context.fillStyle = "#e8e2f0";
+        context.fillStyle = "#EDE9E0";
         context.fillText(edge.label, midX, midY);
       }
     }
@@ -149,8 +149,16 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
       context.fillStyle = node.color;
       context.fill();
       context.lineWidth = (isSelected ? 3.2 : 1.4) / Math.max(1, transform.k * 0.6);
-      context.strokeStyle = isSelected ? "#ffd36d" : "#0d111b";
+      context.strokeStyle = isSelected ? "#F5C15D" : "#0B1120";
       context.stroke();
+      // A quiet halo marks the node under the cursor without repainting it.
+      if (node.id === hoveredId) {
+        context.beginPath();
+        context.arc(node.x, node.y, radius + 5 / Math.max(1, transform.k * 0.7), 0, Math.PI * 2);
+        context.strokeStyle = "rgba(245, 193, 93, 0.55)";
+        context.lineWidth = 2 / Math.max(1, transform.k * 0.7);
+        context.stroke();
+      }
       // Labels scale inversely with zoom so text stays legible at every tier
       // rather than shrinking to the 2.8px it used to render at.
       const fontSize = Math.max(10, (node.kind === "person" ? 12 : 14) / transform.k);
@@ -158,17 +166,17 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
       if (showLabel && active) {
         context.font = `${node.kind === "person" ? "" : "600 "}${fontSize}px system-ui, "PingFang SC", sans-serif`;
         context.textAlign = "center"; context.textBaseline = "top";
-        context.fillStyle = "#0d111b";
+        context.fillStyle = "#0B1120";
         context.lineWidth = 3 / transform.k;
-        context.strokeStyle = "#0d111bcc";
+        context.strokeStyle = "#0B1120cc";
         context.strokeText(node.label, node.x, node.y + radius + 3 / transform.k);
-        context.fillStyle = "#efe9f5";
+        context.fillStyle = "#EDE9E0";
         context.fillText(node.label, node.x, node.y + radius + 3 / transform.k);
       }
       if (node.kind !== "person" && active) {
         context.font = `600 ${Math.max(9, 11 / transform.k)}px system-ui, sans-serif`;
         context.textAlign = "center"; context.textBaseline = "middle";
-        context.fillStyle = "#12131c";
+        context.fillStyle = "#0B1120";
         context.fillText(String(node.weight), node.x, node.y);
       }
     }
@@ -176,9 +184,33 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
   }, [hover, model, selected, size, zoomLevel]);
 
   useEffect(() => {
-    for (const node of model.nodes) {
+    // Spatial continuity across tiers: a node that has never been on screen
+    // starts where its parent tier last stood (people fan out of their group,
+    // groups out of their era) instead of teleporting in from the origin.
+    const parentPosition = (node: GraphNode): { x: number; y: number } | undefined => {
+      if (node.kind === "person") {
+        const group = atlas.groups.find((item) => item.characterSlugs.includes(node.slug));
+        const fromGroup = group && positions.current.get(`group:${group.slug}`);
+        if (fromGroup) return fromGroup;
+        const chapter = atlas.characters.find((item) => item.slug === node.slug)?.chapterSlug;
+        return chapter ? positions.current.get(`era:${chapter}`) : undefined;
+      }
+      if (node.kind === "group") {
+        const anchor = atlas.groups.find((item) => item.slug === node.slug)?.characterSlugs[0];
+        const chapter = anchor ? atlas.characters.find((item) => item.slug === anchor)?.chapterSlug : null;
+        return chapter ? positions.current.get(`era:${chapter}`) : undefined;
+      }
+      return undefined;
+    };
+    for (const [index, node] of model.nodes.entries()) {
       const remembered = positions.current.get(node.id);
-      if (remembered) { node.x = remembered.x; node.y = remembered.y; }
+      if (remembered) { node.x = remembered.x; node.y = remembered.y; continue; }
+      const origin = parentPosition(node);
+      if (origin) {
+        const angle = (index / Math.max(1, model.nodes.length)) * Math.PI * 2;
+        node.x = origin.x + Math.cos(angle) * 14;
+        node.y = origin.y + Math.sin(angle) * 14;
+      }
     }
     const simulation = forceSimulation<GraphNode, GraphEdge>(model.nodes)
       .force("link", forceLink<GraphNode, GraphEdge>(model.edges).id((node) => node.id).distance((edge) => (edge.kind === "succession" ? 130 : 70 + 90 / (1 + edge.weight))).strength((edge) => (edge.kind === "succession" ? 0.55 : 0.25)))
