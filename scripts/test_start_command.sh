@@ -11,14 +11,19 @@ zsh -n Stop-Literary-Atlas.command
 
 ATLAS_HELP=$(bash scripts/start_local.sh --help)
 [[ "$ATLAS_HELP" == *"--dry-run"* ]] || { echo "help output is incomplete" >&2; exit 1; }
+[[ "$ATLAS_HELP" == *"--no-open"* ]] || { echo "help output is incomplete" >&2; exit 1; }
 
 ATLAS_DRY_OUTPUT=$(bash scripts/start_local.sh --dry-run --no-open)
-[[ "$ATLAS_DRY_OUTPUT" == *"1/3"* ]] || { echo "dry-run missed environment step" >&2; exit 1; }
-[[ "$ATLAS_DRY_OUTPUT" == *"2/3"* ]] || { echo "dry-run missed startup step" >&2; exit 1; }
-[[ "$ATLAS_DRY_OUTPUT" == *"DOCKER_BUILDKIT=0"* ]] || { echo "dry-run missed Unicode path build compatibility" >&2; exit 1; }
-[[ "$ATLAS_DRY_OUTPUT" == *"http://localhost:8080"* ]] || { echo "dry-run missed access URL" >&2; exit 1; }
-[[ "$ATLAS_DRY_OUTPUT" == *"最多选择五部同层作品"* ]] || { echo "dry-run missed v3.1 work selection guidance" >&2; exit 1; }
-[[ "$ATLAS_DRY_OUTPUT" == *"《圣经》复杂样本"* ]] || { echo "dry-run missed v3.1 Bible guidance" >&2; exit 1; }
+if [[ "$ATLAS_DRY_OUTPUT" == *"已在运行"* ]]; then
+  # 服务正在运行时，dry-run 走幂等分支，只验证提示与网址。
+  [[ "$ATLAS_DRY_OUTPUT" == *"localhost:5173"* ]] || { echo "idempotent branch missed web URL" >&2; exit 1; }
+else
+  [[ "$ATLAS_DRY_OUTPUT" == *"1/4"* ]] || { echo "dry-run missed environment step" >&2; exit 1; }
+  [[ "$ATLAS_DRY_OUTPUT" == *"2/4"* ]] || { echo "dry-run missed database/deps step" >&2; exit 1; }
+  [[ "$ATLAS_DRY_OUTPUT" == *"3/4"* ]] || { echo "dry-run missed startup step" >&2; exit 1; }
+  [[ "$ATLAS_DRY_OUTPUT" == *"db:bootstrap"* ]] || { echo "dry-run missed db bootstrap" >&2; exit 1; }
+  [[ "$ATLAS_DRY_OUTPUT" == *"localhost:5173"* ]] || { echo "dry-run missed web URL" >&2; exit 1; }
+fi
 [[ ! -f .env ]] || [[ -s .env ]]
 
 printf 'One-click command syntax, help and dry-run: PASS\n'

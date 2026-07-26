@@ -5,6 +5,8 @@
   "workspaces": ["apps/*"],
   "scripts": {
     "dev": "npm run dev -w @literary-atlas/api & npm run dev -w @literary-atlas/web",
+    "dev:api": "npm run dev -w @literary-atlas/api",
+    "dev:web": "npm run dev -w @literary-atlas/web",
     "build": "npm run build -w @literary-atlas/api && npm run build -w @literary-atlas/web",
     "typecheck": "npm run typecheck -w @literary-atlas/api && npm run typecheck -w @literary-atlas/web",
     "test": "npm run test -w @literary-atlas/api && npm run test -w @literary-atlas/web",

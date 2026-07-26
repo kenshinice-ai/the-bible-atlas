@@ -8,3 +8,4 @@ coverage/
 *.zip
 release/*.sha256
 .claude/settings.local.json
+release/logs/
