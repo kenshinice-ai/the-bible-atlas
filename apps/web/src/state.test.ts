@@ -2,17 +2,21 @@ import { describe, expect, it } from "vitest";
 import { formatYear } from "./i18n";
 import { historicalSortValue, parseAtlasState, relationVisibleAtSequence, serializeAtlasState, validateWorkSelection, zoomForLocation } from "./state";
 
-describe("v4 Explore State deep links", () => {
-  it("restores five works, a primary work, typed entity, and timeline", () => {
+describe("v4 Explore State deep links (Bible-only)", () => {
+  it("normalizes a five-work compare link to the Bible while keeping the rest of the state", () => {
     const state = parseAtlasState("?locale=en&mode=compare&works=a,b,c,d,e&primary=c&tab=relations&entity=character:c:moses&timeline=history&from=-1400&to=100");
     expect(state).toMatchObject({
-      locale: "en", mode: "multi", works: ["a", "b", "c", "d", "e"], active: "c", tab: "relations",
+      locale: "en", mode: "single", works: ["the-bible"], active: "the-bible", tab: "relations",
       selectedEntity: { type: "character", workSlug: "c", id: "moses" }, timelineMode: "history", rangeStart: -1400, rangeEnd: 100,
     });
   });
-  it("caps a malformed sixth work without silently replacing the first five", () =>
-    expect(parseAtlasState("?mode=multi&works=a,b,c,d,e,f").works).toEqual(["a", "b", "c", "d", "e"]));
-  it("keeps only one work in single mode", () => expect(parseAtlasState("?mode=single&works=a,b").works).toEqual(["a"]));
+  it("normalizes a six-work multi link to the Bible", () =>
+    expect(parseAtlasState("?mode=multi&works=a,b,c,d,e,f").works).toEqual(["the-bible"]));
+  it("normalizes a single-mode foreign work to the Bible", () => {
+    const state = parseAtlasState("?mode=single&works=a,b");
+    expect(state.works).toEqual(["the-bible"]);
+    expect(state.mode).toBe("single");
+  });
   it("defaults to the Bible when no work is requested", () => expect(parseAtlasState("").works).toEqual(["the-bible"]));
   it("restores a legacy location selection", () =>
     expect(parseAtlasState("?work=a&selected=a:london").selectedEntity).toEqual({ type: "location", workSlug: "a", id: "london" }));

@@ -39,6 +39,14 @@ export interface ExploreState {
   query: string;
 }
 
+/**
+ * Bible-only front-end lock (sacred rebrand P0). Data and multi-work code
+ * paths stay intact so the rollback cost is zero; the parser simply refuses
+ * to leave the Bible.
+ */
+export const BIBLE_ONLY = true;
+const BIBLE_SLUG = "the-bible";
+
 export const MAX_SELECTED_WORKS = 5;
 export const FALLBACK_RANGE = { start: -3000, end: 2026 } as const;
 const tabs = new Set<Tab>(["characters", "events", "locations", "routes", "relations"]);
@@ -67,10 +75,13 @@ export function parseAtlasState(search: string): ExploreState {
   const q = new URLSearchParams(search);
   const tabValue = q.get("tab");
   const legacyWork = q.get("work");
-  const mode: SelectionMode = q.get("mode") === "multi" || q.get("mode") === "compare" ? "multi" : "single";
+  const requestedMode: SelectionMode = q.get("mode") === "multi" || q.get("mode") === "compare" ? "multi" : "single";
+  // Under BIBLE_ONLY, old multi-work deep links are silently normalized to the
+  // Bible instead of erroring — the URL's works/primary/mode are ignored.
+  const mode: SelectionMode = BIBLE_ONLY ? "single" : requestedMode;
   const requestedWorks = (q.get("works")?.split(",") ?? (legacyWork ? [legacyWork] : [])).filter(Boolean);
-  const works = requestedWorks.slice(0, mode === "multi" ? MAX_SELECTED_WORKS : 1);
-  const normalizedWorks = works.length > 0 ? works : ["the-bible"];
+  const works = requestedWorks.slice(0, requestedMode === "multi" ? MAX_SELECTED_WORKS : 1);
+  const normalizedWorks = BIBLE_ONLY ? [BIBLE_SLUG] : works.length > 0 ? works : [BIBLE_SLUG];
   const requestedActive = q.get("active") ?? q.get("primary");
   const requestedLayers = (q.get("layers")?.split(",") ?? ["places", "routes", "landmarks"]).filter((item): item is MapContentLayer => mapLayerValues.has(item as MapContentLayer));
   const untilRaw = q.get("until");

@@ -7,13 +7,14 @@ import { GlobalSearch } from "./components/GlobalSearch";
 import { RelationGraph } from "./components/RelationGraph";
 import { TimelineRibbon } from "./components/TimelineRibbon";
 import { WorkControlCenter } from "./components/WorkControlCenter";
+import { ERA_EPIGRAPHS, FOOTER_EPIGRAPH, LOADING_EPIGRAPHS, WELCOME_EPIGRAPH, type Epigraph } from "./epigraphs";
 import { filtersFrom, isFiltered, visibleCharacters, visibleEvents, visibleLocations, visibleRelations } from "./hierarchy";
 import { formatYear, label, t } from "./i18n";
 import {
-  parseAtlasState, resolveRange, serializeAtlasState, validateWorkSelection,
+  BIBLE_ONLY, parseAtlasState, resolveRange, serializeAtlasState, validateWorkSelection,
   type ExploreState, type MapContentLayer, type SelectedEntity, type SelectionMode, type SelectionSource, type Tab, type TimelineMode, type ZoomLevel,
 } from "./state";
-import { type Atlas, type WorksResponse } from "./types";
+import { type Atlas, type Locale, type WorksResponse } from "./types";
 
 function tabForEntity(entity: SelectedEntity): Tab {
   return entity.type === "character" ? "characters"
@@ -24,6 +25,24 @@ function tabForEntity(entity: SelectedEntity): Tab {
 }
 
 const TABS: readonly Tab[] = ["characters", "events", "locations", "routes", "relations"];
+
+/**
+ * A scripture epigraph as a typographic event: quotation plus attribution,
+ * one complete language at a time (no bilingual interleaving).
+ */
+function EpigraphBlock({ epigraph, locale, className = "epigraph" }: { epigraph: Epigraph; locale: Locale; className?: string }) {
+  return <figure className={className}>
+    {locale === "zh-CN"
+      ? <>
+        <blockquote>「{epigraph.zh}」</blockquote>
+        <cite>——{epigraph.zhRef}{t("epigraphSourceSuffix", locale)}</cite>
+      </>
+      : <>
+        <blockquote lang="en">“{epigraph.en}”</blockquote>
+        <cite>— {epigraph.enRef} {t("epigraphSourceSuffix", locale)}</cite>
+      </>}
+  </figure>;
+}
 
 export default function App() {
   const [explore, setExplore] = useState<ExploreState>(() => parseAtlasState(location.search));
@@ -173,11 +192,11 @@ export default function App() {
           onSelectEntity={(entity) => selectEntity(entity, "search")}
           onSelectWork={chooseWork}
         />
-        <WorkControlCenter
+        {!BIBLE_ONLY && <WorkControlCenter
           works={works} selected={explore.works} active={explore.active} mode={explore.mode} locale={locale} error={selectionError}
           onMode={changeMode} onToggle={chooseWork}
           onActive={(active) => commit({ ...explore, active, selectedEntity: null, until: null, chapter: null }, true)}
-        />
+        />}
         <div className="locale" role="group" aria-label="language">
           <button className={locale === "zh-CN" ? "active" : ""} aria-pressed={locale === "zh-CN"} onClick={() => commit({ ...explore, locale: "zh-CN" }, true)}>中文</button>
           <button className={locale === "en" ? "active" : ""} aria-pressed={locale === "en"} onClick={() => commit({ ...explore, locale: "en" }, true)}>EN</button>
@@ -188,7 +207,7 @@ export default function App() {
     {error ? <section className="error" role="alert"><strong>{t("error", locale)}</strong><p>{error}</p></section>
       : loading || !activeAtlas || !derived ? <Skeleton locale={locale} />
         : <>
-          {atlases.length > 1 && <section className="compare-bar">
+          {!BIBLE_ONLY && atlases.length > 1 && <section className="compare-bar">
             <span>{t("primary", locale)}:</span>
             {atlases.map((atlas) => <button
               key={atlas.work.slug}
@@ -217,6 +236,13 @@ export default function App() {
               {copied ? t("copied", locale) : t("copy", locale)}
             </button>
           </section>
+
+          {/* Scripture epigraph: the selected era's verse, or the welcome verse
+              (Psalm 119:18) while no era is chosen. */}
+          <EpigraphBlock
+            epigraph={(explore.chapter !== null ? ERA_EPIGRAPHS[explore.chapter] : undefined) ?? WELCOME_EPIGRAPH}
+            locale={locale}
+          />
 
           {/* Era rail: the top tier of the hierarchy, and the fastest way to cut a
               136-event work down to one readable chapter. */}
@@ -325,6 +351,8 @@ export default function App() {
           {activeAtlas.sources.length > 0 && <footer>
             <h2>{t("sources", locale)}</h2>
             <p>{t("dataNote", locale)}</p>
+            <EpigraphBlock epigraph={FOOTER_EPIGRAPH} locale={locale} />
+            <p><small>{t("scriptureNote", locale)}</small></p>
             <div className="source-grid">
               {activeAtlas.sources.map((source) => <details key={source.id}>
                 <summary>{source.url ? <a href={source.url} target="_blank" rel="noreferrer">{source.title}</a> : source.title} · {label(source.sourceType, locale)} · {label(source.evidenceGrade, locale)}</summary>
@@ -347,8 +375,17 @@ export default function App() {
 }
 
 function Skeleton({ locale }: { locale: ReturnType<typeof parseAtlasState>["locale"] }) {
+  const [verseIndex, setVerseIndex] = useState(0);
+  useEffect(() => {
+    // Waiting verses rotate every 4s; under prefers-reduced-motion the first
+    // verse simply stays.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => setVerseIndex((index) => (index + 1) % LOADING_EPIGRAPHS.length), 4000);
+    return () => window.clearInterval(timer);
+  }, []);
   return <div className="skeleton" role="status" aria-live="polite">
     <span className="sr-only">{t("loading", locale)}…</span>
+    <EpigraphBlock epigraph={LOADING_EPIGRAPHS[verseIndex] ?? LOADING_EPIGRAPHS[0]!} locale={locale} className="epigraph skeleton-epigraph" />
     <div className="skeleton-hero" />
     <div className="skeleton-workspace">
       <div className="skeleton-map" />

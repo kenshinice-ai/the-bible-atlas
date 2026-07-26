@@ -36,6 +36,14 @@ v4 Bible-first 架构已落地并提交(commit `9b47ea0`):以「时代 → 人�
 
 ## 正在进行
 
+-1. **P0 神圣品牌重塑已执行(2026-07-27,三代理并行完成,静态验证通过)**:
+   - 命名落地:《圣经舆图 · The Bible Atlas》/「从起初,直到地极」——`i18n.ts` 共 20 key 圣化(含 ENUMS 称谓:王/勇士/圣所/敬拜与立约等)+ 新增 `epigraphSourceSuffix`/`scriptureNote`;`index.html` 标题/描述/og/theme-color #0B1120
+   - 视觉令牌靛蓝化:`styles.css` 89 行(4.1 核心令牌 + 4.2 散点值 + 页底烛光渐变 + `.epigraph` 组件样式;金色统一为 --accent 三级制)
+   - 经文题词:新建 `epigraphs.ts`(13 时代题词 + 欢迎诗 119:18 + 加载轮换 ×3 + 页脚赛 40:8,和合本 1919/KJV 逐字录入);`App.tsx` 集成(选中时代显示题词、未选显示欢迎节、骨架屏 4s 轮换、页脚版本声明)
+   - Bible-only 前端锁定:`state.ts` BIBLE_ONLY 常量,旧深链接静默归正;WorkControlCenter/compare-bar 条件隐藏(代码保留);搜索过滤作品类结果;`state.test.ts` 同步改为断言归正行为
+   - 静态验证:typecheck 0 错误、25/25 测试通过;**浏览器实测未做**(待启动链路代理释放端口后进行,项目目录已改名为 The Bible Atlas)
+   - 并行进行中:一键启动链路体检代理(scripts/*.command/README/DEPLOYMENT 的改名适配与实测,完成后另行提交)
+
 0. **重大方向调整(2026-07-27,用户决定)**:项目**只服务于圣经**,进行品牌重塑 + 神圣内容融入 + UI/UX 完善
    - 已新增可复用代理定义 `.claude/agents/liturgical-design-director.md`(神职人员 × UI/UX 设计总监双重人格,用于圣经内容呈现与神圣氛围设计的评审)
    - 实施方案已完成并提交:**`docs/design/sacred-rebrand-plan.md`**(commit `d18975a`)——命名、13 时代经文题词(和合本 1919 + KJV,均公有领域)、文案圣化清单、靛蓝+圣金令牌表(全组合实测对比度)、Bible-only 前端锁定、P0-P2 优先级
