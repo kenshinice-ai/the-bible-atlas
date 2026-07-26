@@ -38,6 +38,7 @@ v4 Bible-first 架构已落地并提交(commit `9b47ea0`):以「时代 → 人�
 2. 种子扩充已于 2026-07-27 **恢复**:
    - `014` judges、`015` united-monarchy、`016` divided-kingdoms 已装载并登记(见「最近完成」)
    - 剩余 4 个时代种子(`018` judah-and-exile / `019` return-and-restoration / `020` gospels / `022` pauline-mission)生成代理正在并行运行(用户要求全部同时执行);完成后按编号顺序装载(保证跨时代人物引用不丢行)、验证、提交
+   - `019` 已生成并通过回滚自测(新增 11 人物/16 事件,时代共 23 事件,seq 10001–10045,无跨时代依赖),**已入 git 但尚未装载、`seed_history` 无记录**;等 `018` 装载后再按序装载
    - 共享规范文档已固化进仓库:`db/seeds/bible-seed-spec.md`(原件在旧会话 scratchpad,已复制),包含 UUID 前缀、sequence 区间、时间标注规范、跨时代人物归属规则;注意其中自测命令里的 SCRATCH 路径属于旧会话,使用时替换为当前可写临时目录
    - 如需重新生成,可参考 `010/013/017/021` 作为模板
 
