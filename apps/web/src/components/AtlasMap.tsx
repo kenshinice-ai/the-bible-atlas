@@ -320,8 +320,11 @@ function RealMap(props: Props) {
         });
         if (points.length < 2) return null;
         const active = props.selectedEntity?.type === "route" && props.selectedEntity.id === route.slug;
+        // `active` is part of the key: Leaflet only applies className when a path
+        // is created (react-leaflet's setStyle never re-syncs it), so remounting
+        // on toggle is what lets the CSS flow animation attach to the SVG path.
         return <Polyline
-          key={`${atlas.work.slug}:${route.slug}`}
+          key={`${atlas.work.slug}:${route.slug}:${active ? "active" : "idle"}`}
           className={`atlas-route certainty-${route.certainty}${active ? " active" : ""}`}
           eventHandlers={{ click: () => props.onSelect({ type: "route", workSlug: atlas.work.slug, id: route.slug }, "map") }}
           positions={points}

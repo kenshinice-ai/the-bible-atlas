@@ -149,6 +149,7 @@ export const UI = {
   brushHint: ["在轴上拖动可框选时间范围", "Drag across the axis to select a range"],
   undated: ["年代不详", "Undated"],
   undatedNote: ["以下事件没有历史年代，只出现在叙事顺序中", "These events carry no historical year and appear only in narrative order"],
+  collapse: ["收起", "Collapse"],
   // graph
   graphLevelEra: ["时代", "Eras"], graphLevelGroup: ["人物群", "Groups"], graphLevelMajor: ["核心人物", "Key people"], graphLevelAll: ["全部人物", "Everyone"],
   graphZoomHint: ["滚轮缩放；放大自动展开到更细的层级", "Scroll to zoom; zooming in expands to a finer tier"],

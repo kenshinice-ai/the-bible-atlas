@@ -60,6 +60,7 @@ export function TimelineRibbon(props: Props) {
   const { atlases, activeAtlas, locale, mode, range, defaultRange, until, chapter, events, selected } = props;
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [brush, setBrush] = useState<{ from: number; to: number } | null>(null);
+  const [showAllUndated, setShowAllUndated] = useState(false);
 
   const dated = useMemo(() => events.filter((event) => event.historicalStartYear !== null), [events]);
   const undated = useMemo(() => events.filter((event) => event.historicalStartYear === null), [events]);
@@ -237,7 +238,12 @@ export function TimelineRibbon(props: Props) {
       <strong>{t("undated", locale)} · {undated.length}</strong>
       <p>{t("undatedNote", locale)}</p>
       <div className="undated-chips">
-        {undated.map((event) => <button key={event.slug} type="button" onClick={() => props.onSelect({ type: "event", workSlug: activeAtlas.work.slug, id: event.slug })}>{event.title}</button>)}
+        {/* A single era can carry dozens of undated events (primeval alone has ~50),
+            so the list stays folded until asked; the ribbon must not scroll the page. */}
+        {(showAllUndated ? undated : undated.slice(0, 12)).map((event) => <button key={event.slug} type="button" onClick={() => props.onSelect({ type: "event", workSlug: activeAtlas.work.slug, id: event.slug })}>{event.title}</button>)}
+        {undated.length > 12 && <button type="button" className="undated-toggle" aria-expanded={showAllUndated} onClick={() => setShowAllUndated(!showAllUndated)}>
+          {showAllUndated ? t("collapse", locale) : `${t("showAll", locale)} (${undated.length})`}
+        </button>}
       </div>
     </div>}
   </section>;

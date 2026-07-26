@@ -2,6 +2,12 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "api",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-lc", "cd apps/api && DATABASE_URL='postgresql://llmacbookpro@localhost:5432/literary_atlas' API_PORT=4000 npx tsx src/index.ts"],
+      "port": 4000
+    },
+    {
       "name": "web",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "-w", "@literary-atlas/web"],
