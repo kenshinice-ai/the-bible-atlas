@@ -36,6 +36,8 @@ v4 Bible-first 架构已落地并提交(commit `9b47ea0`):以「时代 → 人�
 
 ## 正在进行
 
+-9. **已上线 Cloudflare Pages(2026-07-27)**:生产地址 **https://bible-atlas-6h7.pages.dev**(项目名 bible-atlas,生产分支 main;wrangler OAuth 已在本机授权)。线上验证:HTTPS、默认英文、224/394/101/10/272 全量数据、零 /api 请求。更新发布:`bash deploy/deploy-static.sh --publish cf`(脚本已固定 --branch main,避免落到预览分支)。
+
 -8. **已同步 GitHub(2026-07-27)**:远程 `https://github.com/kenshinice-ai/the-bible-atlas`(public,默认分支 main);本地 master 跟踪 origin/main。远程原有的 stub 初始提交用 `-s ours` 合并吸收(未强推)。后续发布:`git push` 即同步;静态站发布可走 `deploy/deploy-static.sh --publish cf` 或 GitHub Pages/Actions。
 
 -7. **方案 C 全静态化已实现并验证(2026-07-27)**:`bake-static.ts` 烘焙 works + full atlas 双语 JSON(4 文件 1.56MB 原始)→ `VITE_DATA_MODE=static` 构建(api.ts 切 /data、抽屉 prose 取 full atlas 兜底、搜索改内存检索、--base=./ 相对路径)→ dist 约 2.3MB 完全自包含。`deploy/deploy-static.sh` 一键(含产物断言:无 localhost 残留),支持 --publish cf/netlify。浏览器实测:零 /api 请求、搜索 41 结果、抽屉 prose 完整。DEPLOYMENT.md 第九节改为「已实现」操作指南。**神职审计(027)已落库后重新烘焙**,静态数据即审计后数据。

@@ -45,7 +45,7 @@ du -sh "$DIST"
 echo "静态站点就绪。本地预览:npx vite preview --outDir apps/web/dist"
 
 case "$PUBLISH" in
-  cf)      npx wrangler pages deploy "$DIST" --project-name bible-atlas ;;
+  cf)      npx wrangler pages deploy "$DIST" --project-name bible-atlas --branch main ;;
   netlify) npx netlify deploy --dir "$DIST" --prod ;;
   "")      echo "未指定 --publish;把 dist 上传到任意静态托管即可(见 docs/DEPLOYMENT.md 方案 C)。" ;;
   *)       echo "未知发布目标:$PUBLISH(支持 cf / netlify)" >&2; exit 1 ;;
