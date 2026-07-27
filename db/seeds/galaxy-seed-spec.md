@@ -1,10 +1,10 @@
-# 银河原力舆图 · 时代种子共享规范(041–052)
+# 银河原力舆图 · 时代种子共享规范(042–053)
 
 你要为《银河原力舆图 The Galactic Force Atlas》生成一个时代的 SQL 种子文件。
 
 - 种子目录:`<项目目录>/db/seeds/`
 - 数据库(只读参考 + 回滚自测):`postgresql://llmacbookpro@localhost:5432/literary_atlas`
-- **骨架模板:先完整阅读 `db/seeds/040_galaxy_structure.sql`**(work / 12 时代 / 13 群体 / 39 地点 / 24 锚点人物 / 3 条航线都已在其中),再参考 `db/seeds/010_bible_full_01_primeval.sql` 的事件写法。
+- **骨架模板:先完整阅读 `db/seeds/040_galaxy_structure.sql` 与 `041_galaxy_canvas_and_tribute.sql`**(work / 12 时代 / 13 群体 / 45 地点 / 24 锚点人物 / 3 条航线都已在其中),再参考 `db/seeds/010_bible_full_01_primeval.sql` 的事件写法。
 - work_id:`10000000-0000-4000-8000-000000000008`(slug `skywalker-saga`)
 - 蓝图:[blueprint/star-wars/SAGA_BLUEPRINT.md](../../blueprint/star-wars/SAGA_BLUEPRINT.md);**IP 边界是硬前提,先读 §7**。
 
@@ -33,7 +33,7 @@
 2. **所有翻译表与成员表的 INSERT 一律加 `ON CONFLICT DO NOTHING`。**
    三国 037/038 都建了司马师,人物表靠 ON CONFLICT 跳过,翻译表却撞主键炸了整个文件。需要防护的表:characters、character_translations、locations、location_translations、character_relations、relation_translations、character_group_members、event_characters、event_locations、event_sources。
    events 与 event_translations **不加**——事件 slug 撞车说明重复造了已有事件,必须改 slug。
-3. **禁止新建行星。** 39 座天体是封闭清单(§5)。
+3. **禁止新建行星。** 45 座天体是封闭清单(§5)。
 
 ## 4. 纪年:BBY/ABY ↔ 带符号年份
 
@@ -46,7 +46,9 @@
 
 ## 5. 地点:封闭清单,不得新增行星
 
-骨架期已入库 39 座天体(35 planet / 3 moon:yavin-4、endor、jedha / 2 space_station:death-star、death-star-ii),坐标是全局资产。
+骨架期已入库 **45 座天体**(040 的 39 座 + 041 补入的 polis-massa、cantonica、pasaana、kijimi、kef-bir、ajan-kloss)。构成:39 planet / 5 moon(yavin-4、endor、jedha、kef-bir、ajan-kloss)/ 3 space_station(death-star、death-star-ii、polis-massa)。坐标是全局资产。
+
+041 补的六座是「先封清单、后核内容」的代价:双胞胎出生地、赌城、以及最后一部的四座星球在骨架表里都缺。**清单到此为止,不再扩。**
 
 - 你**只能引用**,不能新建行星。
 - 确有必要时可新建**行星表面场所**(某座城市、某处神庙、某个基地),`location_type` 用 `city`/`building`/`landmark`/`battlefield` 等既有值,`layer='fictional'`、`geom=NULL`、`coordinate_accuracy='fictional'`、`preferred_zoom=8`,**canvas 坐标继承母行星 ±1 以内**,否则画布散点会漂移。
