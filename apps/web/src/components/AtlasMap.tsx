@@ -397,9 +397,9 @@ function FitAllButton({ places, locale }: { places: Place[]; locale: Locale }) {
  * structure its coordinates are defined against. A work with no backdrop
  * registered simply renders its places on empty ground.
  */
-const BACKDROPS: Record<string, (locale: Locale) => React.ReactNode> = {
-  "the-hobbit": () => <path className="mountains" d="M2 55 L18 35 L29 56 L43 25 L57 56 L70 31 L98 60" />,
-  "skywalker-saga": (locale) => <GalaxyBackdrop locale={locale} />,
+const BACKDROPS: Record<string, (locale: Locale, inverse: number) => React.ReactNode> = {
+  "the-hobbit": (_locale, inverse) => <path className="mountains" d="M2 55 L18 35 L29 56 L43 25 L57 56 L70 31 L98 60" strokeWidth={7 * inverse} />,
+  "skywalker-saga": (locale, inverse) => <GalaxyBackdrop locale={locale} inverse={inverse} />,
 };
 
 /** Galactic centre in canvas units, and the band radii measured from it. */
@@ -422,14 +422,18 @@ const STARS = Array.from({ length: 90 }, (_, index) => {
   return { x: (a / 4093) * 100, y: (b / 4093) * 100, r: index % 7 === 0 ? 0.28 : 0.16 };
 });
 
-function GalaxyBackdrop({ locale }: { locale: Locale }) {
+function GalaxyBackdrop({ locale, inverse }: { locale: Locale; inverse: number }) {
   const index = locale === "zh-CN" ? 0 : 1;
   return <g aria-hidden="true">
-    {STARS.map((star, i) => <circle key={i} className="galaxy-star" cx={star.x} cy={star.y} r={star.r} opacity={i % 3 === 0 ? 0.5 : 0.28} />)}
+    {STARS.map((star, i) => <circle key={i} className="galaxy-star" cx={star.x} cy={star.y} r={star.r * inverse} opacity={i % 3 === 0 ? 0.5 : 0.28} />)}
     <circle className="galaxy-core" cx={GALACTIC_CENTRE.x} cy={GALACTIC_CENTRE.y} r={6} />
     {GALACTIC_BANDS.map((band) => <g key={band.radius}>
-      <circle className="galaxy-ring" cx={GALACTIC_CENTRE.x} cy={GALACTIC_CENTRE.y} r={band.radius} />
-      <text className="galaxy-ring-label" x={GALACTIC_CENTRE.x} y={GALACTIC_CENTRE.y - band.radius - 0.9} textAnchor="middle">{band.name[index]}</text>
+      <circle className="galaxy-ring" cx={GALACTIC_CENTRE.x} cy={GALACTIC_CENTRE.y} r={band.radius} strokeWidth={0.18 * inverse} />
+      {/* Band names are furniture, not places: they stay put and stay small
+          rather than growing into the reading you zoomed in to do. */}
+      <g transform={`translate(${GALACTIC_CENTRE.x} ${GALACTIC_CENTRE.y - band.radius - 0.9 * inverse}) scale(${inverse})`}>
+        <text className="galaxy-ring-label" textAnchor="middle">{band.name[index]}</text>
+      </g>
     </g>)}
   </g>;
 }
@@ -489,6 +493,7 @@ function labelWidth(text: string, fontSize: number): number {
 function placeLabels(
   places: readonly { slug: string; name: string; x: number; y: number; importance: number }[],
   fontSize: number,
+  slots: readonly LabelSlot[] = LABEL_SLOTS,
 ): Map<string, LabelSlot> {
   const chosen = new Map<string, LabelSlot>();
   const taken: { left: number; right: number; top: number; bottom: number }[] = [];
@@ -508,9 +513,9 @@ function placeLabels(
     // Score every candidate by how much ink it would cover, so that when a
     // place is boxed in on all sides — Sullust between Dagobah, Hoth and
     // Mustafar — it still lands in the least bad spot rather than a fixed one.
-    let slot = LABEL_SLOTS[0]!;
+    let slot = slots[0]!;
     let bestCost = Infinity;
-    for (const candidate of LABEL_SLOTS) {
+    for (const candidate of slots) {
       const box = boxFor(place, candidate, width);
       // Running off the canvas is not better than colliding: Dantooine sits
       // four units from the top edge, so its label cannot go above it however
@@ -529,6 +534,37 @@ function placeLabels(
   return chosen;
 }
 
+/** Canvas viewport: content is drawn under translate(x, y) scale(k). */
+interface CanvasView { k: number; x: number; y: number }
+
+const MIN_ZOOM = 1;
+const MAX_ZOOM = 8;
+const IDENTITY_VIEW: CanvasView = { k: 1, x: 0, y: 0 };
+
+const clamp = (value: number, low: number, high: number) => Math.min(high, Math.max(low, value));
+
+/**
+ * Keep the drawing covering the frame: at scale k the content spans
+ * [x, x + 100k], so x may run from 100 - 100k up to 0. Without this you can
+ * drag the galaxy off the edge and be left looking at empty space.
+ */
+function clampView(view: CanvasView): CanvasView {
+  const k = clamp(view.k, MIN_ZOOM, MAX_ZOOM);
+  const low = 100 - 100 * k;
+  return { k, x: clamp(view.x, low, 0), y: clamp(view.y, low, 0) };
+}
+
+/** Zoom by `factor` while holding the canvas point under (vx, vy) still. */
+function zoomAt(view: CanvasView, factor: number, vx: number, vy: number): CanvasView {
+  const k = clamp(view.k * factor, MIN_ZOOM, MAX_ZOOM);
+  return clampView({ k, x: vx - (k / view.k) * (vx - view.x), y: vy - (k / view.k) * (vy - view.y) });
+}
+
+/** Centre the canvas point (cx, cy) in the frame at scale k. */
+function centreOn(cx: number, cy: number, k: number): CanvasView {
+  return clampView({ k, x: 50 - k * cx, y: 50 - k * cy });
+}
+
 function FictionalCanvas(props: Props) {
   const selected = props.selectedEntity?.type === "location" ? `${props.selectedEntity.workSlug}:${props.selectedEntity.id}` : null;
   const primarySlug = props.atlases[0]?.work.slug ?? "";
@@ -537,47 +573,205 @@ function FictionalCanvas(props: Props) {
   // collision boxes describe text that is not the text being drawn.
   const isGalaxy = primarySlug === "skywalker-saga";
   const fontSize = isGalaxy ? 2.1 : 3;
-  const labelSlots = useMemo(() => placeLabels(props.atlases.flatMap((atlas) => atlas.locations.flatMap((location) =>
+  const dotRadius = isGalaxy ? 1.7 : 2.4;
+  const { onSelect, selectionSource } = props;
+
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const [view, setView] = useState<CanvasView>(IDENTITY_VIEW);
+
+  // Labels keep their size on screen, so as the geometry spreads under zoom
+  // they take up less and less of the canvas — which means the layout that was
+  // best at 1x is leaving room unused at 3x. Recomputing per zoom level is what
+  // actually makes zooming resolve a crowded cluster: solve it again, in the
+  // space that now exists. Quantised so a slow wheel does not reshuffle labels
+  // on every frame.
+  const layoutScale = Math.round(view.k * 4) / 4;
+  const points = useMemo(() => props.atlases.flatMap((atlas) => atlas.locations.flatMap((location) =>
     location.canvasX != null && location.canvasY != null
       ? [{ slug: `${atlas.work.slug}:${location.slug}`, name: location.name, x: location.canvasX, y: location.canvasY, importance: location.eventSlugs.length }]
-      : [])), fontSize), [props.atlases, fontSize]);
+      : [])), [props.atlases]);
+  const labelSlots = useMemo(
+    () => placeLabels(points, fontSize / layoutScale, LABEL_SLOTS.map((slot) => ({ ...slot, dx: slot.dx / layoutScale, dy: slot.dy / layoutScale }))),
+    [points, fontSize, layoutScale],
+  );
+  const drag = useRef<{ pointerId: number; startX: number; startY: number; origin: CanvasView } | null>(null);
+  const pinch = useRef<Map<number, { x: number; y: number }>>(new Map());
+
+  /** Client coordinates to canvas units (the 0-100 viewBox, before transform). */
+  const toCanvas = (clientX: number, clientY: number) => {
+    const rect = svgRef.current?.getBoundingClientRect();
+    if (!rect || rect.width === 0 || rect.height === 0) return { x: 50, y: 50 };
+    return { x: ((clientX - rect.left) / rect.width) * 100, y: ((clientY - rect.top) / rect.height) * 100 };
+  };
+
+  const zoomBy = (factor: number) => setView((current) => zoomAt(current, factor, 50, 50));
+
+  // Wheel is bound imperatively because React's onWheel is passive, and a
+  // passive listener cannot preventDefault — the page would scroll away under
+  // the cursor while you tried to zoom.
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      const point = toCanvas(event.clientX, event.clientY);
+      setView((current) => zoomAt(current, Math.exp(-event.deltaY * 0.0015), point.x, point.y));
+    };
+    svg.addEventListener("wheel", onWheel, { passive: false });
+    return () => svg.removeEventListener("wheel", onWheel);
+  }, []);
+
+  // A place chosen anywhere else — the list, search, the drawer — is brought
+  // into the frame. A place clicked on the canvas is already where the reader
+  // is looking, so moving the ground under them would be disorienting.
+  useEffect(() => {
+    if (!selected || selectionSource === "map") return;
+    const slug = selected.slice(selected.indexOf(":") + 1);
+    for (const atlas of props.atlases) {
+      const found = atlas.locations.find((location) => location.slug === slug);
+      if (found?.canvasX != null && found.canvasY != null) {
+        setView((current) => centreOn(found.canvasX!, found.canvasY!, Math.max(current.k, 2.4)));
+        return;
+      }
+    }
+  }, [selected, selectionSource, props.atlases]);
+
+  const onPointerDown = (event: React.PointerEvent<SVGSVGElement>) => {
+    pinch.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (pinch.current.size > 1) { drag.current = null; return; }
+    event.currentTarget.setPointerCapture(event.pointerId);
+    drag.current = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, origin: view };
+  };
+
+  const onPointerMove = (event: React.PointerEvent<SVGSVGElement>) => {
+    if (!pinch.current.has(event.pointerId)) return;
+    const previous = pinch.current.get(event.pointerId)!;
+    pinch.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (pinch.current.size === 2) {
+      const [a, b] = [...pinch.current.values()];
+      const spread = Math.hypot(a!.x - b!.x, a!.y - b!.y);
+      const before = Math.hypot(
+        (previous.x === a!.x && previous.y === a!.y ? b! : a!).x - previous.x,
+        (previous.x === a!.x && previous.y === a!.y ? b! : a!).y - previous.y,
+      );
+      if (before > 0 && spread > 0) {
+        const mid = toCanvas((a!.x + b!.x) / 2, (a!.y + b!.y) / 2);
+        setView((current) => zoomAt(current, spread / before, mid.x, mid.y));
+      }
+      return;
+    }
+    const active = drag.current;
+    if (!active || active.pointerId !== event.pointerId) return;
+    const rect = svgRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const dx = ((event.clientX - active.startX) / rect.width) * 100;
+    const dy = ((event.clientY - active.startY) / rect.height) * 100;
+    setView(clampView({ k: active.origin.k, x: active.origin.x + dx, y: active.origin.y + dy }));
+  };
+
+  const endPointer = (event: React.PointerEvent<SVGSVGElement>) => {
+    pinch.current.delete(event.pointerId);
+    if (drag.current?.pointerId === event.pointerId) drag.current = null;
+  };
+
+  const onKeyDown = (event: React.KeyboardEvent<SVGSVGElement>) => {
+    const step = 8 / view.k;
+    const moves: Record<string, [number, number]> = {
+      ArrowUp: [0, step], ArrowDown: [0, -step], ArrowLeft: [step, 0], ArrowRight: [-step, 0],
+    };
+    if (event.key === "+" || event.key === "=") { zoomBy(1.4); }
+    else if (event.key === "-" || event.key === "_") { zoomBy(1 / 1.4); }
+    else if (event.key === "0") { setView(IDENTITY_VIEW); }
+    else if (moves[event.key]) {
+      const [dx, dy] = moves[event.key]!;
+      setView((current) => clampView({ ...current, x: current.x + dx, y: current.y + dy }));
+    } else return;
+    event.preventDefault();
+  };
+
+  const zh = props.locale === "zh-CN";
+  // Everything drawn is divided by k so dots, labels and lines keep their size
+  // on screen while the geometry spreads apart. That is the whole point of
+  // zooming into a crowded region: at 1x, Tatooine and Geonosis are neighbours.
+  const inverse = 1 / view.k;
+  const atIdentity = view.k === 1 && view.x === 0 && view.y === 0;
+
   return <div className="map-stage">
     <div className="fictional">
-      <svg viewBox="0 0 100 100" role="img" aria-label="Fictional world map canvas" className={isGalaxy ? "galaxy" : undefined}>
-        {backdrop?.(props.locale)}
-        {props.atlases.flatMap((atlas) => {
-          const bySlug = new Map(atlas.locations.map((location) => [location.slug, location]));
-          return [
-            props.mapLayers.includes("routes") && atlas.routes.map((route) => <polyline
-              key={`${atlas.work.slug}:${route.slug}`}
-              onClick={() => props.onSelect({ type: "route", workSlug: atlas.work.slug, id: route.slug }, "map")}
-              points={route.waypoints.flatMap((waypoint) => {
-                const location = bySlug.get(waypoint.locationSlug);
-                return location?.canvasX != null && location.canvasY != null ? [`${location.canvasX},${location.canvasY}`] : [];
-              }).join(" ")}
-              className="quest"
-              style={{ stroke: atlas.work.themeColor }}
-            />),
-            props.mapLayers.includes("places") && atlas.locations.map((location) => {
-              const key = `${atlas.work.slug}:${location.slug}`;
-              if (location.canvasX == null || location.canvasY == null) return null;
-              const slot = labelSlots.get(key) ?? LABEL_SLOTS[0]!;
-              return <g
-                key={key}
-                transform={`translate(${location.canvasX} ${location.canvasY})`}
-                onClick={() => props.onSelect({ type: "location", workSlug: atlas.work.slug, id: location.slug }, "map")}
-                className={selected === key ? "place selected" : "place"}
-                role="button"
-                tabIndex={0}
-              >
-                <circle r="2.4" style={{ fill: atlas.work.themeColor }} />
-                <text x={slot.dx} y={slot.dy} textAnchor={slot.anchor}>{location.name}</text>
-              </g>;
-            }),
-          ];
-        })}
+      <svg
+        ref={svgRef}
+        viewBox="0 0 100 100"
+        className={`${isGalaxy ? "galaxy " : ""}${drag.current ? "panning" : ""}`}
+        role="group"
+        aria-label={zh ? "虚构画布:滚轮缩放,拖动平移,方向键移动,加号减号缩放,数字 0 复位" : "Fictional canvas: scroll to zoom, drag to pan; arrow keys move, plus and minus zoom, 0 resets"}
+        tabIndex={0}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endPointer}
+        onPointerCancel={endPointer}
+        onKeyDown={onKeyDown}
+      >
+        <g transform={`translate(${view.x} ${view.y}) scale(${view.k})`}>
+          {backdrop?.(props.locale, inverse)}
+          {props.atlases.flatMap((atlas) => {
+            const bySlug = new Map(atlas.locations.map((location) => [location.slug, location]));
+            return [
+              props.mapLayers.includes("routes") && atlas.routes.map((route) => <polyline
+                key={`${atlas.work.slug}:${route.slug}`}
+                onClick={() => onSelect({ type: "route", workSlug: atlas.work.slug, id: route.slug }, "map")}
+                points={route.waypoints.flatMap((waypoint) => {
+                  const location = bySlug.get(waypoint.locationSlug);
+                  return location?.canvasX != null && location.canvasY != null ? [`${location.canvasX},${location.canvasY}`] : [];
+                }).join(" ")}
+                className="quest"
+                style={{ stroke: atlas.work.themeColor, strokeWidth: 0.8 * inverse, strokeDasharray: `${2 * inverse} ${inverse}` }}
+              />),
+              props.mapLayers.includes("places") && atlas.locations.map((location) => {
+                const key = `${atlas.work.slug}:${location.slug}`;
+                if (location.canvasX == null || location.canvasY == null) return null;
+                const base = LABEL_SLOTS[0]!;
+                const slot = labelSlots.get(key) ?? { ...base, dx: base.dx * inverse, dy: base.dy * inverse };
+                return <g
+                  key={key}
+                  transform={`translate(${location.canvasX} ${location.canvasY})`}
+                  onClick={() => onSelect({ type: "location", workSlug: atlas.work.slug, id: location.slug }, "map")}
+                  className={selected === key ? "place selected" : "place"}
+                  role="button"
+                  aria-label={location.name}
+                  aria-pressed={selected === key}
+                  tabIndex={0}
+                >
+                  {/* Our own focus and selection indicator. The browser draws
+                      its default ring around the whole group — which includes
+                      the label, offset several units away — so it came out as
+                      a box across half the map. Suppressed in CSS and replaced
+                      by this ring, which sits on the dot where it belongs. */}
+                  <circle className="place-ring" r={dotRadius * 2.1 * inverse} strokeWidth={0.7 * inverse} />
+                  <circle className="place-dot" r={dotRadius * inverse} strokeWidth={0.35 * inverse} style={{ fill: atlas.work.themeColor }} />
+                  {/* Offsets already carry the zoom (placeLabels solved in the
+                      geometry of this scale); size is set inline so it beats
+                      the stylesheet's default. */}
+                  <text
+                    x={slot.dx}
+                    y={slot.dy}
+                    textAnchor={slot.anchor}
+                    style={{ fontSize: fontSize * inverse, strokeWidth: (isGalaxy ? 0.55 : 0.7) * inverse }}
+                  >{location.name}</text>
+                </g>;
+              }),
+            ];
+          })}
+        </g>
       </svg>
-      <p className="canvas-note">Fictional coordinates · 虚构画布坐标，不映射现实经纬度</p>
+      <div className="canvas-zoom" role="group" aria-label={zh ? "画布缩放" : "Canvas zoom"}>
+        <button type="button" onClick={() => zoomBy(1.4)} aria-label={zh ? "放大" : "Zoom in"} disabled={view.k >= MAX_ZOOM}>+</button>
+        <button type="button" onClick={() => zoomBy(1 / 1.4)} aria-label={zh ? "缩小" : "Zoom out"} disabled={view.k <= MIN_ZOOM}>−</button>
+        <button type="button" onClick={() => setView(IDENTITY_VIEW)} aria-label={zh ? "复位视图" : "Reset view"} disabled={atIdentity}>⤢</button>
+      </div>
+      <p className="canvas-note">
+        {zh ? "虚构画布坐标,不映射现实经纬度" : "Fictional coordinates, not mapped to real latitude and longitude"}
+        {view.k > 1 ? ` · ${view.k.toFixed(1)}×` : ""}
+      </p>
     </div>
     <div className="map-controls"><LayerControls mapLayers={props.mapLayers} onToggleLayer={props.onToggleLayer} locale={props.locale} /></div>
   </div>;
