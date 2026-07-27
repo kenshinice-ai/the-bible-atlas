@@ -808,6 +808,18 @@ footer summary { cursor: pointer; color: var(--text-dim); }
 footer summary:hover { color: var(--text); }
 footer details p { color: var(--muted); font-size: 0.85rem; }
 
+/* -------------------------------------------------------- production credit -- */
+/* One uniform endorsement line at the foot of every page: quiet, letterspaced,
+   never competing with content. */
+.production-credit {
+  margin: var(--gap-l) 0 6px;
+  text-align: center;
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  color: var(--faint);
+  text-transform: uppercase;
+}
+
 /* ------------------------------------------------------------------ skeleton -- */
 
 .skeleton { display: grid; gap: var(--gap-m); }

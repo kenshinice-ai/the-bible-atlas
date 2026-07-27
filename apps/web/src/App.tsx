@@ -391,6 +391,10 @@ export default function App() {
             onChapter={setChapter}
           />}
         </>}
+
+    {/* Production credit: one quiet, globally uniform line — an endorsement,
+        not a second logo. It closes every page like a film credit. */}
+    <p className="production-credit">A&nbsp;PARADISE&nbsp;PRODUCTION&nbsp;·&nbsp;天域文创出品</p>
   </main>;
 }
 
