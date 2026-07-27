@@ -36,6 +36,14 @@ v4 Bible-first 架构已落地并提交(commit `9b47ea0`):以「时代 → 人�
 
 ## 正在进行
 
+-10. **三国舆图完整项目上线(2026-07-27)**:生产地址 **https://three-kingdoms-atlas.pages.dev**(CF 项目 three-kingdoms-atlas)。
+   - 数据(seeds 031–039,全部装载):志 75 人物/92 事件/54 地点/93 关系 + 演义 78/127/55/96;13 时代双 work 同 slug 对照(赤壁志行瘟疫退军简记 vs 演义借东风铺陈);桃园结义/空城计/玉泉显圣等演义独有事件按 reality 分级;五项孤儿检查零行
+   - 装载踩坑记录:037 与 038 都建了司马师,038 靠人物 ON CONFLICT 跳过但翻译撞主键——修复=038 全部翻译/成员表补 ON CONFLICT DO NOTHING(七处);**后续种子规范应把「二次插入防护」列为强制**
+   - 前端:WORK_PROFILE 机制(profile.ts;bible/three-kingdoms 两档),三国档默认中文、锁定志+演义对、保留主作品切换栏;玄墨朱金主题([data-profile] 令牌,对比度验算);题词档案化(临江仙/曹操诗/演义回目);题词版本后缀(和合本/KJV)改为 bible 档专属
+   - 品牌:全站页底统一署名「A PARADISE PRODUCTION · 天域文创出品」+ 星火 P favicon(SVG 路径绘制)
+   - 已知余项(P1):三国 routes 为 0(北伐/伐吴路线待补);演义 hero 年代显示 164–301(个别背景事件超 184–280 区间,待收敛);FictionalCanvas 增强(Star Wars 前置)
+   - **Star Wars Atlas 蓝图完成**:`blueprint/star-wars/`(SAGA_BLUEPRINT/IP_AND_NAMING/ESTIMATE_AND_PIPELINE)——单 work 决策、BBY/ABY 纪年双轨、39 点银河画布、去商标化命名「Galaxy Atlas」+ 题词 12 原创 2 短引、IP 合规为结构性风险(M0 需真人法律审阅)
+
 -9. **已上线 Cloudflare Pages(2026-07-27)**:生产地址 **https://bible-atlas-6h7.pages.dev**(项目名 bible-atlas,生产分支 main;wrangler OAuth 已在本机授权)。线上验证:HTTPS、默认英文、224/394/101/10/272 全量数据、零 /api 请求。更新发布:`bash deploy/deploy-static.sh --publish cf`(脚本已固定 --branch main,避免落到预览分支)。
 
 -8. **已同步 GitHub(2026-07-27)**:远程 `https://github.com/kenshinice-ai/the-bible-atlas`(public,默认分支 main);本地 master 跟踪 origin/main。远程原有的 stub 初始提交用 `-s ours` 合并吸收(未强推)。后续发布:`git push` 即同步;静态站发布可走 `deploy/deploy-static.sh --publish cf` 或 GitHub Pages/Actions。

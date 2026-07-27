@@ -36,11 +36,12 @@ function EpigraphBlock({ epigraph, locale, className = "epigraph" }: { epigraph:
     {locale === "zh-CN"
       ? <>
         <blockquote>「{epigraph.zh}」</blockquote>
-        <cite>——{epigraph.zhRef}{t("epigraphSourceSuffix", locale)}</cite>
+        {/* The translation-version suffix (和合本/KJV) is a Bible-profile fact. */}
+        <cite>——{epigraph.zhRef}{PROFILE.id === "bible" ? t("epigraphSourceSuffix", locale) : ""}</cite>
       </>
       : <>
         <blockquote lang="en">“{epigraph.en}”</blockquote>
-        <cite>— {epigraph.enRef} {t("epigraphSourceSuffix", locale)}</cite>
+        <cite>— {epigraph.enRef}{PROFILE.id === "bible" ? ` ${t("epigraphSourceSuffix", locale)}` : ""}</cite>
       </>}
   </figure>;
 }
