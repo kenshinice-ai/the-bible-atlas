@@ -1,3 +1,4 @@
+import { PROFILE } from "./profile";
 import { EntityTypeSchema, LocaleSchema, type Atlas, type EntityType, type Locale } from "./types";
 
 export type Tab = "characters" | "events" | "locations" | "routes" | "relations";
@@ -44,8 +45,14 @@ export interface ExploreState {
  * paths stay intact so the rollback cost is zero; the parser simply refuses
  * to leave the Bible.
  */
-export const BIBLE_ONLY = true;
-const BIBLE_SLUG = "the-bible";
+/**
+ * Work lock now comes from the deployment profile: a build serves exactly the
+ * profile's works. BIBLE_ONLY survives as a derived flag for Bible-specific
+ * UI branches; multi-work profiles (e.g. history + romance pairs) keep the
+ * compare bar but never show the free work picker.
+ */
+export const WORK_LOCK = true;
+export const BIBLE_ONLY = PROFILE.id === "bible";
 
 export const MAX_SELECTED_WORKS = 5;
 export const FALLBACK_RANGE = { start: -3000, end: 2026 } as const;
@@ -76,12 +83,12 @@ export function parseAtlasState(search: string): ExploreState {
   const tabValue = q.get("tab");
   const legacyWork = q.get("work");
   const requestedMode: SelectionMode = q.get("mode") === "multi" || q.get("mode") === "compare" ? "multi" : "single";
-  // Under BIBLE_ONLY, old multi-work deep links are silently normalized to the
-  // Bible instead of erroring — the URL's works/primary/mode are ignored.
-  const mode: SelectionMode = BIBLE_ONLY ? "single" : requestedMode;
+  // Under the work lock, deep links are silently normalized to the profile's
+  // works instead of erroring — foreign works/primary/mode in the URL are ignored.
+  const mode: SelectionMode = WORK_LOCK ? PROFILE.mode : requestedMode;
   const requestedWorks = (q.get("works")?.split(",") ?? (legacyWork ? [legacyWork] : [])).filter(Boolean);
   const works = requestedWorks.slice(0, requestedMode === "multi" ? MAX_SELECTED_WORKS : 1);
-  const normalizedWorks = BIBLE_ONLY ? [BIBLE_SLUG] : works.length > 0 ? works : [BIBLE_SLUG];
+  const normalizedWorks = WORK_LOCK ? [...PROFILE.works] : works.length > 0 ? works : [PROFILE.active];
   const requestedActive = q.get("active") ?? q.get("primary");
   const requestedLayers = (q.get("layers")?.split(",") ?? ["places", "routes", "landmarks"]).filter((item): item is MapContentLayer => mapLayerValues.has(item as MapContentLayer));
   const untilRaw = q.get("until");
@@ -92,11 +99,12 @@ export function parseAtlasState(search: string): ExploreState {
   const rangeStart = optionalYear(q.get("from"));
   const rangeEnd = optionalYear(q.get("to"));
   return {
-    // English is the default presentation language; Chinese stays one tap away.
-    locale: LocaleSchema.catch("en").parse(q.get("locale") ?? (q.get("lang") === "zh-CN" ? "zh-CN" : "en")),
+    // The profile decides the default language; the other stays one tap away.
+    locale: LocaleSchema.catch(PROFILE.defaultLocale).parse(q.get("locale") ?? q.get("lang") ?? PROFILE.defaultLocale),
     mode,
     works: normalizedWorks,
-    active: requestedActive && normalizedWorks.includes(requestedActive) ? requestedActive : normalizedWorks[0]!,
+    active: requestedActive && normalizedWorks.includes(requestedActive) ? requestedActive
+      : normalizedWorks.includes(PROFILE.active) ? PROFILE.active : normalizedWorks[0]!,
     tab: tabValue && tabs.has(tabValue as Tab) ? (tabValue as Tab) : "events",
     selectedEntity: parseEntity(q.get("entity"), q.get("selected")),
     selectionSource: "url",

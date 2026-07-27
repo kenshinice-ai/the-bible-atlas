@@ -1,3 +1,4 @@
+import { PROFILE } from "./profile";
 /**
  * Scripture epigraphs for the Bible Atlas, transcribed verbatim from
  * docs/design/sacred-rebrand-plan.md (section 2). Chinese: Union Version
@@ -20,7 +21,7 @@ export interface Epigraph {
 }
 
 /** One epigraph per Bible era, keyed by chapter slug. */
-export const ERA_EPIGRAPHS: Record<string, Epigraph> = {
+const BIBLE_ERA_EPIGRAPHS: Record<string, Epigraph> = {
   "primeval": {
     zh: "起初,神创造天地。",
     zhRef: "创世记 1:1",
@@ -102,7 +103,7 @@ export const ERA_EPIGRAPHS: Record<string, Epigraph> = {
 };
 
 /** Shown in the hero area while no era is selected (Psalm 119:18). */
-export const WELCOME_EPIGRAPH: Epigraph = {
+const BIBLE_WELCOME: Epigraph = {
   zh: "求你开我的眼睛,使我看出你律法中的奇妙。",
   zhRef: "诗篇 119:18",
   en: "Open thou mine eyes, that I may behold wondrous things out of thy law.",
@@ -110,7 +111,7 @@ export const WELCOME_EPIGRAPH: Epigraph = {
 };
 
 /** Rotated on the loading skeleton. */
-export const LOADING_EPIGRAPHS: readonly Epigraph[] = [
+const BIBLE_LOADING: readonly Epigraph[] = [
   {
     zh: "你的话是我脚前的灯,是我路上的光。",
     zhRef: "诗篇 119:105",
@@ -132,9 +133,102 @@ export const LOADING_EPIGRAPHS: readonly Epigraph[] = [
 ];
 
 /** Site-wide footer verse (Isaiah 40:8). */
-export const FOOTER_EPIGRAPH: Epigraph = {
+const BIBLE_FOOTER: Epigraph = {
   zh: "草必枯干,花必凋残,惟有我们神的话必永远立定。",
   zhRef: "以赛亚书 40:8",
   en: "The grass withereth, the flower fadeth: but the word of our God shall stand for ever.",
   enRef: "Isaiah 40:8",
 };
+
+// ---------------------------------------------------------------------------
+// Three Kingdoms profile (三国舆图): epigraphs drawn from the two works and
+// their canonical framing poems — all long in the public domain.
+// ---------------------------------------------------------------------------
+
+const THREE_KINGDOMS_ERA_EPIGRAPHS: Record<string, Epigraph> = {
+  "yellow-turban-rising": {
+    zh: "苍天已死,黄天当立;岁在甲子,天下大吉。",
+    zhRef: "三国演义 · 第一回",
+    en: "The Azure Heaven is dead; the Yellow Heaven shall rise.",
+    enRef: "Romance of the Three Kingdoms, Ch. 1",
+  },
+  "red-cliffs": {
+    zh: "万事俱备,只欠东风。",
+    zhRef: "三国演义 · 第四十九回",
+    en: "All is ready — all but the east wind.",
+    enRef: "Romance of the Three Kingdoms, Ch. 49",
+  },
+  "northern-expeditions": {
+    zh: "鞠躬尽瘁,死而后已。",
+    zhRef: "后出师表",
+    en: "I shall bend my back to the task until my dying day.",
+    enRef: "The Later Memorial on the Expedition",
+  },
+  "jin-unification": {
+    zh: "鼎足三分已成梦,后人凭吊空牢骚。",
+    zhRef: "三国演义 · 第一百二十回",
+    en: "The tripod\u2019s three legs are now a dream; those who come after mourn in vain.",
+    enRef: "Romance of the Three Kingdoms, Ch. 120",
+  },
+};
+
+const THREE_KINGDOMS_WELCOME: Epigraph = {
+  zh: "滚滚长江东逝水,浪花淘尽英雄。",
+  zhRef: "临江仙 · 杨慎",
+  en: "The Yangtze rolls ever eastward; its waves have washed away the heroes.",
+  enRef: "Immortals by the River, Yang Shen",
+};
+
+const THREE_KINGDOMS_LOADING: readonly Epigraph[] = [
+  {
+    zh: "老骥伏枥,志在千里。",
+    zhRef: "龟虽寿 · 曹操",
+    en: "The old steed in the stable still dreams of a thousand li.",
+    enRef: "Though the Tortoise Lives Long, Cao Cao",
+  },
+  {
+    zh: "非淡泊无以明志,非宁静无以致远。",
+    zhRef: "诫子书 · 诸葛亮",
+    en: "Without stillness there is no reaching far.",
+    enRef: "Admonition to My Son, Zhuge Liang",
+  },
+  {
+    zh: "山不厌高,海不厌深。",
+    zhRef: "短歌行 · 曹操",
+    en: "Mountains never tire of height, nor seas of depth.",
+    enRef: "Short Song, Cao Cao",
+  },
+];
+
+const THREE_KINGDOMS_FOOTER: Epigraph = {
+  zh: "天下大势,分久必合,合久必分。",
+  zhRef: "三国演义 · 第一回",
+  en: "The empire, long divided, must unite; long united, must divide.",
+  enRef: "Romance of the Three Kingdoms, Ch. 1",
+};
+
+/** Footer source note per profile; null falls back to i18n scriptureNote. */
+const SOURCE_NOTES: Record<string, readonly [string, string] | null> = {
+  bible: null,
+  "three-kingdoms": [
+    "引文出自陈寿《三国志》、罗贯中《三国演义》(毛评本)及相关公有领域诗文;英文为本站译文。",
+    "Quotations are from Chen Shou\u2019s Records and Luo Guanzhong\u2019s Romance of the Three Kingdoms (public domain); English renderings are our own.",
+  ],
+};
+
+// ---------------------------------------------------------------------------
+// Profile resolution: the rest of the app imports these four names unchanged.
+// ---------------------------------------------------------------------------
+
+const SETS = {
+  bible: { era: BIBLE_ERA_EPIGRAPHS, welcome: BIBLE_WELCOME, loading: BIBLE_LOADING, footer: BIBLE_FOOTER },
+  "three-kingdoms": { era: THREE_KINGDOMS_ERA_EPIGRAPHS, welcome: THREE_KINGDOMS_WELCOME, loading: THREE_KINGDOMS_LOADING, footer: THREE_KINGDOMS_FOOTER },
+} as const;
+
+const ACTIVE = SETS[PROFILE.id as keyof typeof SETS] ?? SETS.bible;
+
+export const ERA_EPIGRAPHS: Record<string, Epigraph> = ACTIVE.era;
+export const WELCOME_EPIGRAPH: Epigraph = ACTIVE.welcome;
+export const LOADING_EPIGRAPHS: readonly Epigraph[] = ACTIVE.loading;
+export const FOOTER_EPIGRAPH: Epigraph = ACTIVE.footer;
+export const SOURCE_NOTE: readonly [string, string] | null = SOURCE_NOTES[PROFILE.id] ?? null;

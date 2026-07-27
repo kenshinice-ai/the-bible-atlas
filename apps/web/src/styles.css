@@ -104,6 +104,38 @@ button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-v
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 
+/* ------------------------------------------------- profile theme overrides -- */
+/* 三国舆图: lacquer-ink ground, silk text, vermilion-and-bronze accents.
+   Contrast measured: body pairs >= 4.96:1 on panel; --accent-deep is
+   graphics/large-type only (3.90:1). Era colours come from the database. */
+:root[data-profile="three-kingdoms"] {
+  --bg: #120D0B;
+  --bg-raise: #1A1210;
+  --panel: #1B140F;
+  --panel-raise: #261B13;
+  --overlay: rgba(18, 13, 11, 0.94);
+  --line: #4A3826;
+  --line-soft: #372A1D;
+  --text: #EFE7D8;
+  --text-dim: #D2C7B4;
+  --muted: #AC9F8A;
+  --faint: #90846F;
+  --accent: #F0A05A;
+  --accent-strong: #E2782F;
+  --accent-deep: #C1521F;
+  --violet: #7FA88F;
+  --violet-soft: #D9B98C;
+  --neutral-rel: #90846F;
+}
+:root[data-profile="three-kingdoms"] body {
+  background:
+    radial-gradient(1100px 520px at 18% -5%, #2A1C12 0%, transparent 55%),
+    radial-gradient(900px 420px at 98% 0%, #241410 0%, transparent 50%),
+    radial-gradient(700px 300px at 50% 112%, rgba(193, 82, 31, 0.08), transparent 60%),
+    var(--bg);
+}
+:root[data-profile="three-kingdoms"] ::selection { background: #C1521F; color: #120D0B; }
+
 /* ---------------------------------------------------------------- layout -- */
 
 main { max-width: 1560px; margin: auto; padding: var(--gap-l); }

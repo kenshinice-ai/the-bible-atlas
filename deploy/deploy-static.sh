@@ -18,8 +18,23 @@ ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 cd "$ROOT"
 
 API_URL="${BAKE_API_URL:-http://localhost:4000}"
+
+# --profile bible|three-kingdoms 决定烘焙哪些作品、构建哪个品牌与发布到哪个项目
+PROFILE="bible"
 PUBLISH=""
-[[ "${1:-}" == "--publish" ]] && PUBLISH="${2:-}"
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --profile) PROFILE="${2:-bible}"; shift 2 ;;
+    --publish) PUBLISH="${2:-}"; shift 2 ;;
+    *) echo "未知参数:$1" >&2; exit 1 ;;
+  esac
+done
+
+case "$PROFILE" in
+  bible)          WORKS="the-bible"; CF_PROJECT="bible-atlas"; PROBE="atlas.the-bible.en.json" ;;
+  three-kingdoms) WORKS="records-of-the-three-kingdoms,romance-of-the-three-kingdoms"; CF_PROJECT="three-kingdoms-atlas"; PROBE="atlas.romance-of-the-three-kingdoms.zh-CN.json" ;;
+  *) echo "未知 profile:$PROFILE(支持 bible / three-kingdoms)" >&2; exit 1 ;;
+esac
 
 echo "[1/4] 检查本地 API(烘焙数据源):$API_URL"
 if ! curl -sf "$API_URL/health" > /dev/null; then
@@ -28,15 +43,15 @@ if ! curl -sf "$API_URL/health" > /dev/null; then
 fi
 
 echo "[2/4] 烘焙静态数据(works + full atlas,双语)"
-npm run bake:static -w @literary-atlas/api -- --api "$API_URL"
+npm run bake:static -w @literary-atlas/api -- --api "$API_URL" --works "$WORKS"
 
 echo "[3/4] 静态模式构建(VITE_DATA_MODE=static,相对资源路径)"
-VITE_DATA_MODE=static npm run build -w @literary-atlas/web -- --base=./
+VITE_DATA_MODE=static VITE_WORK_PROFILE="$PROFILE" npm run build -w @literary-atlas/web -- --base=./
 
 DIST="$ROOT/apps/web/dist"
 echo "[4/4] 产物检查:$DIST"
 test -f "$DIST/index.html"
-test -f "$DIST"/data/atlas.the-bible.en.json
+test -f "$DIST/data/$PROBE"
 if grep -rl "localhost:4000" "$DIST/assets" > /dev/null 2>&1; then
   echo "错误:产物中残留 localhost API 地址,静态模式未生效。" >&2
   exit 1
@@ -45,7 +60,7 @@ du -sh "$DIST"
 echo "静态站点就绪。本地预览:npx vite preview --outDir apps/web/dist"
 
 case "$PUBLISH" in
-  cf)      npx wrangler pages deploy "$DIST" --project-name bible-atlas --branch main ;;
+  cf)      npx wrangler pages deploy "$DIST" --project-name "$CF_PROJECT" --branch main ;;
   netlify) npx netlify deploy --dir "$DIST" --prod ;;
   "")      echo "未指定 --publish;把 dist 上传到任意静态托管即可(见 docs/DEPLOYMENT.md 方案 C)。" ;;
   *)       echo "未知发布目标:$PUBLISH(支持 cf / netlify)" >&2; exit 1 ;;

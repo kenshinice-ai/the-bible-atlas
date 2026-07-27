@@ -22,7 +22,8 @@ function argValue(flag: string, fallback: string): string {
 const apiBase = argValue("--api", process.env.BAKE_API_URL ?? "http://localhost:4000");
 const outDir = resolve(import.meta.dirname, argValue("--out", "../../web/public/data"));
 const locales = ["en", "zh-CN"] as const;
-const workSlugs = ["the-bible"] as const;
+// Which works to bake; a profile build passes its own list (comma-separated).
+const workSlugs = argValue("--works", "the-bible").split(",").filter(Boolean);
 
 async function fetchJson(path: string): Promise<unknown> {
   const response = await fetch(`${apiBase}${path}`);

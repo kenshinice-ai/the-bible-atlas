@@ -7,11 +7,12 @@ import { GlobalSearch } from "./components/GlobalSearch";
 import { RelationGraph } from "./components/RelationGraph";
 import { TimelineRibbon } from "./components/TimelineRibbon";
 import { WorkControlCenter } from "./components/WorkControlCenter";
-import { ERA_EPIGRAPHS, FOOTER_EPIGRAPH, LOADING_EPIGRAPHS, WELCOME_EPIGRAPH, type Epigraph } from "./epigraphs";
+import { ERA_EPIGRAPHS, FOOTER_EPIGRAPH, LOADING_EPIGRAPHS, SOURCE_NOTE, WELCOME_EPIGRAPH, type Epigraph } from "./epigraphs";
 import { filtersFrom, isFiltered, visibleCharacters, visibleEvents, visibleLocations, visibleRelations } from "./hierarchy";
+import { PROFILE } from "./profile";
 import { formatYear, label, t } from "./i18n";
 import {
-  BIBLE_ONLY, parseAtlasState, resolveRange, serializeAtlasState, validateWorkSelection,
+  WORK_LOCK, parseAtlasState, resolveRange, serializeAtlasState, validateWorkSelection,
   type ExploreState, type MapContentLayer, type SelectedEntity, type SelectionMode, type SelectionSource, type Tab, type TimelineMode, type ZoomLevel,
 } from "./state";
 import { type Atlas, type Locale, type WorksResponse } from "./types";
@@ -46,6 +47,12 @@ function EpigraphBlock({ epigraph, locale, className = "epigraph" }: { epigraph:
 
 export default function App() {
   const [explore, setExplore] = useState<ExploreState>(() => parseAtlasState(location.search));
+
+  // The profile owns the document identity: tab title and CSS theme scope.
+  useEffect(() => {
+    document.title = `${PROFILE.title[0]} · ${PROFILE.title[1]}`;
+    document.documentElement.dataset.profile = PROFILE.theme;
+  }, []);
   const [works, setWorks] = useState<WorksResponse["items"]>([]);
   const [atlases, setAtlases] = useState<Atlas[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -182,8 +189,8 @@ export default function App() {
   return <main className={explore.selectedEntity ? "has-drawer" : undefined}>
     <header className="topbar">
       <div className="brand">
-        <p className="eyebrow">{t("tagline", locale)}</p>
-        <h1>{t("title", locale)}</h1>
+        <p className="eyebrow">{PROFILE.tagline[locale === "zh-CN" ? 0 : 1]}</p>
+        <h1>{PROFILE.title[locale === "zh-CN" ? 0 : 1]}</h1>
       </div>
       <div className="controls">
         <GlobalSearch
@@ -193,7 +200,7 @@ export default function App() {
           onSelectEntity={(entity) => selectEntity(entity, "search")}
           onSelectWork={chooseWork}
         />
-        {!BIBLE_ONLY && <WorkControlCenter
+        {!WORK_LOCK && <WorkControlCenter
           works={works} selected={explore.works} active={explore.active} mode={explore.mode} locale={locale} error={selectionError}
           onMode={changeMode} onToggle={chooseWork}
           onActive={(active) => commit({ ...explore, active, selectedEntity: null, until: null, chapter: null }, true)}
@@ -208,7 +215,9 @@ export default function App() {
     {error ? <section className="error" role="alert"><strong>{t("error", locale)}</strong><p>{error}</p></section>
       : loading || !activeAtlas || !derived ? <Skeleton locale={locale} />
         : <>
-          {!BIBLE_ONLY && atlases.length > 1 && <section className="compare-bar">
+          {/* A locked work *pair* (history + romance) still wants the primary
+              switcher; only the free-form picker stays hidden under the lock. */}
+          {atlases.length > 1 && <section className="compare-bar">
             <span>{t("primary", locale)}:</span>
             {atlases.map((atlas) => <button
               key={atlas.work.slug}
@@ -363,7 +372,7 @@ export default function App() {
             <h2>{t("sources", locale)}</h2>
             <p>{t("dataNote", locale)}</p>
             <EpigraphBlock epigraph={FOOTER_EPIGRAPH} locale={locale} />
-            <p><small>{t("scriptureNote", locale)}</small></p>
+            <p><small>{SOURCE_NOTE ? SOURCE_NOTE[locale === "zh-CN" ? 0 : 1] : t("scriptureNote", locale)}</small></p>
             <div className="source-grid">
               {activeAtlas.sources.map((source) => <details key={source.id}>
                 <summary>{source.url ? <a href={source.url} target="_blank" rel="noreferrer">{source.title}</a> : source.title} · {label(source.sourceType, locale)} · {label(source.evidenceGrade, locale)}</summary>
