@@ -47,9 +47,9 @@ export const PROFILE_META: Record<string, ProfileMeta> = {
     lang: "en",
     title: "银河原力舆图 · The Galactic Force Atlas",
     description:
-      "银河原力舆图——天行者九部曲的非官方检索图集:十二个时代、三十余座星球与航线、锚点人物谱系,依银河纪年绘于一图,中英双语。The Galactic Force Atlas: an unofficial, non-commercial fan reference to the Skywalker saga. Not affiliated with, sponsored, or endorsed by Lucasfilm Ltd. or The Walt Disney Company; all names and marks belong to their respective owners.",
+      "银河原力舆图——向原著影片致敬而作的非官方检索图集,十二个时代、四十余座星球与航线、天行者家族谱系,依银河纪年绘于一图,中英双语。全站不作任何商业用途:无广告、不收费、不接受打赏,亦不能替代观影。与 Lucasfilm Ltd.、The Walt Disney Company 无隶属、授权或背书关系,相关名称与标志归各自权利人所有。A tribute-made, unofficial, strictly non-commercial reference atlas to the Skywalker saga — no advertising, no fees, no donations, and no substitute for watching the films. Not affiliated with, sponsored, or endorsed by Lucasfilm Ltd. or The Walt Disney Company; all names and marks belong to their respective owners.",
     ogDescription:
-      "天行者九部曲非官方检索图集。An unofficial reference to the Skywalker saga — not affiliated with or endorsed by Lucasfilm Ltd.",
+      "向原著致敬的非官方检索图集,不作任何商业用途。A tribute-made, unofficial and non-commercial reference to the Skywalker saga — not affiliated with or endorsed by Lucasfilm Ltd.",
     themeColor: "#05070F",
   },
 };
