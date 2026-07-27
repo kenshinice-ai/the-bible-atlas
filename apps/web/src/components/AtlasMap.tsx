@@ -391,12 +391,160 @@ function FitAllButton({ places, locale }: { places: Place[]; locale: Locale }) {
   }}>{t("fitAll", locale)}</button>;
 }
 
+/**
+ * Backdrops are per work: a canvas drawn for one imagined world says nothing
+ * true about another. Middle-earth gets its ridgeline; a galaxy gets the ring
+ * structure its coordinates are defined against. A work with no backdrop
+ * registered simply renders its places on empty ground.
+ */
+const BACKDROPS: Record<string, (locale: Locale) => React.ReactNode> = {
+  "the-hobbit": () => <path className="mountains" d="M2 55 L18 35 L29 56 L43 25 L57 56 L70 31 L98 60" />,
+  "skywalker-saga": (locale) => <GalaxyBackdrop locale={locale} />,
+};
+
+/** Galactic centre in canvas units, and the band radii measured from it. */
+const GALACTIC_CENTRE = { x: 50, y: 38 } as const;
+const GALACTIC_BANDS: readonly { radius: number; name: readonly [string, string] }[] = [
+  { radius: 10, name: ["核心世界", "Core Worlds"] },
+  { radius: 16, name: ["内环", "Inner Rim"] },
+  { radius: 34, name: ["中环", "Mid Rim"] },
+  { radius: 50, name: ["外环", "Outer Rim"] },
+];
+
+/**
+ * Sparse starfield. The offsets are generated from a fixed integer sequence
+ * rather than a random source so the same stars appear on every render and in
+ * every build — a backdrop that reshuffles itself reads as a rendering bug.
+ */
+const STARS = Array.from({ length: 90 }, (_, index) => {
+  const a = (index * 2654435761) % 4093;
+  const b = (index * 40503 + 977) % 4093;
+  return { x: (a / 4093) * 100, y: (b / 4093) * 100, r: index % 7 === 0 ? 0.28 : 0.16 };
+});
+
+function GalaxyBackdrop({ locale }: { locale: Locale }) {
+  const index = locale === "zh-CN" ? 0 : 1;
+  return <g aria-hidden="true">
+    {STARS.map((star, i) => <circle key={i} className="galaxy-star" cx={star.x} cy={star.y} r={star.r} opacity={i % 3 === 0 ? 0.5 : 0.28} />)}
+    <circle className="galaxy-core" cx={GALACTIC_CENTRE.x} cy={GALACTIC_CENTRE.y} r={6} />
+    {GALACTIC_BANDS.map((band) => <g key={band.radius}>
+      <circle className="galaxy-ring" cx={GALACTIC_CENTRE.x} cy={GALACTIC_CENTRE.y} r={band.radius} />
+      <text className="galaxy-ring-label" x={GALACTIC_CENTRE.x} y={GALACTIC_CENTRE.y - band.radius - 0.9} textAnchor="middle">{band.name[index]}</text>
+    </g>)}
+  </g>;
+}
+
+/** Where a place's label sits relative to its dot, in canvas units. */
+interface LabelSlot { dx: number; dy: number; anchor: "middle" | "start" | "end" }
+
+/**
+ * Candidate positions, tried in order: above and below first because they read
+ * as belonging to the dot, then the sides, then diagonals pushed further out
+ * for the places that are genuinely crowded.
+ */
+const LABEL_SLOTS: readonly LabelSlot[] = [
+  { dx: 0, dy: -2.9, anchor: "middle" },
+  { dx: 0, dy: 4.3, anchor: "middle" },
+  { dx: 3.2, dy: 0.8, anchor: "start" },
+  { dx: -3.2, dy: 0.8, anchor: "end" },
+  { dx: 3.0, dy: -2.4, anchor: "start" },
+  { dx: -3.0, dy: -2.4, anchor: "end" },
+  { dx: 3.0, dy: 3.8, anchor: "start" },
+  { dx: -3.0, dy: 3.8, anchor: "end" },
+  // A second ring, further out, for the tightest clusters — Kuat beside
+  // Corellia, Tatooine beside Kamino. A leader line would be the next step up
+  // if this is ever not enough.
+  { dx: 0, dy: -6.4, anchor: "middle" },
+  { dx: 0, dy: 7.8, anchor: "middle" },
+  { dx: 5.4, dy: -5.2, anchor: "start" },
+  { dx: -5.4, dy: -5.2, anchor: "end" },
+  { dx: 5.4, dy: 6.6, anchor: "start" },
+  { dx: -5.4, dy: 6.6, anchor: "end" },
+];
+
+/**
+ * Text extent in canvas units, without laying the text out.
+ *
+ * A CJK glyph is one em; the Latin factor was calibrated against
+ * getComputedTextLength on the rendered labels and rounded upward, because an
+ * estimate that runs narrow puts labels on top of each other while one that
+ * runs wide only spreads them out.
+ */
+function labelWidth(text: string, fontSize: number): number {
+  let width = 0;
+  for (const character of text) width += character.codePointAt(0)! > 0x2e7f ? fontSize : fontSize * 0.6;
+  return width;
+}
+
+/**
+ * Choose a label position per place so neighbours do not print over each other.
+ *
+ * A canvas carrying nearly forty bodies guarantees collisions — Tatooine sits
+ * beside Geonosis, Endor beside the station in its orbit — and every label
+ * used to be centred a fixed distance above its dot. Places are laid out
+ * most-prominent first so the ones a reader is looking for keep the preferred
+ * slot, and each then takes the first candidate whose box clears everything
+ * already placed. Ties break on slug so the layout is stable between renders.
+ */
+function placeLabels(
+  places: readonly { slug: string; name: string; x: number; y: number; importance: number }[],
+  fontSize: number,
+): Map<string, LabelSlot> {
+  const chosen = new Map<string, LabelSlot>();
+  const taken: { left: number; right: number; top: number; bottom: number }[] = [];
+  const boxFor = (place: { x: number; y: number }, slot: LabelSlot, width: number) => {
+    const centre = place.x + slot.dx + (slot.anchor === "start" ? width / 2 : slot.anchor === "end" ? -width / 2 : 0);
+    return { left: centre - width / 2, right: centre + width / 2, top: place.y + slot.dy - fontSize, bottom: place.y + slot.dy + fontSize * 0.25 };
+  };
+  // The dots are obstacles too: a label that clears every other label can
+  // still be printed straight through a neighbouring marker.
+  const dotRadius = fontSize * 0.85;
+  for (const place of places) taken.push({ left: place.x - dotRadius, right: place.x + dotRadius, top: place.y - dotRadius, bottom: place.y + dotRadius });
+  // Prominence first, then longest name: a long label has the fewest places it
+  // can go, so letting a short one take the open slot first strands it.
+  const ordered = [...places].sort((a, b) => b.importance - a.importance || b.name.length - a.name.length || a.slug.localeCompare(b.slug));
+  for (const place of ordered) {
+    const width = labelWidth(place.name, fontSize);
+    // Score every candidate by how much ink it would cover, so that when a
+    // place is boxed in on all sides — Sullust between Dagobah, Hoth and
+    // Mustafar — it still lands in the least bad spot rather than a fixed one.
+    let slot = LABEL_SLOTS[0]!;
+    let bestCost = Infinity;
+    for (const candidate of LABEL_SLOTS) {
+      const box = boxFor(place, candidate, width);
+      // Running off the canvas is not better than colliding: Dantooine sits
+      // four units from the top edge, so its label cannot go above it however
+      // empty that space looks.
+      const outside = Math.max(0, -box.top) + Math.max(0, box.bottom - 100) + Math.max(0, -box.left) + Math.max(0, box.right - 100);
+      const overlap = taken.reduce((sum, other) => sum
+        + Math.max(0, Math.min(box.right, other.right) - Math.max(box.left, other.left))
+        * Math.max(0, Math.min(box.bottom, other.bottom) - Math.max(box.top, other.top)), 0);
+      const cost = overlap + outside * 10;
+      if (cost < bestCost) { bestCost = cost; slot = candidate; }
+      if (cost === 0) break;
+    }
+    taken.push(boxFor(place, slot, width));
+    chosen.set(place.slug, slot);
+  }
+  return chosen;
+}
+
 function FictionalCanvas(props: Props) {
   const selected = props.selectedEntity?.type === "location" ? `${props.selectedEntity.workSlug}:${props.selectedEntity.id}` : null;
+  const primarySlug = props.atlases[0]?.work.slug ?? "";
+  const backdrop = BACKDROPS[primarySlug];
+  // Must match the font-size the stylesheet gives these labels, or the
+  // collision boxes describe text that is not the text being drawn.
+  const isGalaxy = primarySlug === "skywalker-saga";
+  const fontSize = isGalaxy ? 2.1 : 3;
+  const labelSlots = useMemo(() => placeLabels(props.atlases.flatMap((atlas) => atlas.locations.flatMap((location) =>
+    location.canvasX != null && location.canvasY != null
+      ? [{ slug: `${atlas.work.slug}:${location.slug}`, name: location.name, x: location.canvasX, y: location.canvasY, importance: location.eventSlugs.length }]
+      : [])), fontSize), [props.atlases, fontSize]);
   return <div className="map-stage">
     <div className="fictional">
-      <svg viewBox="0 0 100 100" role="img" aria-label="Fictional world map canvas">
-        <path className="mountains" d="M2 55 L18 35 L29 56 L43 25 L57 56 L70 31 L98 60" />
+      <svg viewBox="0 0 100 100" role="img" aria-label="Fictional world map canvas" className={isGalaxy ? "galaxy" : undefined}>
+        {backdrop?.(props.locale)}
         {props.atlases.flatMap((atlas) => {
           const bySlug = new Map(atlas.locations.map((location) => [location.slug, location]));
           return [
@@ -413,6 +561,7 @@ function FictionalCanvas(props: Props) {
             props.mapLayers.includes("places") && atlas.locations.map((location) => {
               const key = `${atlas.work.slug}:${location.slug}`;
               if (location.canvasX == null || location.canvasY == null) return null;
+              const slot = labelSlots.get(key) ?? LABEL_SLOTS[0]!;
               return <g
                 key={key}
                 transform={`translate(${location.canvasX} ${location.canvasY})`}
@@ -422,7 +571,7 @@ function FictionalCanvas(props: Props) {
                 tabIndex={0}
               >
                 <circle r="2.4" style={{ fill: atlas.work.themeColor }} />
-                <text y="-4" textAnchor="middle">{location.name}</text>
+                <text x={slot.dx} y={slot.dy} textAnchor={slot.anchor}>{location.name}</text>
               </g>;
             }),
           ];

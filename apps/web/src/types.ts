@@ -5,7 +5,10 @@ export type Locale = z.infer<typeof LocaleSchema>;
 export const MapLayerSchema = z.enum(["real", "fictional"]);
 export const WorkCategorySchema = z.enum(["historical_document", "historical_fiction", "realist_fiction", "fantasy", "mythic_epic"]);
 export const TimeTypeSchema = z.enum(["exact", "approximate", "range", "relative", "fictional_calendar", "unknown"]);
-export const LocationTypeSchema = z.enum(["country", "region", "city", "district", "street", "building", "landmark", "prison", "station", "port", "battlefield", "residence", "school", "religious_site", "fictional_place", "route_node"]);
+// Mirrors the location_type enum in the database. It is strict on purpose — an
+// unknown value fails the whole atlas parse rather than rendering a raw string
+// — so widening it in db/migrations means widening it here in the same change.
+export const LocationTypeSchema = z.enum(["country", "region", "city", "district", "street", "building", "landmark", "prison", "station", "port", "battlefield", "residence", "school", "religious_site", "fictional_place", "route_node", "planet", "moon", "space_station"]);
 export const EntityTypeSchema = z.enum(["work", "character", "event", "location", "route", "relationship"]);
 
 const TranslationMetaSchema = z.object({ resolvedLocale: LocaleSchema, fallbackUsed: z.boolean(), translationStatus: z.enum(["draft", "reviewed", "published"]) });

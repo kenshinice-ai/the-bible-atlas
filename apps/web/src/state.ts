@@ -41,18 +41,18 @@ export interface ExploreState {
 }
 
 /**
- * Bible-only front-end lock (sacred rebrand P0). Data and multi-work code
- * paths stay intact so the rollback cost is zero; the parser simply refuses
- * to leave the Bible.
- */
-/**
- * Work lock now comes from the deployment profile: a build serves exactly the
- * profile's works. BIBLE_ONLY survives as a derived flag for Bible-specific
- * UI branches; multi-work profiles (e.g. history + romance pairs) keep the
- * compare bar but never show the free work picker.
+ * Work lock: a build serves exactly its profile's works, and deep links to
+ * anything else are normalised rather than rejected. The multi-work code paths
+ * stay intact, so the rollback cost is zero.
  */
 export const WORK_LOCK = true;
-export const BIBLE_ONLY = PROFILE.id === "bible";
+/**
+ * A single-work build has nothing to switch to, so work-level hits in search
+ * are noise. Multi-work profiles keep them: that is how the compare bar is
+ * reached. (This was a Bible-specific flag until a second single-work atlas
+ * existed; keying it on the profile's mode is what makes it reusable.)
+ */
+export const SINGLE_WORK = PROFILE.mode === "single";
 
 export const MAX_SELECTED_WORKS = 5;
 export const FALLBACK_RANGE = { start: -3000, end: 2026 } as const;
@@ -146,7 +146,9 @@ export function validateWorkSelection(catalog: readonly { slug: string; mapLayer
 export function historicalSortValue(year: number | null): number { return year ?? Number.POSITIVE_INFINITY; }
 
 export function zoomForLocation(type: string, preferred: number): number {
-  const defaults: Record<string, number> = { country: 5, region: 7, city: 10, district: 13, street: 15, building: 15, landmark: 15, prison: 15, station: 15, port: 13, battlefield: 12, residence: 15, school: 15, religious_site: 15, fictional_place: 8, route_node: 12 };
+  // planet/moon/space_station only ever appear on the fictional canvas, which
+  // does not use Leaflet zoom; they are listed so the table stays exhaustive.
+  const defaults: Record<string, number> = { country: 5, region: 7, city: 10, district: 13, street: 15, building: 15, landmark: 15, prison: 15, station: 15, port: 13, battlefield: 12, residence: 15, school: 15, religious_site: 15, fictional_place: 8, route_node: 12, planet: 8, moon: 8, space_station: 8 };
   return Number.isFinite(preferred) && preferred >= 2 && preferred <= 18 ? preferred : (defaults[type] ?? 10);
 }
 

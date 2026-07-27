@@ -21,6 +21,12 @@ export interface WorkProfile {
   tagline: readonly [string, string];
   /** data-profile attribute value driving the CSS token theme. */
   theme: string;
+  /**
+   * Era naming for works that do not count years from the Common Era.
+   * `{n}` is replaced by the absolute year; negative/positive select the side
+   * of the epoch. Absent means the atlas is dated BCE/CE as before.
+   */
+  yearLabels?: { negative: readonly [string, string]; positive: readonly [string, string] };
 }
 
 export const PROFILES: Record<string, WorkProfile> = {
@@ -43,6 +49,26 @@ export const PROFILES: Record<string, WorkProfile> = {
     title: ["三国舆图", "The Three Kingdoms Atlas"],
     tagline: ["是非成败,俱付笑谈", "History and Romance, Mapped Side by Side"],
     theme: "three-kingdoms",
+  },
+  // Unofficial fan reference. The product name carries no trademark, and the
+  // tagline states the unofficial relationship in the nominative-use form
+  // required by blueprint/star-wars/IP_AND_NAMING.md §1.
+  galaxy: {
+    id: "galaxy",
+    works: ["skywalker-saga"],
+    active: "skywalker-saga",
+    mode: "single",
+    defaultLocale: "en",
+    title: ["银河原力舆图", "The Galactic Force Atlas"],
+    tagline: ["天行者九部曲非官方检索图集", "An unofficial reference to the Skywalker saga"],
+    theme: "galaxy",
+    // Years are counted from the battle of Yavin: BBY before, ABY after. There
+    // is no year zero, matching the BCE/CE convention the database already
+    // enforces, so 0 BBY maps to -1 and 0 ABY to +1.
+    yearLabels: {
+      negative: ["雅汶战役前 {n} 年", "{n} BBY"],
+      positive: ["雅汶战役后 {n} 年", "{n} ABY"],
+    },
   },
 };
 

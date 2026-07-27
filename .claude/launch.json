@@ -12,6 +12,18 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "-w", "@literary-atlas/web"],
       "port": 5173
+    },
+    {
+      "name": "web-three-kingdoms",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd apps/web && VITE_WORK_PROFILE=three-kingdoms npx vite --port 5174 --strictPort"],
+      "port": 5174
+    },
+    {
+      "name": "web-galaxy",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd apps/web && VITE_WORK_PROFILE=galaxy npx vite --port 5175 --strictPort"],
+      "port": 5175
     }
   ]
 }

@@ -33,7 +33,9 @@ done
 case "$PROFILE" in
   bible)          WORKS="the-bible"; CF_PROJECT="bible-atlas"; PROBE="atlas.the-bible.en.json" ;;
   three-kingdoms) WORKS="records-of-the-three-kingdoms,romance-of-the-three-kingdoms"; CF_PROJECT="three-kingdoms-atlas"; PROBE="atlas.romance-of-the-three-kingdoms.zh-CN.json" ;;
-  *) echo "未知 profile:$PROFILE(支持 bible / three-kingdoms)" >&2; exit 1 ;;
+  # 托管项目名不含商标词(blueprint/star-wars/IP_AND_NAMING.md §1.2)
+  galaxy)         WORKS="skywalker-saga"; CF_PROJECT="galactic-force-atlas"; PROBE="atlas.skywalker-saga.en.json" ;;
+  *) echo "未知 profile:$PROFILE(支持 bible / three-kingdoms / galaxy)" >&2; exit 1 ;;
 esac
 
 echo "[1/4] 检查本地 API(烘焙数据源):$API_URL"

@@ -7,7 +7,7 @@ import { GlobalSearch } from "./components/GlobalSearch";
 import { RelationGraph } from "./components/RelationGraph";
 import { TimelineRibbon } from "./components/TimelineRibbon";
 import { WorkControlCenter } from "./components/WorkControlCenter";
-import { ERA_EPIGRAPHS, FOOTER_EPIGRAPH, LOADING_EPIGRAPHS, SOURCE_NOTE, WELCOME_EPIGRAPH, type Epigraph } from "./epigraphs";
+import { DATA_NOTE, ERA_EPIGRAPHS, FOOTER_EPIGRAPH, LOADING_EPIGRAPHS, SOURCE_NOTE, WELCOME_EPIGRAPH, type Epigraph } from "./epigraphs";
 import { filtersFrom, isFiltered, visibleCharacters, visibleEvents, visibleLocations, visibleRelations } from "./hierarchy";
 import { PROFILE } from "./profile";
 import { formatYear, label, t } from "./i18n";
@@ -371,7 +371,7 @@ export default function App() {
 
           {activeAtlas.sources.length > 0 && <footer>
             <h2>{t("sources", locale)}</h2>
-            <p>{t("dataNote", locale)}</p>
+            <p>{DATA_NOTE ? DATA_NOTE[locale === "zh-CN" ? 0 : 1] : t("dataNote", locale)}</p>
             <EpigraphBlock epigraph={FOOTER_EPIGRAPH} locale={locale} />
             <p><small>{SOURCE_NOTE ? SOURCE_NOTE[locale === "zh-CN" ? 0 : 1] : t("scriptureNote", locale)}</small></p>
             <div className="source-grid">

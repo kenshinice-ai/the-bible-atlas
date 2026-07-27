@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { STATIC_DATA, search } from "../api";
 import { t, type UIKey } from "../i18n";
-import { BIBLE_ONLY, type SelectedEntity } from "../state";
+import { SINGLE_WORK, type SelectedEntity } from "../state";
 import type { Atlas, Locale, SearchResponse } from "../types";
 
 const KIND_KEY: Record<SearchResponse["items"][number]["kind"], UIKey> = {
@@ -60,8 +60,8 @@ export function GlobalSearch({ locale, activeWork, atlases, onSelectEntity, onSe
     setPending(true);
     const timer = window.setTimeout(() => {
       search(trimmed, locale, controller.signal)
-        // Bible-only: whole-work results have nothing to switch to, so hide them.
-        .then((response) => { setResults(BIBLE_ONLY ? response.items.filter((item) => item.kind !== "work") : response.items); setOpen(true); })
+        // Single-work build: whole-work results have nothing to switch to.
+        .then((response) => { setResults(SINGLE_WORK ? response.items.filter((item) => item.kind !== "work") : response.items); setOpen(true); })
         .catch(() => setResults([]))
         .finally(() => setPending(false));
     }, 220);

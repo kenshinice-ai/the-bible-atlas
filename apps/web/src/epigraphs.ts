@@ -207,6 +207,140 @@ const THREE_KINGDOMS_FOOTER: Epigraph = {
   enRef: "Romance of the Three Kingdoms, Ch. 1",
 };
 
+// ---------------------------------------------------------------------------
+// Galaxy profile (银河原力舆图 · The Galactic Force Atlas).
+//
+// Unlike the Bible and Three Kingdoms sets, the source films are in copyright,
+// so the rule (blueprint/star-wars/IP_AND_NAMING.md §3) is: epigraphs are our
+// own writing, with a strict allowance for short quotation.
+//
+// QUOTATION REGISTER — audit this list against the entries below:
+//   1. GALAXY_FOOTER            6 words   Episode IV (1977)
+//   2. era "hoth-and-exile"     5 words   Episode V (1980)
+//   Total 2 of the permitted 3; longest 6 of the permitted 15 words.
+// Everything else on this page is original, marked `本站题记 / house epigraph`.
+// Adding a third quotation, or lengthening either of these, requires going
+// back to that file rather than editing here.
+// ---------------------------------------------------------------------------
+
+const HOUSE_REF: readonly [string, string] = ["本站题记", "house epigraph"];
+
+const GALAXY_ERA_EPIGRAPHS: Record<string, Epigraph> = {
+  "naboo-crisis": {
+    zh: "和平的表面之下,阴影已开始移动。",
+    zhRef: HOUSE_REF[0],
+    en: "Beneath the surface of peace, a shadow begins to move.",
+    enRef: HOUSE_REF[1],
+  },
+  "clone-wars": {
+    zh: "以保卫共和国之名开始的战争,耗尽了共和国。",
+    zhRef: HOUSE_REF[0],
+    en: "A war fought to save the Republic slowly spent it.",
+    enRef: HOUSE_REF[1],
+  },
+  "order-66-and-imperial-rise": {
+    zh: "一道命令传遍银河,万千灯火在同一夜熄灭。",
+    zhRef: HOUSE_REF[0],
+    en: "One order crossed the galaxy, and a thousand lights went out in a single night.",
+    enRef: HOUSE_REF[1],
+  },
+  "dark-times": {
+    zh: "火种散落荒野,等待有人俯身拾起。",
+    zhRef: HOUSE_REF[0],
+    en: "Embers scattered in the wilderness, waiting to be gathered.",
+    enRef: HOUSE_REF[1],
+  },
+  "rebel-alliance-rising": {
+    zh: "反抗,始于一次不肯低头。",
+    zhRef: HOUSE_REF[0],
+    en: "Rebellion begins with a single refusal to kneel.",
+    enRef: HOUSE_REF[1],
+  },
+  "yavin-campaign": {
+    zh: "一艘小船,载着半个银河的希望。",
+    zhRef: HOUSE_REF[0],
+    en: "A small ship carried half the galaxy’s hope.",
+    enRef: HOUSE_REF[1],
+  },
+  // Quotation 2 of 2 — 5 words. Quotation marks are added by the renderer, so
+  // the text is stored unquoted like every other epigraph.
+  "hoth-and-exile": {
+    zh: "不。我是你父亲。",
+    zhRef: "第五部(1980)",
+    en: "No. I am your father.",
+    enRef: "Episode V (1980)",
+  },
+  "endor-and-the-fall": {
+    zh: "森林的月亮,见证一个帝国的黄昏。",
+    zhRef: HOUSE_REF[0],
+    en: "A forest moon watched an empire’s dusk.",
+    enRef: HOUSE_REF[1],
+  },
+  "new-republic": {
+    zh: "战争结束了;银河开始学习和平。",
+    zhRef: HOUSE_REF[0],
+    en: "The war ended; the galaxy began to learn peace.",
+    enRef: HOUSE_REF[1],
+  },
+  "first-order-rising": {
+    zh: "灰烬未冷,旧的秩序换上了新的面孔。",
+    zhRef: HOUSE_REF[0],
+    en: "From ashes not yet cold, the old order returned with a new face.",
+    enRef: HOUSE_REF[1],
+  },
+  "last-jedi": {
+    zh: "传奇隐居海岛,火种却不肯熄灭。",
+    zhRef: HOUSE_REF[0],
+    en: "The legend hid on an island, but the spark refused to die.",
+    enRef: HOUSE_REF[1],
+  },
+  "skywalker-reborn": {
+    zh: "名字可以继承,选择必须自己作出。",
+    zhRef: HOUSE_REF[0],
+    en: "A name can be inherited; the choice must be one’s own.",
+    enRef: HOUSE_REF[1],
+  },
+};
+
+const GALAXY_WELCOME: Epigraph = {
+  zh: "群星之间,原力长存。",
+  zhRef: HOUSE_REF[0],
+  en: "Among the stars, the Force endures.",
+  enRef: HOUSE_REF[1],
+};
+
+const GALAXY_LOADING: readonly Epigraph[] = [
+  { zh: "正在穿越超空间……", zhRef: HOUSE_REF[0], en: "Crossing hyperspace…", enRef: HOUSE_REF[1] },
+  { zh: "航线计算中……", zhRef: HOUSE_REF[0], en: "Plotting the route…", enRef: HOUSE_REF[1] },
+  { zh: "远方的星群正在亮起……", zhRef: HOUSE_REF[0], en: "Distant stars are waking…", enRef: HOUSE_REF[1] },
+];
+
+/** Quotation 1 of 2 — 6 words. Renderer supplies the quotation marks. */
+const GALAXY_FOOTER: Epigraph = {
+  zh: "愿原力与你同在。",
+  zhRef: "第四部(1977)",
+  en: "May the Force be with you.",
+  enRef: "Episode IV (1977)",
+};
+
+/**
+ * How this atlas's own entries were written, per profile; null falls back to
+ * the i18n `dataNote`, which is phrased for scripture. Without this the galaxy
+ * and Three Kingdoms builds both told readers their summaries followed "the
+ * scriptural record".
+ */
+const DATA_NOTES: Record<string, readonly [string, string] | null> = {
+  bible: null,
+  "three-kingdoms": [
+    "凡近似年代与推定地点均已明确标注;摘要为原创结构化描述,正史条目本于《三国志》,演义条目本于小说文本,两者分级标注。",
+    "Uncertain dates and inferred places are explicitly marked; summaries are original structured descriptions, drawn from the Records for history entries and from the novel for Romance entries, and graded accordingly.",
+  ],
+  galaxy: [
+    "凡推定年代与示意坐标均已明确标注;全部条目文字为本站原创转述,以银河纪年(BBY/ABY)编排,不复制影片台词或官方文案。",
+    "Inferred dates and illustrative coordinates are explicitly marked. All entry text is original writing by this project, ordered by galactic dating (BBY/ABY); no film dialogue or official copy is reproduced.",
+  ],
+};
+
 /** Footer source note per profile; null falls back to i18n scriptureNote. */
 const SOURCE_NOTES: Record<string, readonly [string, string] | null> = {
   bible: null,
@@ -214,21 +348,32 @@ const SOURCE_NOTES: Record<string, readonly [string, string] | null> = {
     "引文出自陈寿《三国志》、罗贯中《三国演义》(毛评本)及相关公有领域诗文;英文为本站译文。",
     "Quotations are from Chen Shou\u2019s Records and Luo Guanzhong\u2019s Romance of the Three Kingdoms (public domain); English renderings are our own.",
   ],
+  // Landing point 2 of 2 for the trademark disclaimer required by
+  // blueprint/star-wars/IP_AND_NAMING.md \u00a71.3. Landing point 1 is the page
+  // description stamped into index.html by vite.config.ts. Both must stay in
+  // place; the IP audit checks for them by name.
+  galaxy: [
+    "\u672c\u7ad9\u4e3a\u975e\u5b98\u65b9\u3001\u975e\u5546\u4e1a\u7684\u7c89\u4e1d\u53c2\u8003\u9879\u76ee,\u4e0e Lucasfilm Ltd.\u3001The Walt Disney Company \u53ca\u5176\u5173\u8054\u65b9\u5747\u65e0\u96b6\u5c5e\u3001\u6388\u6743\u6216\u80cc\u4e66\u5173\u7cfb\u3002Star Wars \u53ca\u76f8\u5173\u540d\u79f0\u3001\u6807\u5fd7\u4e3a\u5176\u5404\u81ea\u6743\u5229\u4eba\u7684\u5546\u6807;\u672c\u7ad9\u4ec5\u4ee5\u4e8b\u5b9e\u6027\u65b9\u5f0f\u6307\u79f0\u539f\u4f5c\u5185\u5bb9,\u5168\u90e8\u6761\u76ee\u6587\u5b57\u4e3a\u672c\u7ad9\u539f\u521b\u8f6c\u8ff0\u3002",
+    "This is an unofficial, non-commercial fan reference project. It is not affiliated with, sponsored, or endorsed by Lucasfilm Ltd., The Walt Disney Company, or their affiliates. Star Wars and all related names and marks are trademarks of their respective owners; they appear here only as factual references, and all entry text is original writing by this project.",
+  ],
 };
 
 // ---------------------------------------------------------------------------
 // Profile resolution: the rest of the app imports these four names unchanged.
 // ---------------------------------------------------------------------------
 
-const SETS = {
+/** Exported so tests can assert every profile has a set of its own. */
+export const SETS_BY_PROFILE = {
   bible: { era: BIBLE_ERA_EPIGRAPHS, welcome: BIBLE_WELCOME, loading: BIBLE_LOADING, footer: BIBLE_FOOTER },
   "three-kingdoms": { era: THREE_KINGDOMS_ERA_EPIGRAPHS, welcome: THREE_KINGDOMS_WELCOME, loading: THREE_KINGDOMS_LOADING, footer: THREE_KINGDOMS_FOOTER },
+  galaxy: { era: GALAXY_ERA_EPIGRAPHS, welcome: GALAXY_WELCOME, loading: GALAXY_LOADING, footer: GALAXY_FOOTER },
 } as const;
 
-const ACTIVE = SETS[PROFILE.id as keyof typeof SETS] ?? SETS.bible;
+const ACTIVE = SETS_BY_PROFILE[PROFILE.id as keyof typeof SETS_BY_PROFILE] ?? SETS_BY_PROFILE.bible;
 
 export const ERA_EPIGRAPHS: Record<string, Epigraph> = ACTIVE.era;
 export const WELCOME_EPIGRAPH: Epigraph = ACTIVE.welcome;
 export const LOADING_EPIGRAPHS: readonly Epigraph[] = ACTIVE.loading;
 export const FOOTER_EPIGRAPH: Epigraph = ACTIVE.footer;
 export const SOURCE_NOTE: readonly [string, string] | null = SOURCE_NOTES[PROFILE.id] ?? null;
+export const DATA_NOTE: readonly [string, string] | null = DATA_NOTES[PROFILE.id] ?? null;

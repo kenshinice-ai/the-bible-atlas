@@ -36,6 +36,17 @@ v4 Bible-first 架构已落地并提交(commit `9b47ea0`):以「时代 → 人�
 
 ## 正在进行
 
+-11. **银河原力舆图 The Galactic Force Atlas · M1 骨架上屏完成(2026-07-27)**:第三个图集,单 work `skywalker-saga`,profile id `galaxy`。**未部署**(等 M2 内容 + IP 审读)。
+   - **实现清单**:`blueprint/star-wars/IMPLEMENTATION_CHECKLIST.md`——逐条核对代码库后写成,记录了蓝图的 8 处过时前提。其中两处最贵:①蓝图要求新建迁移删掉 `works` 的 hobbit CHECK,而 `002` 早就删了(工作不存在);②蓝图把新增 `location_type` 当成 i18n 小事,实际 `location_type` 是 **PG 枚举 + `types.ts` 严格 zod 枚举**,漏改 zod 会让整个 atlas 响应解析失败(白屏而非降级)
+   - **用户拍板**:名称「银河原力舆图 / The Galactic Force Atlas」(不含商标词;CF 项目名 `galactic-force-atlas`);location_type 走新增枚举值方案(取通用词 planet/moon/space_station 以便后续更多虚构作品复用);两条 ≤15 词台词短引用保留;默认英文;顺带修三国的数据隔离缺陷
+   - **代码**(12 项,全部完成):迁移 `004`(ALTER TYPE,**必须与用它的种子分文件**,同事务内新枚举值不可用)+ zod/ENUMS/zoomForLocation 同步;`profile.ts` 加 galaxy 档与 `yearLabels`;**`formatYear` 第三参默认取 `PROFILE.yearLabels`**——比清单原案(6 个调用点各自传值)更稳,漏传这个失败模式在结构上消失;`epigraphs.ts` 加 GALAXY 一组(题词配额登记在文件头供 IP 审读核对);`styles.css` 加 `[data-profile="galaxy"]` 令牌(全部对比度实测,最差 4.54:1);FictionalCanvas 重做(背景按 work 参数化、同心环带 + 确定性星场、14 候选位标签防碰撞);`deploy-static.sh` 加 galaxy 分支
+   - **数据隔离(用户要求,顺带修了三国的历史缺陷)**:新增 `profile-meta.ts` + `vite.config.ts` 的 `transformIndexHtml`——此前 `index.html` 是硬编码圣经 meta,**三国线上站至今带着圣经的 description 与 og**;同类泄漏还有两处已修:`dataNote`(圣经措辞「悉以经文记载为本」在三档页脚全显示)、`BIBLE_ONLY`(泛化为 `SINGLE_WORK = mode === "single"`)。隔离由 `profile.test.ts` 守住(PROFILE_META / SETS_BY_PROFILE 的 key 集合必须与 PROFILES 一致)
+   - **补上一个历史测试缺口**:`missingLabels()` 的注释声称「测试断言为空」,实际**没有任何测试引用它**。补测试后立刻抓到 4 个既有缺口——`documented`/`text_explicit`/`liege`/`double` 从无中文标签,zh-CN 界面一直显示生英文;已补齐
+   - **数据**:规范 `db/seeds/galaxy-seed-spec.md`(时代代理的唯一依据);骨架种子 `040_galaxy_structure.sql` 已装载并登记——12 时代 / 13 群体 / 11 sources / **39 天体画布坐标** / 24 锚点人物 / 3 条航线,事件为 0(留给时代种子)
+   - **门禁**:画布环带 SQL 门 0 行矛盾;结构与孤儿检查全绿;浏览器实测三档(bible / three-kingdoms / galaxy)中英双语,galaxy 39 个标签 0 处互压 0 处越界;typecheck 干净、36 测试通过、三档构建均成功
+   - **下一步**:种子 `041`–`052`(12 时代,3 批并行)→ `053` 重排 → `054` 关系精修 → IP 审读(`docs/IP_AUDIT.md`)→ 重烘焙 → `--publish cf`
+   - **风险**:IP 合规是本实例唯一的结构性风险,M0 出口要求的**真人法律审阅尚未安排**,工程侧无法替代
+
 -10. **三国舆图完整项目上线(2026-07-27)**:生产地址 **https://three-kingdoms-atlas.pages.dev**(CF 项目 three-kingdoms-atlas)。
    - 数据(seeds 031–039,全部装载):志 75 人物/92 事件/54 地点/93 关系 + 演义 78/127/55/96;13 时代双 work 同 slug 对照(赤壁志行瘟疫退军简记 vs 演义借东风铺陈);桃园结义/空城计/玉泉显圣等演义独有事件按 reality 分级;五项孤儿检查零行
    - 装载踩坑记录:037 与 038 都建了司马师,038 靠人物 ON CONFLICT 跳过但翻译撞主键——修复=038 全部翻译/成员表补 ON CONFLICT DO NOTHING(七处);**后续种子规范应把「二次插入防护」列为强制**

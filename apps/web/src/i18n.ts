@@ -1,3 +1,4 @@
+import { PROFILE } from "./profile";
 import type { Locale } from "./types";
 
 /**
@@ -22,6 +23,8 @@ const ENUMS: Record<string, Pair> = {
   prophet: ["先知", "Prophet"], priest: ["祭司", "Priest"], judge: ["士师", "Judge"], disciple: ["门徒", "Disciple"],
   missionary: ["宣教士", "Missionary"], ruler: ["统治者", "Ruler"], soldier: ["勇士", "Warrior"],
   teacher: ["教师", "Teacher"], lawgiver: ["颁律法者", "Lawgiver"], person: ["人物", "Person"],
+  jedi: ["绝地", "Jedi"], sith: ["西斯", "Sith"], droid: ["机器人", "Droid"], pilot: ["飞行员", "Pilot"],
+  senator: ["议员", "Senator"], smuggler: ["走私者", "Smuggler"], bounty_hunter: ["赏金猎人", "Bounty hunter"],
   // event type
   birth: ["出生", "Birth"], death: ["死亡", "Death"], meeting: ["会面", "Meeting"], journey: ["行程", "Journey"],
   battle: ["战事", "Battle"], trial: ["审判", "Trial"], imprisonment: ["囚禁", "Imprisonment"], escape: ["逃离", "Escape"],
@@ -41,6 +44,7 @@ const ENUMS: Record<string, Pair> = {
   street: ["街道", "Street"], building: ["建筑", "Building"], landmark: ["地标", "Landmark"], prison: ["监狱", "Prison"],
   station: ["车站", "Station"], port: ["港口", "Port"], battlefield: ["战场", "Battlefield"], residence: ["住所", "Residence"],
   school: ["学校", "School"], religious_site: ["圣所", "Sanctuary"], fictional_place: ["虚构地点", "Fictional place"], route_node: ["路线节点", "Route node"],
+  planet: ["行星", "Planet"], moon: ["卫星", "Moon"], space_station: ["空间站", "Space station"],
   city_centroid: ["城市中心点", "City centroid"], inferred: ["推定", "Inferred"],
   // relations
   bidirectional: ["双向", "Mutual"], source_to_target: ["单向（前者→后者）", "One-way (first → second)"], target_to_source: ["单向（后者→前者）", "One-way (second → first)"],
@@ -48,6 +52,9 @@ const ENUMS: Record<string, Pair> = {
   active: ["持续", "Active"], ended: ["已结束", "Ended"], changed: ["已改变", "Changed"],
   family: ["亲属", "Family"], spouse: ["配偶", "Spouse"], sibling: ["兄弟姐妹", "Siblings"], ally: ["同盟", "Ally"],
   adversary: ["对立", "Adversary"], mentor: ["师承", "Mentorship"], romantic: ["情感", "Romantic"],
+  liege: ["君臣", "Liege and retainer"], double: ["对照人物", "Narrative double"],
+  // routes
+  documented: ["有据可考", "Documented"], text_explicit: ["文本明示", "Stated in the text"],
   // sources
   primary_text: ["原始文本", "Primary text"], scholarly: ["学术研究", "Scholarly"], reference: ["参考资料", "Reference"],
   map: ["地图", "Map"], image: ["图像", "Image"], primary: ["一手", "Primary"],
@@ -72,7 +79,28 @@ export function missingLabels(values: readonly string[]): string[] {
   return values.filter((value) => !(value in ENUMS));
 }
 
-export function formatYear(year: number, locale: Locale): string {
+/** Era naming for atlases that do not count years from the Common Era. */
+export type YearLabels = { negative: readonly [string, string]; positive: readonly [string, string] };
+
+/**
+ * A signed year as readers of this atlas name it.
+ *
+ * Signed integers are the only chronology the engine understands, so a work
+ * with its own epoch (a fictional calendar, say) supplies `labels` and the
+ * sign is rendered in that work's terms instead of BCE/CE.
+ *
+ * The active profile's labels are the default rather than something each call
+ * site passes in: six call sites reach this function without a curated
+ * `time_label` to prefer, and one of them forgetting would have a galaxy-scale
+ * atlas quietly announcing that its events happened BCE.
+ */
+export function formatYear(year: number, locale: Locale, labels: YearLabels | undefined = PROFILE.yearLabels): string {
+  const index = locale === "zh-CN" ? 0 : 1;
+  if (labels) {
+    if (year === 0) return labels.positive[index].replace("{n}", "0");
+    const template = year < 0 ? labels.negative[index] : labels.positive[index];
+    return template.replace("{n}", String(Math.abs(year)));
+  }
   if (year === 0) return locale === "zh-CN" ? "公元纪元分界" : "BCE/CE boundary";
   const absolute = Math.abs(year);
   if (year < 0) return locale === "zh-CN" ? `公元前 ${absolute} 年` : `${absolute} BCE`;
