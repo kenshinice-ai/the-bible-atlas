@@ -566,7 +566,24 @@ function centreOn(cx: number, cy: number, k: number): CanvasView {
 }
 
 function FictionalCanvas(props: Props) {
-  const selected = props.selectedEntity?.type === "location" ? `${props.selectedEntity.workSlug}:${props.selectedEntity.id}` : null;
+  // Any selection resolves to a place on the canvas, not only a selection that
+  // *is* a place: pick an event in the timeline, a person in the list or a
+  // route in the drawer, and the star it happens at lights up. The real map has
+  // always done this through locationForEntity; the fictional canvas only ever
+  // matched type === "location", which is why the star chart sat there
+  // unconnected to the events and people beside it.
+  const selectedRoute = props.selectedEntity?.type === "route"
+    ? `${props.selectedEntity.workSlug}:${props.selectedEntity.id}` : null;
+  const selected = useMemo(() => {
+    const entity = props.selectedEntity;
+    if (!entity) return null;
+    for (const atlas of props.atlases) {
+      if (atlas.work.slug !== entity.workSlug) continue;
+      const place = locationForEntity(atlas, entity);
+      if (place) return `${atlas.work.slug}:${place.slug}`;
+    }
+    return null;
+  }, [props.selectedEntity, props.atlases]);
   const primarySlug = props.atlases[0]?.work.slug ?? "";
   const backdrop = BACKDROPS[primarySlug];
   // Must match the font-size the stylesheet gives these labels, or the
@@ -594,8 +611,11 @@ function FictionalCanvas(props: Props) {
     () => placeLabels(points, fontSize / layoutScale, LABEL_SLOTS.map((slot) => ({ ...slot, dx: slot.dx / layoutScale, dy: slot.dy / layoutScale }))),
     [points, fontSize, layoutScale],
   );
-  const drag = useRef<{ pointerId: number; startX: number; startY: number; origin: CanvasView } | null>(null);
+  const drag = useRef<{ pointerId: number; startX: number; startY: number; origin: CanvasView; moved: boolean } | null>(null);
   const pinch = useRef<Map<number, { x: number; y: number }>>(new Map());
+  // Set while a pan actually moved, so the click that follows it does not also
+  // select whatever happened to be under the finger when it stopped.
+  const suppressClick = useRef(false);
 
   /** Client coordinates to canvas units (the 0-100 viewBox, before transform). */
   const toCanvas = (clientX: number, clientY: number) => {
@@ -637,11 +657,18 @@ function FictionalCanvas(props: Props) {
   }, [selected, selectionSource, props.atlases]);
 
   const onPointerDown = (event: React.PointerEvent<SVGSVGElement>) => {
+    suppressClick.current = false;
     pinch.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
     if (pinch.current.size > 1) { drag.current = null; return; }
-    event.currentTarget.setPointerCapture(event.pointerId);
-    drag.current = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, origin: view };
+    // Deliberately NOT capturing the pointer here. Capture retargets the click
+    // that follows to this element, and every place on the canvas would stop
+    // being clickable. Capture is taken in onPointerMove, once the pointer has
+    // travelled far enough that this is a pan rather than a tap.
+    drag.current = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, origin: view, moved: false };
   };
+
+  /** Past this many pixels a press is a pan, not a tap with a shaky hand. */
+  const DRAG_THRESHOLD = 4;
 
   const onPointerMove = (event: React.PointerEvent<SVGSVGElement>) => {
     if (!pinch.current.has(event.pointerId)) return;
@@ -662,6 +689,15 @@ function FictionalCanvas(props: Props) {
     }
     const active = drag.current;
     if (!active || active.pointerId !== event.pointerId) return;
+    const travelled = Math.hypot(event.clientX - active.startX, event.clientY - active.startY);
+    if (!active.moved) {
+      if (travelled < DRAG_THRESHOLD) return;
+      active.moved = true;
+      suppressClick.current = true;
+      // Now that this is a pan, take the pointer so it keeps tracking outside
+      // the element — and only now, so taps stay clicks.
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
     const rect = svgRef.current?.getBoundingClientRect();
     if (!rect) return;
     const dx = ((event.clientX - active.startX) / rect.width) * 100;
@@ -671,7 +707,18 @@ function FictionalCanvas(props: Props) {
 
   const endPointer = (event: React.PointerEvent<SVGSVGElement>) => {
     pinch.current.delete(event.pointerId);
-    if (drag.current?.pointerId === event.pointerId) drag.current = null;
+    if (drag.current?.pointerId === event.pointerId) {
+      if (drag.current.moved && event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+      drag.current = null;
+    }
+  };
+
+  /** Selection from the canvas, refused when the press was a pan. */
+  const selectFromCanvas = (entity: SelectedEntity) => {
+    if (suppressClick.current) { suppressClick.current = false; return; }
+    onSelect(entity, "map");
   };
 
   const onKeyDown = (event: React.KeyboardEvent<SVGSVGElement>) => {
@@ -718,13 +765,13 @@ function FictionalCanvas(props: Props) {
             return [
               props.mapLayers.includes("routes") && atlas.routes.map((route) => <polyline
                 key={`${atlas.work.slug}:${route.slug}`}
-                onClick={() => onSelect({ type: "route", workSlug: atlas.work.slug, id: route.slug }, "map")}
+                onClick={() => selectFromCanvas({ type: "route", workSlug: atlas.work.slug, id: route.slug })}
                 points={route.waypoints.flatMap((waypoint) => {
                   const location = bySlug.get(waypoint.locationSlug);
                   return location?.canvasX != null && location.canvasY != null ? [`${location.canvasX},${location.canvasY}`] : [];
                 }).join(" ")}
-                className="quest"
-                style={{ stroke: atlas.work.themeColor, strokeWidth: 0.8 * inverse, strokeDasharray: `${2 * inverse} ${inverse}` }}
+                className={selectedRoute === `${atlas.work.slug}:${route.slug}` ? "quest selected" : "quest"}
+                style={{ stroke: atlas.work.themeColor, strokeWidth: (selectedRoute === `${atlas.work.slug}:${route.slug}` ? 1.6 : 0.8) * inverse, strokeDasharray: `${2 * inverse} ${inverse}` }}
               />),
               props.mapLayers.includes("places") && atlas.locations.map((location) => {
                 const key = `${atlas.work.slug}:${location.slug}`;
@@ -734,7 +781,7 @@ function FictionalCanvas(props: Props) {
                 return <g
                   key={key}
                   transform={`translate(${location.canvasX} ${location.canvasY})`}
-                  onClick={() => onSelect({ type: "location", workSlug: atlas.work.slug, id: location.slug }, "map")}
+                  onClick={() => selectFromCanvas({ type: "location", workSlug: atlas.work.slug, id: location.slug })}
                   className={selected === key ? "place selected" : "place"}
                   role="button"
                   aria-label={location.name}
