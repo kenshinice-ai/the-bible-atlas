@@ -41,8 +41,13 @@ SQL
 psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d atlas_upgrade -f "$ATLAS_ROOT/db/migrations/002_v3_1_complex_atlas.sql" >/dev/null
 test "$(psql -At -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d atlas_upgrade -c "SELECT coordinate_accuracy FROM locations WHERE slug='bag-end'")" = "fictional"
 
-psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres -f "$ATLAS_ROOT/db/migrations/001_initial.sql" >/dev/null
-psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres -f "$ATLAS_ROOT/db/migrations/002_v3_1_complex_atlas.sql" >/dev/null
+# The current API reads the complete v3.1/v4 schema, including the dedicated
+# art-history tables. Keep the upgrade fixture above intentionally limited to
+# 001→002, but make the fresh verification database follow the ordered
+# migration set used by db:bootstrap.
+for migration in "$ATLAS_ROOT"/db/migrations/*.sql; do
+  psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres -f "$migration" >/dev/null
+done
 psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres -f "$ATLAS_ROOT/db/seeds/001_four_works.sql" >/dev/null
 psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres -f "$ATLAS_ROOT/db/seeds/002_bible_v3_1.sql" >/dev/null
 
@@ -105,7 +110,7 @@ const locales=read('locales');
 const works=read('works');
 const atlas=read('atlas');
 const bible=read('bible');
-assert(health.status==='ok'&&health.version==='3.1.0','health contract failed');
+assert(health.status==='ok'&&health.version==='4.0.0','health contract failed');
 assert(JSON.stringify(locales.locales)===JSON.stringify(['zh-CN','en']),'locale contract failed');
 assert(works.items.length===5&&works.items.every((item)=>item.translationStatus==='published'&&item.resolvedLocale==='zh-CN'&&item.fallbackUsed===false),'work locale metadata failed');
 assert(atlas.characters.length===8&&atlas.events.length===6&&atlas.locations.length===6&&atlas.routes.length===1,'Tale atlas counts failed');
