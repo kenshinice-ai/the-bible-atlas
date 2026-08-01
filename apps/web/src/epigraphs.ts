@@ -339,6 +339,10 @@ const DATA_NOTES: Record<string, readonly [string, string] | null> = {
     "凡推定年代与示意坐标均已明确标注;全部条目文字为本站原创转述,以银河纪年(BBY/ABY)编排,不复制影片台词或官方文案。",
     "Inferred dates and illustrative coordinates are explicitly marked. All entry text is original writing by this project, ordered by galactic dating (BBY/ABY); no film dialogue or official copy is reproduced.",
   ],
+  "european-art-history": [
+    "凡推定年代与地点均已明确标注;条目为本站原创结构化摘要,以艺术史编年与馆藏来源整理,不收录受版权保护的大段原文。",
+    "Inferred dates and places are explicitly marked. Entries are original structured summaries organized by art-historical chronology and collection sources; no substantial copyrighted text is reproduced.",
+  ],
 };
 
 /** Footer source note per profile; null falls back to i18n scriptureNote. */
@@ -355,6 +359,10 @@ const SOURCE_NOTES: Record<string, readonly [string, string] | null> = {
   galaxy: [
     "\u672c\u7ad9\u5168\u90e8\u6761\u76ee\u5747\u4e3a\u5411\u539f\u8457\u5f71\u7247\u81f4\u656c\u800c\u5199,\u662f\u4e00\u4efd\u4fbf\u4e8e\u68c0\u7d22\u7684\u7d22\u5f15,\u4e0d\u80fd\u4e5f\u4e0d\u6253\u7b97\u66ff\u4ee3\u89c2\u5f71;\u4e0d\u4f5c\u4efb\u4f55\u5546\u4e1a\u7528\u9014\u2014\u2014\u65e0\u5e7f\u544a\u3001\u4e0d\u6536\u8d39\u3001\u4e0d\u63a5\u53d7\u6253\u8d4f\u3002\u672c\u7ad9\u4e3a\u975e\u5b98\u65b9\u7c89\u4e1d\u9879\u76ee,\u4e0e Lucasfilm Ltd.\u3001The Walt Disney Company \u53ca\u5176\u5173\u8054\u65b9\u5747\u65e0\u96b6\u5c5e\u3001\u6388\u6743\u6216\u80cc\u4e66\u5173\u7cfb\u3002Star Wars \u53ca\u76f8\u5173\u540d\u79f0\u3001\u6807\u5fd7\u4e3a\u5176\u5404\u81ea\u6743\u5229\u4eba\u7684\u5546\u6807;\u672c\u7ad9\u4ec5\u4ee5\u4e8b\u5b9e\u6027\u65b9\u5f0f\u6307\u79f0\u539f\u4f5c\u5185\u5bb9,\u5168\u90e8\u6761\u76ee\u6587\u5b57\u4e3a\u672c\u7ad9\u539f\u521b\u8f6c\u8ff0\u3002",
     "Every entry here is written in tribute to the original films: an index built to make them easier to navigate, offered as no substitute for watching them, and used for nothing commercial \u2014 no advertising, no fees, no donations. This is an unofficial fan project, not affiliated with, sponsored, or endorsed by Lucasfilm Ltd., The Walt Disney Company, or their affiliates. Star Wars and all related names and marks are trademarks of their respective owners; they appear here only as factual references, and all entry text is original writing by this project.",
+  ],
+  "european-art-history": [
+    "来源包括博物馆馆藏目录与艺术史参考资料;年代、地点与作品归属按证据等级标注。",
+    "Sources include museum collection catalogues and art-history references; dates, places and attributions are marked by evidence grade.",
   ],
 };
 
