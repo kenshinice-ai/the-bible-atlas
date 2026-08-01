@@ -44,7 +44,11 @@ async function bake(): Promise<void> {
   };
 
   for (const locale of locales) {
-    await write(`works.${locale}.json`, await fetchJson(`/api/works?locale=${encodeURIComponent(locale)}`));
+    const worksPayload = await fetchJson(`/api/works?locale=${encodeURIComponent(locale)}`);
+    if (typeof worksPayload !== "object" || worksPayload === null || !Array.isArray((worksPayload as { items?: unknown }).items)) throw new Error("/api/works returned an invalid payload");
+    const allowed = new Set(workSlugs);
+    const filteredItems = (worksPayload as { items: unknown[] }).items.filter((item) => typeof item === "object" && item !== null && typeof (item as { slug?: unknown }).slug === "string" && allowed.has((item as { slug: string }).slug));
+    await write(`works.${locale}.json`, { ...(worksPayload as Record<string, unknown>), items: filteredItems });
     for (const slug of workSlugs) {
       await write(
         `atlas.${slug}.${locale}.json`,

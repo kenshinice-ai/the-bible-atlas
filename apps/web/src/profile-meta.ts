@@ -52,4 +52,11 @@ export const PROFILE_META: Record<string, ProfileMeta> = {
       "向原著致敬的非官方检索图集,不作任何商业用途。A tribute-made, unofficial and non-commercial reference to the Skywalker saga — not affiliated with or endorsed by Lucasfilm Ltd.",
     themeColor: "#05070F",
   },
+  "european-art-history": {
+    lang: "zh-CN",
+    title: "欧洲美术史 Atlas · European Art History Atlas",
+    description: "欧洲美术史 Atlas——按时代连接艺术家、作品、流派、机构与真实地点，首版聚焦古典时代至 1945 年，提供中英双语结构化资料。European Art History Atlas: artists, artworks, movements, institutions and real places across eras, focused on the period through 1945.",
+    ogDescription: "按时代连接艺术家、作品与地点。Artists, artworks and places across time.",
+    themeColor: "#17120D",
+  },
 };

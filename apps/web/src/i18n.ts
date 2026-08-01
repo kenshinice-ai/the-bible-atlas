@@ -60,7 +60,10 @@ const ENUMS: Record<string, Pair> = {
   map: ["地图", "Map"], image: ["图像", "Image"], primary: ["一手", "Primary"],
   // work + group
   historical_document: ["历史文献", "Historical document"], historical_fiction: ["历史小说", "Historical fiction"],
-  realist_fiction: ["现实主义小说", "Realist fiction"], fantasy: ["奇幻", "Fantasy"], mythic_epic: ["神话史诗", "Mythic epic"],
+  realist_fiction: ["现实主义小说", "Realist fiction"], fantasy: ["奇幻", "Fantasy"], mythic_epic: ["神话史诗", "Mythic epic"], art_history: ["艺术史", "Art history"],
+  workshop: ["工坊", "Workshop"], anonymous_master: ["匿名大师", "Anonymous master"],
+  confirmed: ["已确认", "Confirmed"], attributed: ["归属推定", "Attributed"], destroyed: ["已毁损", "Destroyed"],
+  commissioned: ["委托", "Commissioned"], produced: ["创作", "Produced"], completed: ["完成", "Completed"], exhibited: ["展出", "Exhibited"], acquired: ["收藏", "Acquired"], relocated: ["转移", "Relocated"], restored: ["修复", "Restored"],
   dynasty: ["王朝", "Dynasty"], circle: ["群体", "Circle"], tribe: ["支派", "Tribe"], institution: ["机构与势力", "Institution"],
   // translation status
   draft: ["草稿", "Draft"], reviewed: ["已审阅", "Reviewed"], published: ["已发布", "Published"],
@@ -124,9 +127,9 @@ export function formatEventTime(
   return `${prefix}${formatYear(start, locale)} – ${formatYear(end, locale)}`;
 }
 
-export function formatCount(count: number, kind: "characters" | "events" | "locations" | "routes" | "relations" | "sources", locale: Locale): string {
+export function formatCount(count: number, kind: "characters" | "artists" | "artworks" | "movements" | "events" | "locations" | "routes" | "relations" | "sources", locale: Locale): string {
   const nouns = {
-    characters: ["人物", "people"], events: ["事件", "events"], locations: ["地点", "places"],
+    characters: ["人物", "people"], artists: ["艺术家", "artists"], artworks: ["作品", "artworks"], movements: ["流派", "movements"], events: ["事件", "events"], locations: ["地点", "places"],
     routes: ["路线", "routes"], relations: ["关系", "relations"], sources: ["来源", "sources"],
   } as const;
   const noun = nouns[kind][locale === "zh-CN" ? 0 : 1];
@@ -141,7 +144,8 @@ export const UI = {
   error: ["加载失败", "Load failed"],
   retry: ["重试", "Retry"],
   characters: ["人物", "People"], events: ["事件", "Events"], locations: ["地点", "Places"],
-  routes: ["路线", "Routes"], relations: ["关系", "Relations"],
+  routes: ["路线", "Routes"], relations: ["关系", "Relations"], artists: ["艺术家", "Artists"], artworks: ["作品", "Artworks"], movements: ["流派", "Movements"],
+  creationPlace: ["创作地点", "Creation place"], currentLocation: ["现藏地点", "Current collection"], medium: ["媒介", "Medium"],
   sources: ["出处与数据说明", "Sources and data notes"],
   copy: ["复制此景链接", "Copy link to this view"], copied: ["已复制", "Copied"],
   single: ["单部探索", "Single work"], multi: ["多部对照", "Compare works"],
@@ -153,8 +157,8 @@ export const UI = {
   workPicker: ["作品控制中心", "Work control centre"],
   searchWorks: ["搜索名称、作者、地区、年代或类型", "Search title, author, region, era, or type"],
   allCategories: ["全部类型", "All categories"],
-  searchEverything: ["寻访人物、事件与地点…", "Search people, events, places…"],
-  kindWork: ["作品", "Work"], kindCharacter: ["人物", "Person"], kindEvent: ["事件", "Event"], kindLocation: ["地点", "Place"],
+  searchEverything: ["寻访人物、艺术家、作品、事件与地点…", "Search people, artists, artworks, events and places…"],
+  kindWork: ["作品集", "Work"], kindCharacter: ["人物", "Person"], kindEvent: ["事件", "Event"], kindLocation: ["地点", "Place"], kindArtist: ["艺术家", "Artist"], kindArtwork: ["作品", "Artwork"], kindMovement: ["流派", "Movement"], kindInstitution: ["机构", "Institution"],
   noResults: ["没有匹配结果", "No matches"],
   clear: ["清除", "Clear"],
   clearFilters: ["清除全部筛选", "Clear all filters"],

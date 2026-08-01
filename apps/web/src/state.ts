@@ -1,7 +1,7 @@
 import { PROFILE } from "./profile";
 import { EntityTypeSchema, LocaleSchema, type Atlas, type EntityType, type Locale } from "./types";
 
-export type Tab = "characters" | "events" | "locations" | "routes" | "relations";
+export type Tab = "characters" | "artists" | "artworks" | "movements" | "events" | "locations" | "routes" | "relations";
 export type SelectionMode = "single" | "multi";
 export type MapLayer = "real" | "fictional";
 export type SelectionSource = "map" | "timeline" | "list" | "graph" | "search" | "url";
@@ -56,7 +56,7 @@ export const SINGLE_WORK = PROFILE.mode === "single";
 
 export const MAX_SELECTED_WORKS = 5;
 export const FALLBACK_RANGE = { start: -3000, end: 2026 } as const;
-const tabs = new Set<Tab>(["characters", "events", "locations", "routes", "relations"]);
+const tabs = new Set<Tab>(["characters", "artists", "artworks", "movements", "events", "locations", "routes", "relations"]);
 const mapLayerValues = new Set<MapContentLayer>(["places", "routes", "landmarks"]);
 const zoomValues = new Set<ZoomLevel>(ZOOM_LEVELS);
 

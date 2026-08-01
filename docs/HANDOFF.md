@@ -2,6 +2,14 @@
 
 ## 项目现状
 
+### 2026-08-01 阶段性交接：欧洲美术史 Foundation（R1/R2/R4/R5/R6）
+
+欧洲美术史已进入可运行 Foundation，独立 profile 为 `european-art-history`，不改变圣经、三国、银河原力三条既有内容线。当前验证计数：16 艺术家、5 作品、5 流派、5 生命周期事件、3 机构；作品以“事件的产物”建模，通过作品/艺术家事件链接表达委托、制作、完成等角色。已完成专用迁移、双语 seed、API/搜索、艺术家/作品/流派浏览、时代筛选、地图联动、实体深链接和 profile 静态隔离。
+
+验证门禁：`npm run typecheck`、`npm test`、`npm run build`、migration+seed bootstrap（含重复幂等执行）、API atlas/search/detail、静态构建均通过。后续仍需 R3 内容扩容（MVP 目标 48 艺术家/96 作品）、浏览器完整验收和独立生产发布；不得把 Foundation 状态写成已上线。
+
+详细边界与文件清单见 [`docs/HANDOFF_DECISIONS_2026-08-01.md`](HANDOFF_DECISIONS_2026-08-01.md) 与 [`blueprint/european-art-history/IMPLEMENTATION_CHECKLIST.md`](../blueprint/european-art-history/IMPLEMENTATION_CHECKLIST.md)。
+
 v4 Bible-first 架构已落地并提交(commit `9b47ea0`):以「时代 → 人物群 → 个人」的缩放层级取代此前基于实体数量上限的展示方式。
 
 技术栈:

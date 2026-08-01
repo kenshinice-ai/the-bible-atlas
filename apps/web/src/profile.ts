@@ -70,6 +70,16 @@ export const PROFILES: Record<string, WorkProfile> = {
       positive: ["雅汶战役后 {n} 年", "{n} ABY"],
     },
   },
+  "european-art-history": {
+    id: "european-art-history",
+    works: ["european-art-history"],
+    active: "european-art-history",
+    mode: "single",
+    defaultLocale: "zh-CN",
+    title: ["欧洲美术史 Atlas", "European Art History Atlas"],
+    tagline: ["按时代连接艺术家、作品与地点", "Artists, artworks and places across time"],
+    theme: "european-art-history",
+  },
 };
 
 const requested = (import.meta.env.VITE_WORK_PROFILE as string | undefined) ?? "bible";

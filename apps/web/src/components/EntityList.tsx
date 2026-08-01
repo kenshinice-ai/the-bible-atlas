@@ -3,13 +3,16 @@ import { useRef } from "react";
 import { colorForCharacter, colorForEvent } from "../hierarchy";
 import { formatEventTime, label, t } from "../i18n";
 import type { SelectedEntity, Tab } from "../state";
-import type { Atlas, AtlasCharacter, AtlasEvent, AtlasLocation, AtlasRoute, Locale } from "../types";
+import type { Atlas, AtlasArtist, AtlasArtwork, AtlasCharacter, AtlasEvent, AtlasLocation, AtlasMovement, AtlasRoute, Locale } from "../types";
 
 type Row =
   | { kind: "characters"; item: AtlasCharacter }
   | { kind: "events"; item: AtlasEvent }
   | { kind: "locations"; item: AtlasLocation }
-  | { kind: "routes"; item: AtlasRoute };
+  | { kind: "routes"; item: AtlasRoute }
+  | { kind: "artists"; item: AtlasArtist }
+  | { kind: "artworks"; item: AtlasArtwork }
+  | { kind: "movements"; item: AtlasMovement };
 
 interface Props {
   atlas: Atlas;
@@ -19,6 +22,9 @@ interface Props {
   events: readonly AtlasEvent[];
   locations: readonly AtlasLocation[];
   routes: readonly AtlasRoute[];
+  artists: readonly AtlasArtist[];
+  artworks: readonly AtlasArtwork[];
+  movements: readonly AtlasMovement[];
   selected: SelectedEntity | null;
   onSelect: (entity: SelectedEntity) => void;
 }
@@ -34,12 +40,15 @@ function activate(event: React.KeyboardEvent<HTMLElement>, action: () => void) {
  * only the rows in view are mounted. Row heights are measured rather than
  * assumed, because event summaries wrap to different depths.
  */
-export function EntityList({ atlas, tab, locale, characters, events, locations, routes, selected, onSelect }: Props) {
+export function EntityList({ atlas, tab, locale, characters, events, locations, routes, artists, artworks, movements, selected, onSelect }: Props) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const rows: Row[] =
     tab === "characters" ? characters.map((item) => ({ kind: "characters", item }))
-      : tab === "events" ? events.map((item) => ({ kind: "events", item }))
+      : tab === "artists" ? artists.map((item) => ({ kind: "artists", item }))
+        : tab === "artworks" ? artworks.map((item) => ({ kind: "artworks", item }))
+          : tab === "movements" ? movements.map((item) => ({ kind: "movements", item }))
+            : tab === "events" ? events.map((item) => ({ kind: "events", item }))
         : tab === "locations" ? locations.map((item) => ({ kind: "locations", item }))
           : routes.map((item) => ({ kind: "routes", item }));
 
@@ -87,6 +96,37 @@ function renderRow(row: Row, atlas: Atlas, locale: Locale, selected: SelectedEnt
       <h3>{person.name}<i className="importance" aria-hidden="true">{"●".repeat(person.importance)}</i></h3>
       <p>{person.summary}</p>
       <small>{label(person.iconVariant, locale)} · {label(person.roleType, locale)}{era ? ` · ${era.title}` : ""} · {person.eventSlugs.length} {t("events", locale)}</small>
+    </article>;
+  }
+
+  if (row.kind === "artists") {
+    const artist = row.item;
+    const era = atlas.chapters.find((item) => item.slug === artist.chapterSlug);
+    const isSelected = selected?.type === "artist" && selected.id === artist.slug;
+    const choose = () => onSelect({ type: "artist", workSlug, id: artist.slug });
+    return <article role="button" tabIndex={0} className={isSelected ? "card selected" : "card"} onClick={choose} onKeyDown={(event) => activate(event, choose)}>
+      <span className="mini-person" aria-hidden="true" /><h3>{artist.name}</h3><p>{artist.summary}</p>
+      <small>{label(artist.artistKind, locale)}{era ? ` · ${era.title}` : ""} · {artist.artworkSlugs.length} {t("artworks", locale)}</small>
+    </article>;
+  }
+
+  if (row.kind === "artworks") {
+    const artwork = row.item;
+    const era = atlas.chapters.find((item) => item.slug === artwork.chapterSlug);
+    const isSelected = selected?.type === "artwork" && selected.id === artwork.slug;
+    const choose = () => onSelect({ type: "artwork", workSlug, id: artwork.slug });
+    return <article role="button" tabIndex={0} className={isSelected ? "card selected" : "card"} onClick={choose} onKeyDown={(event) => activate(event, choose)}>
+      <span className="sequence" aria-hidden="true" /><h3>{artwork.title}</h3><p>{artwork.summary}</p>
+      <small>{artwork.creationStartYear ?? "?"}{artwork.creationEndYear && artwork.creationEndYear !== artwork.creationStartYear ? `–${artwork.creationEndYear}` : ""} · {artwork.medium}{era ? ` · ${era.title}` : ""}</small>
+    </article>;
+  }
+
+  if (row.kind === "movements") {
+    const movement = row.item;
+    const isSelected = selected?.type === "movement" && selected.id === movement.slug;
+    const choose = () => onSelect({ type: "movement", workSlug, id: movement.slug });
+    return <article role="button" tabIndex={0} className={isSelected ? "card selected" : "card"} onClick={choose} onKeyDown={(event) => activate(event, choose)}>
+      <h3>{movement.name}</h3><p>{movement.summary}</p><small>{movement.startYear ?? "?"}–{movement.endYear ?? "?"} · {movement.artistSlugs.length} {t("artists", locale)}</small>
     </article>;
   }
 

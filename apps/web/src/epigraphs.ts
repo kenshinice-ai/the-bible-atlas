@@ -358,6 +358,10 @@ const SOURCE_NOTES: Record<string, readonly [string, string] | null> = {
   ],
 };
 
+const ART_WELCOME: Epigraph = { zh: "艺术使时间留下形状。", zhRef: "欧洲美术史 Atlas · 策展摘要", en: "Art gives time a shape.", enRef: "European Art History Atlas · curatorial note" };
+const ART_LOADING: readonly Epigraph[] = [ART_WELCOME];
+const ART_FOOTER: Epigraph = { zh: "本图集保存结构化摘要、时代信息与来源，不替代博物馆目录或学术研究。", zhRef: "数据说明", en: "This atlas preserves structured summaries, period metadata and sources; it does not replace museum catalogues or scholarship.", enRef: "Data note" };
+
 // ---------------------------------------------------------------------------
 // Profile resolution: the rest of the app imports these four names unchanged.
 // ---------------------------------------------------------------------------
@@ -367,6 +371,7 @@ export const SETS_BY_PROFILE = {
   bible: { era: BIBLE_ERA_EPIGRAPHS, welcome: BIBLE_WELCOME, loading: BIBLE_LOADING, footer: BIBLE_FOOTER },
   "three-kingdoms": { era: THREE_KINGDOMS_ERA_EPIGRAPHS, welcome: THREE_KINGDOMS_WELCOME, loading: THREE_KINGDOMS_LOADING, footer: THREE_KINGDOMS_FOOTER },
   galaxy: { era: GALAXY_ERA_EPIGRAPHS, welcome: GALAXY_WELCOME, loading: GALAXY_LOADING, footer: GALAXY_FOOTER },
+  "european-art-history": { era: {}, welcome: ART_WELCOME, loading: ART_LOADING, footer: ART_FOOTER },
 } as const;
 
 const ACTIVE = SETS_BY_PROFILE[PROFILE.id as keyof typeof SETS_BY_PROFILE] ?? SETS_BY_PROFILE.bible;

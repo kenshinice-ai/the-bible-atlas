@@ -3,13 +3,13 @@ import { z } from "zod";
 export const LocaleSchema = z.enum(["zh-CN", "en"]);
 export type Locale = z.infer<typeof LocaleSchema>;
 export const MapLayerSchema = z.enum(["real", "fictional"]);
-export const WorkCategorySchema = z.enum(["historical_document", "historical_fiction", "realist_fiction", "fantasy", "mythic_epic"]);
+export const WorkCategorySchema = z.enum(["historical_document", "historical_fiction", "realist_fiction", "fantasy", "mythic_epic", "art_history"]);
 export const TimeTypeSchema = z.enum(["exact", "approximate", "range", "relative", "fictional_calendar", "unknown"]);
 // Mirrors the location_type enum in the database. It is strict on purpose — an
 // unknown value fails the whole atlas parse rather than rendering a raw string
 // — so widening it in db/migrations means widening it here in the same change.
 export const LocationTypeSchema = z.enum(["country", "region", "city", "district", "street", "building", "landmark", "prison", "station", "port", "battlefield", "residence", "school", "religious_site", "fictional_place", "route_node", "planet", "moon", "space_station"]);
-export const EntityTypeSchema = z.enum(["work", "character", "event", "location", "route", "relationship"]);
+export const EntityTypeSchema = z.enum(["work", "character", "event", "location", "route", "relationship", "artist", "artwork", "movement", "institution"]);
 
 const TranslationMetaSchema = z.object({ resolvedLocale: LocaleSchema, fallbackUsed: z.boolean(), translationStatus: z.enum(["draft", "reviewed", "published"]) });
 const WorkCoreSchema = z.object({
@@ -20,7 +20,7 @@ const WorkCoreSchema = z.object({
 
 export const WorksResponseSchema = z.object({
   locale: LocaleSchema,
-  items: z.array(WorkCoreSchema.and(z.object({ alternateTitle: z.string().nullable(), characterCount: z.number(), eventCount: z.number(), locationCount: z.number() }))),
+  items: z.array(WorkCoreSchema.and(z.object({ alternateTitle: z.string().nullable(), characterCount: z.number(), eventCount: z.number(), locationCount: z.number(), artistCount: z.number().optional(), artworkCount: z.number().optional(), movementCount: z.number().optional() }))),
 });
 
 const CharacterSchema = z.object({
@@ -69,6 +69,31 @@ const RelationSchema = z.object({
   startEventSlug: z.string().nullable(), endEventSlug: z.string().nullable(), label: z.string(), summary: z.string(), sourceTitles: z.array(z.string()),
 }).and(TranslationMetaSchema);
 
+const ArtistSchema = z.object({
+  id: z.string().uuid(), slug: z.string(), artistKind: z.enum(["person", "workshop", "collective", "anonymous_master", "school"]),
+  birthYear: z.number().nullable(), deathYear: z.number().nullable(), birthPlaceSlug: z.string().nullable(), deathPlaceSlug: z.string().nullable(),
+  importance: z.number(), name: z.string(), summary: z.string(), modernStatus: z.string(), periodTitles: z.array(z.string()),
+  chapterSlug: z.string().nullable(), artworkSlugs: z.array(z.string()), movementSlugs: z.array(z.string()), eventSlugs: z.array(z.string()), locationSlugs: z.array(z.string()), sourceTitles: z.array(z.string()),
+}).and(TranslationMetaSchema);
+
+const ArtworkSchema = z.object({
+  id: z.string().uuid(), slug: z.string(), primaryArtistSlug: z.string().nullable(), chapterSlug: z.string().nullable(),
+  creationStartYear: z.number().nullable(), creationEndYear: z.number().nullable(), creationTimeType: TimeTypeSchema, medium: z.string(), dimensions: z.string(),
+  status: z.enum(["confirmed", "attributed", "workshop", "lost", "destroyed", "unknown"]), attributionConfidence: z.enum(["high", "medium", "low", "unknown"]), copyrightStatus: z.string(),
+  creationLocationSlug: z.string().nullable(), currentLocationSlug: z.string().nullable(), title: z.string(), summary: z.string(),
+  artistSlugs: z.array(z.string()), movementSlugs: z.array(z.string()), eventSlugs: z.array(z.string()), sourceTitles: z.array(z.string()),
+}).and(TranslationMetaSchema);
+
+const MovementSchema = z.object({
+  id: z.string().uuid(), slug: z.string(), chapterSlug: z.string().nullable(), startYear: z.number().nullable(), endYear: z.number().nullable(),
+  name: z.string(), summary: z.string(), artistSlugs: z.array(z.string()), artworkSlugs: z.array(z.string()), sourceTitles: z.array(z.string()),
+}).and(TranslationMetaSchema);
+
+const InstitutionSchema = z.object({
+  id: z.string().uuid(), slug: z.string(), locationSlug: z.string(), institutionType: z.string(), foundedYear: z.number().nullable(), closedYear: z.number().nullable(),
+  name: z.string(), summary: z.string(), artistSlugs: z.array(z.string()), sourceTitles: z.array(z.string()),
+}).and(TranslationMetaSchema);
+
 const SourceSchema = z.object({ id: z.string().uuid(), title: z.string(), url: z.string().nullable(), citation: z.string(), evidenceGrade: z.string(), sourceType: z.enum(["primary_text", "scholarly", "historical", "reference", "map", "image"]) });
 const ChronologySchema = z.object({ id: z.string().uuid(), kind: z.enum(["historical", "narrative", "fictional"]), label: z.string(), startYear: z.number().nullable(), endYear: z.number().nullable(), calendarSystem: z.enum(["gregorian", "julian", "fictional", "unknown"]), isDefault: z.boolean() });
 const MediaSchema = z.object({ id: z.string().uuid(), entityKind: EntityTypeSchema, entityId: z.string().uuid(), assetSource: z.string(), assetLicence: z.string(), assetAuthor: z.string(), assetUrl: z.string().url(), attributionText: z.string(), altText: z.string() });
@@ -93,6 +118,7 @@ export const AtlasResponseSchema = z.object({
   characters: z.array(CharacterSchema), locations: z.array(LocationSchema), events: z.array(EventSchema), routes: z.array(RouteSchema),
   relations: z.array(RelationSchema), sources: z.array(SourceSchema), chronologies: z.array(ChronologySchema), media: z.array(MediaSchema),
   chapters: z.array(ChapterSchema), groups: z.array(GroupSchema),
+  artists: z.array(ArtistSchema).default([]), artworks: z.array(ArtworkSchema).default([]), movements: z.array(MovementSchema).default([]), institutions: z.array(InstitutionSchema).default([]),
 });
 
 export const EntityDetailSchema = z.object({
@@ -102,7 +128,7 @@ export const EntityDetailSchema = z.object({
 
 export const SearchResponseSchema = z.object({
   locale: LocaleSchema, query: z.string(),
-  items: z.array(z.object({ kind: z.enum(["work", "character", "event", "location"]), slug: z.string(), label: z.string(), context: z.string().nullable(), workSlug: z.string() })),
+  items: z.array(z.object({ kind: z.enum(["work", "character", "event", "location", "artist", "artwork", "movement", "institution"]), slug: z.string(), label: z.string(), context: z.string().nullable(), workSlug: z.string() })),
 });
 
 export type WorksResponse = z.infer<typeof WorksResponseSchema>;
@@ -115,6 +141,10 @@ export type AtlasRoute = Atlas["routes"][number];
 export type AtlasRelation = Atlas["relations"][number];
 export type AtlasChapter = Atlas["chapters"][number];
 export type AtlasGroup = Atlas["groups"][number];
+export type AtlasArtist = Atlas["artists"][number];
+export type AtlasArtwork = Atlas["artworks"][number];
+export type AtlasMovement = Atlas["movements"][number];
+export type AtlasInstitution = Atlas["institutions"][number];
 export type EntityDetail = z.infer<typeof EntityDetailSchema>;
 export type SearchResponse = z.infer<typeof SearchResponseSchema>;
 export type EntityType = z.infer<typeof EntityTypeSchema>;

@@ -168,6 +168,19 @@ button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-v
 }
 :root[data-profile="galaxy"] ::selection { background: #C9B45A; color: #05070F; }
 
+/* European Art History: warm archive ground with ochre and terracotta era accents. */
+:root[data-profile="european-art-history"] {
+  --bg: #17120D; --bg-raise: #201912; --panel: #211A14; --panel-raise: #2B2118;
+  --overlay: rgba(23, 18, 13, 0.95); --line: #5A4630; --line-soft: #3E3022;
+  --text: #F2E9D8; --text-dim: #D8C9B5; --muted: #B6A48B; --faint: #95836B;
+  --accent: #D8A45E; --accent-strong: #E8B875; --accent-deep: #B87945;
+  --violet: #A996C7; --violet-soft: #D6C6E9; --neutral-rel: #95836B;
+}
+:root[data-profile="european-art-history"] body {
+  background: radial-gradient(1000px 520px at 18% -8%, #342417 0%, transparent 58%), radial-gradient(900px 420px at 96% 0%, #2A1C15 0%, transparent 52%), var(--bg);
+}
+:root[data-profile="european-art-history"] ::selection { background: #D8A45E; color: #17120D; }
+
 /* ---------------------------------------------------------------- layout -- */
 
 main { max-width: 1560px; margin: auto; padding: var(--gap-l); }

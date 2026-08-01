@@ -19,13 +19,17 @@ import { type Atlas, type Locale, type WorksResponse } from "./types";
 
 function tabForEntity(entity: SelectedEntity): Tab {
   return entity.type === "character" ? "characters"
+    : entity.type === "artist" ? "artists"
+      : entity.type === "artwork" ? "artworks"
+        : entity.type === "movement" ? "movements"
     : entity.type === "event" ? "events"
       : entity.type === "location" ? "locations"
         : entity.type === "route" ? "routes"
           : entity.type === "relationship" ? "relations" : "events";
 }
 
-const TABS: readonly Tab[] = ["characters", "events", "locations", "routes", "relations"];
+const TABS: readonly Tab[] = ["characters", "artists", "artworks", "movements", "events", "locations", "routes", "relations"];
+const VISIBLE_TABS: readonly Tab[] = PROFILE.id === "european-art-history" ? TABS : ["characters", "events", "locations", "routes", "relations"];
 
 /**
  * A scripture epigraph as a typographic event: quotation plus attribution,
@@ -139,7 +143,12 @@ export default function App() {
     const locations = visibleLocations(activeAtlas, filters, eventSlugs);
     const relations = visibleRelations(activeAtlas, filters, characterSlugs);
     const routes = activeAtlas.routes.filter((route) => route.waypoints.some((waypoint) => eventSlugs.has(waypoint.eventSlug ?? "") || locations.some((place) => place.slug === waypoint.locationSlug)));
-    return { events, eventSlugs, characters, characterSlugs, locations, relations, routes, locationSlugs: new Set(locations.map((place) => place.slug)) };
+    const inEra = (chapterSlug: string | null) => !filters.chapter || chapterSlug === filters.chapter;
+    const artists = activeAtlas.artists.filter((artist) => inEra(artist.chapterSlug));
+    const artworks = activeAtlas.artworks.filter((artwork) => inEra(artwork.chapterSlug));
+    const movements = activeAtlas.movements.filter((movement) => inEra(movement.chapterSlug));
+    const artLocationSlugs = new Set([...artists.flatMap((artist) => artist.locationSlugs), ...artworks.flatMap((artwork) => [artwork.creationLocationSlug, artwork.currentLocationSlug].filter((slug): slug is string => Boolean(slug))), ...activeAtlas.institutions.map((institution) => institution.locationSlug)]);
+    return { events, eventSlugs, characters, characterSlugs, locations, relations, routes, artists, artworks, movements, locationSlugs: new Set([...locations.map((place) => place.slug), ...artLocationSlugs]) };
   }, [activeAtlas, filters]);
 
   const selectedAtlas = explore.selectedEntity ? atlases.find((atlas) => atlas.work.slug === explore.selectedEntity?.workSlug) : null;
@@ -308,9 +317,9 @@ export default function App() {
 
             <aside className="browser">
               <nav aria-label="panels">
-                {TABS.map((key) => <button key={key} className={explore.tab === key ? "active" : ""} aria-pressed={explore.tab === key} onClick={() => setTab(key)}>
+                {VISIBLE_TABS.map((key) => <button key={key} className={explore.tab === key ? "active" : ""} aria-pressed={explore.tab === key} onClick={() => setTab(key)}>
                   {t(key, locale)}
-                  <b>{key === "characters" ? derived.characters.length : key === "events" ? derived.events.length : key === "locations" ? derived.locations.length : key === "routes" ? derived.routes.length : derived.relations.length}</b>
+                  <b>{key === "characters" ? derived.characters.length : key === "artists" ? derived.artists.length : key === "artworks" ? derived.artworks.length : key === "movements" ? derived.movements.length : key === "events" ? derived.events.length : key === "locations" ? derived.locations.length : key === "routes" ? derived.routes.length : derived.relations.length}</b>
                 </button>)}
               </nav>
 
@@ -345,6 +354,9 @@ export default function App() {
                   events={derived.events}
                   locations={derived.locations}
                   routes={derived.routes}
+                  artists={derived.artists}
+                  artworks={derived.artworks}
+                  movements={derived.movements}
                   selected={explore.selectedEntity}
                   onSelect={(entity) => selectEntity(entity, "list")}
                 />}
