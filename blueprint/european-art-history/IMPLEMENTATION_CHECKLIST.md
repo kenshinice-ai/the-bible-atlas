@@ -67,15 +67,15 @@
 - [x] 构建数据文件按 profile 隔离；现有三档数据未修改。
 - [x] 产物无 localhost API 残留。
 - [x] 独立站浏览器验收：中文/英文、地图、搜索、艺术家详情、时代筛选、时间轴、深链接与 390px 响应式布局。
-- [ ] 独立 Cloudflare Pages 项目发布到 production `main`（待本次发布命令完成）。
-- [ ] 发布后记录 URL、commit、数据计数和构建哈希。
+- [x] 独立 Cloudflare Pages 项目发布到 production `main`（`european-art-history-atlas`）。
+- [x] 发布后记录 URL、commit、数据计数和构建哈希（见 `docs/HANDOFF.md`）。
 
 ## Gate 7：交付文档
 
 - [x] 更新 `docs/HANDOFF.md` 与阶段性决策 handoff，记录艺术史 profile 的真实状态。
 - [x] 增加数据来源政策、版权政策和人工复核清单。
 - [x] 增加独立站 README 与启动命令。
-- [ ] 生成独立 Blueprint、源码 ZIP 和 SHA-256（发布后生成本次交付包）。
+- [x] 生成独立 Blueprint、源码 ZIP 和 SHA-256（本次交付包）。
 - [x] 明确未完成内容，不能把本地构建状态写成“已上线”。
 
 ## 推荐 Sprint

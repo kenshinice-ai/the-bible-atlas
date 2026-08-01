@@ -6,7 +6,9 @@
 
 欧洲美术史已完成 R3 内容扩容，独立 profile 为 `european-art-history`，不改变圣经、三国、银河原力三条既有内容线。当前验证计数：**48 艺术家、96 作品、16 流派、96 生命周期事件、24 地点、3 机构**；作品以“事件的产物”建模，通过作品/艺术家事件链接表达委托、制作、完成、展出、收藏、转移或修复等角色。全部新增艺术实体具备中英文 published 翻译、来源闭环与 PostGIS 真实地点；跨 1840–1945 的作品按跨章规则归入主时代，避免时间轴重复归属。
 
-验证门禁：`npm run typecheck`、`npm test`、`npm run build`、migration+seed bootstrap（含重复幂等执行）、计数/双语/时间/孤儿审计、API atlas/search/detail、profile 静态构建，以及桌面/中英切换/时代筛选/实体深链接/390px 响应式浏览器验收均通过。生产发布与线上 URL 以本次交付记录为准；在 Cloudflare Pages 发布完成前，不把本地构建写成已上线。
+验证门禁：`npm run typecheck`、`npm test`、`npm run build`、migration+seed bootstrap（含重复幂等执行）、计数/双语/时间/孤儿审计、API atlas/search/detail、profile 静态构建，以及桌面/中英切换/时代筛选/实体深链接/390px 响应式浏览器验收均通过。
+
+独立站已发布到 Cloudflare Pages production `main`：**https://european-art-history-atlas.pages.dev**（deployment `1e046d1f`，2026-08-01）；线上首页、双语 atlas JSON、作品隔离和 48/96 计数均返回 200/正确值。交付代码提交为 `d23d91720dd6b6353967cf6e7fa6bf931eb71dae`；静态构建关键哈希：`index.html` `5c81b9cf…ca8ae7`、`index-DiB2dwAW.js` `fe413570…1b804c`。
 
 详细边界与文件清单见 [`docs/HANDOFF_DECISIONS_2026-08-01.md`](HANDOFF_DECISIONS_2026-08-01.md) 与 [`blueprint/european-art-history/IMPLEMENTATION_CHECKLIST.md`](../blueprint/european-art-history/IMPLEMENTATION_CHECKLIST.md)。
 
