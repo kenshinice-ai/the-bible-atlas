@@ -34,6 +34,7 @@
 - API 已验证 atlas/detail/search：艺术史 atlas 返回 48 人物、48 艺术家、96 作品、96 事件、18 关系；搜索“提香”只返回一个 canonical character；所有新增人物/关系 UUID 均符合 RFC-4122 版本/变体约束。
 - 最终静态包已完成桌面与 390px 浏览器验收：中英文切换保留人物/关系状态，旧 `artist:` 深链接归一为 `character:`，人物抽屉显示完整姓名/爵位，关系图显示 48 节点/18 连线，群体层在无群组 profile 中禁用，控制台无 error/warn，横向溢出为 0。
 - Cloudflare Pages production 已发布：`https://european-art-history-atlas.pages.dev`，deployment `d3b92eb0`；预览地址 `https://d3b92eb0.european-art-history-atlas.pages.dev`；线上双语静态 JSON 返回 48 人物 / 48 艺术家 / 96 作品 / 96 事件 / 18 关系。
+- 源码包：`release/European-Art-History-Atlas-R7-20260802-source.zip`；SHA-256 `12daad4d94ea6d5229d8223c2cce3c71fd47abef9d43b7d5460b958f6288765b`；实现提交 `5229286`，最终 handoff 提交 `3554011`。
 
 ## 保护边界
 
