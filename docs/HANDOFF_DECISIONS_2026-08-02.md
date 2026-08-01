@@ -30,9 +30,10 @@
 ## 验证与发布
 
 - 已通过 `npm run typecheck`。
-- `npm test` 的 API listen 测试在受限沙箱中需要外部本地 socket 权限；提权后再执行完整测试并记录结果。
-- API 已验证 atlas/detail/search：艺术史 atlas 返回 48 人物、48 艺术家、96 作品、96 事件、18 关系；搜索“提香”只返回一个 canonical character。
-- 下一步：提权执行完整测试/生产构建，使用独立 API 烘焙 `european-art-history`，完成浏览器中英切换、人物→关系→作品、旧深链接与 390px 验收，再发布 Cloudflare Pages 并补写 URL/deployment/hash。
+- `npm test` 已通过：API 5 tests、Web 31 tests；`npm run typecheck`、`npm run build`、`npm run verify:postgis` 均通过。
+- API 已验证 atlas/detail/search：艺术史 atlas 返回 48 人物、48 艺术家、96 作品、96 事件、18 关系；搜索“提香”只返回一个 canonical character；所有新增人物/关系 UUID 均符合 RFC-4122 版本/变体约束。
+- 最终静态包已完成桌面与 390px 浏览器验收：中英文切换保留人物/关系状态，旧 `artist:` 深链接归一为 `character:`，人物抽屉显示完整姓名/爵位，关系图显示 48 节点/18 连线，群体层在无群组 profile 中禁用，控制台无 error/warn，横向溢出为 0。
+- Cloudflare Pages production 已发布：`https://european-art-history-atlas.pages.dev`，deployment `d3b92eb0`；预览地址 `https://d3b92eb0.european-art-history-atlas.pages.dev`；线上双语静态 JSON 返回 48 人物 / 48 艺术家 / 96 作品 / 96 事件 / 18 关系。
 
 ## 保护边界
 
