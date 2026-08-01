@@ -19,7 +19,7 @@ import { type Atlas, type Locale, type WorksResponse } from "./types";
 
 function tabForEntity(entity: SelectedEntity): Tab {
   return entity.type === "character" ? "characters"
-    : entity.type === "artist" ? "artists"
+    : entity.type === "artist" ? (PROFILE.id === "european-art-history" ? "characters" : "artists")
       : entity.type === "artwork" ? "artworks"
         : entity.type === "movement" ? "movements"
     : entity.type === "event" ? "events"
@@ -29,7 +29,7 @@ function tabForEntity(entity: SelectedEntity): Tab {
 }
 
 const TABS: readonly Tab[] = ["characters", "artists", "artworks", "movements", "events", "locations", "routes", "relations"];
-const VISIBLE_TABS: readonly Tab[] = PROFILE.id === "european-art-history" ? TABS : ["characters", "events", "locations", "routes", "relations"];
+const VISIBLE_TABS: readonly Tab[] = PROFILE.id === "european-art-history" ? ["characters", "artworks", "movements", "events", "locations", "routes", "relations"] : ["characters", "events", "locations", "routes", "relations"];
 
 /**
  * A scripture epigraph as a typographic event: quotation plus attribution,
@@ -127,6 +127,19 @@ export default function App() {
   }, [locale, explore.mode, explore.works, works]);
 
   const activeAtlas = atlases.find((atlas) => atlas.work.slug === explore.active) ?? atlases[0] ?? null;
+
+  // Older art-history links used the specialist `artist` entity kind. Once
+  // the person mapping is present, normalize those links to the canonical
+  // character so the drawer, graph, events and places all share one identity.
+  useEffect(() => {
+    if (PROFILE.id === "european-art-history" && activeAtlas && activeAtlas.groups.length === 0 && explore.zoomLevel === "group") {
+      commit({ ...explore, zoomLevel: "all" });
+      return;
+    }
+    if (PROFILE.id !== "european-art-history" || !activeAtlas || explore.selectedEntity?.type !== "artist") return;
+    const artist = activeAtlas.artists.find((item) => item.slug === explore.selectedEntity?.id);
+    if (artist?.characterSlug) commit({ ...explore, selectedEntity: { ...explore.selectedEntity, type: "character", id: artist.characterSlug }, tab: "characters" });
+  }, [activeAtlas, explore]);
 
   // One derivation feeds every panel, which is why moving the timeline now also
   // changes the map, the lists and the graph instead of only the event list.

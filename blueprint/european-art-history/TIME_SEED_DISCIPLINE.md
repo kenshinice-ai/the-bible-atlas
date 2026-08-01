@@ -9,5 +9,7 @@ The European atlas follows the same rules that made the Bible, Three Kingdoms an
 5. Real locations use PostGIS coordinates only when the location is a real place. Fictional canvas coordinates are not used in this atlas.
 6. Every bilingual row has an explicit translation status and a source join. Missing requested locale data resolves to the work default locale and exposes `fallbackUsed`.
 7. The skeleton seed is intentionally small and deterministic. Expansion must add a source, a time anchor, both locales and a reproducible UUID in the same change.
+8. A named artist is also a person: every `artist_kind=person` row must map to exactly one canonical `characters` row before adding person-level relations. Mirror artist event/location/source links into the character chain; keep the specialist artist row for artwork and movement metadata.
+9. `full_name` is the complete historical name, `aliases` contains concise catalogue names, and `formal_titles` contains only source-supported ranks or honorifics. An empty title array is the correct value when no documented title is established.
 
 The first seed (`049_european_art_history_skeleton.sql`) is therefore a framework dataset, not a claim of complete art-historical coverage.

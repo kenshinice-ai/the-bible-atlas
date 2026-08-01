@@ -2,6 +2,16 @@
 
 ## 项目现状
 
+### 2026-08-02 阶段性交接：欧洲美术史 R7 人物统一（实现与审计完成）
+
+艺术史中的“艺术家”现在与“人物”统一为一条 canonical identity 链：`artists` 继续承载作品、流派和艺术目录专用字段，但每位具名艺术家通过 `artists.character_id` 映射到唯一 `characters` 行。人物关系、作品生命周期事件、地点、来源和搜索均以人物行作为公共入口；艺术家专业数据仍可从映射回溯。当前临时验证库为 **48 人物 / 48 艺术家 / 96 作品 / 96 事件 / 16 流派 / 24 地点 / 18 人物关系**，48/48 映射无空值，关系和翻译均为中英文 published。
+
+新增 migration `010_artist_person_unification.sql` 与 seed `053_european_art_people_unification.sql`：艺术家翻译增加 `full_name`、`aliases`、`formal_titles`；48 位艺术家均补全历史全名，爵位/荣誉称号只录入有来源支撑的项目（无可靠称号保持空数组，不把现代地位标签冒充爵位）。艺术家事件/地点/来源链镜像进入 `event_characters`、`character_locations`、`character_sources`，18 条艺术史关系同时写入 `character_relations` 与 `artist_relations`。
+
+前端艺术史 profile 隐藏重复的“艺术家”页签，人物页显示完整姓名并保留艺术史状态、时期称谓、正式爵位/荣誉称号和作品入口；旧的 `artist:` 深链接、作品反向入口及搜索结果自动归一到 `character:`。圣经、三国、银河原力三条既有内容线的 seed 与静态站点不修改。
+
+本阶段已通过：`npm run typecheck`；PostgreSQL 18 + PostGIS 全量 migration/seed bootstrap 及重复幂等执行；48/48 映射、96 事件、43 地点关联、48 来源关联、36 条双语关系翻译 SQL 审计；API atlas/detail/search（搜索同一艺术家只返回一个人物结果）。独立站静态烘焙与浏览器/生产验收将在本次提交后更新本段记录。详见 [`docs/HANDOFF_DECISIONS_2026-08-02.md`](HANDOFF_DECISIONS_2026-08-02.md)。
+
 ### 2026-08-01 阶段性交接：欧洲美术史 R3 内容扩容（R1/R2/R3/R4/R5/R6）
 
 欧洲美术史已完成 R3 内容扩容，独立 profile 为 `european-art-history`，不改变圣经、三国、银河原力三条既有内容线。当前验证计数：**48 艺术家、96 作品、16 流派、96 生命周期事件、24 地点、3 机构**；作品以“事件的产物”建模，通过作品/艺术家事件链接表达委托、制作、完成、展出、收藏、转移或修复等角色。全部新增艺术实体具备中英文 published 翻译、来源闭环与 PostGIS 真实地点；跨 1840–1945 的作品按跨章规则归入主时代，避免时间轴重复归属。

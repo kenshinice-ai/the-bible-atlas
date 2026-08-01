@@ -28,7 +28,7 @@ const CharacterSchema = z.object({
   roleType: z.enum(["protagonist", "antagonist", "supporting", "narrator", "historical", "collective", "supernatural"]),
   realityType: z.enum(["historical", "fictional", "fictionalised_historical", "unknown"]),
   birthYear: z.number().nullable(), deathYear: z.number().nullable(), birthPlaceSlug: z.string().nullable(), deathPlaceSlug: z.string().nullable(),
-  iconVariant: z.string(), importance: z.number(), name: z.string(), summary: z.string(), aliases: z.array(z.string()), detail: z.string(), motivation: z.string(),
+  iconVariant: z.string(), importance: z.number(), artistSlug: z.string().nullable(), name: z.string(), summary: z.string(), aliases: z.array(z.string()), detail: z.string(), motivation: z.string(),
   eventSlugs: z.array(z.string()), locationSlugs: z.array(z.string()), sourceTitles: z.array(z.string()),
   // v4 hierarchy: which era a person first appears in, and which groups collapse them.
   groupSlugs: z.array(z.string()), chapterSlug: z.string().nullable(),
@@ -70,9 +70,9 @@ const RelationSchema = z.object({
 }).and(TranslationMetaSchema);
 
 const ArtistSchema = z.object({
-  id: z.string().uuid(), slug: z.string(), artistKind: z.enum(["person", "workshop", "collective", "anonymous_master", "school"]),
+  id: z.string().uuid(), slug: z.string(), characterSlug: z.string().nullable(), artistKind: z.enum(["person", "workshop", "collective", "anonymous_master", "school"]),
   birthYear: z.number().nullable(), deathYear: z.number().nullable(), birthPlaceSlug: z.string().nullable(), deathPlaceSlug: z.string().nullable(),
-  importance: z.number(), name: z.string(), summary: z.string(), modernStatus: z.string(), periodTitles: z.array(z.string()),
+  importance: z.number(), name: z.string(), fullName: z.string(), aliases: z.array(z.string()), formalTitles: z.array(z.string()), summary: z.string(), modernStatus: z.string(), periodTitles: z.array(z.string()),
   chapterSlug: z.string().nullable(), artworkSlugs: z.array(z.string()), movementSlugs: z.array(z.string()), eventSlugs: z.array(z.string()), locationSlugs: z.array(z.string()), sourceTitles: z.array(z.string()),
 }).and(TranslationMetaSchema);
 

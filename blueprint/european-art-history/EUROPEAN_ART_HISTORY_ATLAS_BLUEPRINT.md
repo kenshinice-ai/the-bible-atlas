@@ -1,6 +1,6 @@
 # 欧洲美术史 Atlas 框架
 
-状态：R1/R2/R3/R4/R5/R6 已完成本地实现与验收；当前内容 MVP 为 48 位艺术家、96 件作品，独立生产发布记录随交付 handoff 更新。
+状态：R1/R2/R3/R4/R5/R6 已完成本地实现与验收；R7 已完成艺术家与 canonical 人物统一及全名/爵位字段修正；当前内容 MVP 为 48 位艺术家、96 件作品，独立生产发布记录随交付 handoff 更新。
 
 目标 profile：`european-art-history`。目标是独立网站 / 独立静态构建，不并入圣经舆图、三国舆图或银河原力舆图的默认内容。
 
@@ -40,21 +40,21 @@
 
 ## 4. 数据实体设计
 
-现有 `events`、`locations`、`routes`、`sources`、双语翻译和层级时间轴可以复用，但不能把艺术家或艺术作品伪装成 `characters`。第一条 seed 前必须完成专用 schema 设计：
+现有 `events`、`locations`、`routes`、`sources`、双语翻译和层级时间轴可以复用。艺术家是“人物”语义的一种专业视图：保留 `artists` 专用表承载作品、流派与目录元数据，同时为每位有姓名的艺术家建立唯一 `characters` canonical 人物，并用 `artists.character_id` 连接；人物关系、事件参与、地点和来源统一走 `characters` 链，避免同一人出现两个互不连通的图节点。第一条 seed 前必须完成专用 schema 设计：
 
-- `artists` / `artist_translations`：艺术家、生卒、国籍/地区、重要度；
+- `artists` / `artist_translations`：艺术家专业记录、生卒、国籍/地区、重要度；翻译表同时保留简短目录名与 `full_name`、`aliases`、`formal_titles`。没有可靠爵位/荣誉称号时 `formal_titles` 为空，不用现代地位标签冒充历史爵位；
 - `artworks` / `artwork_translations`：作品、创作年代、媒介、尺寸、现藏信息、版权状态；
 - `movements` / `movement_translations`：流派、时代归属、代表性城市；
 - `artist_artworks`、`artwork_movements`、`artist_movements`：多对多关联；
 - `institutions`，或明确以 `locations.location_type` 承载博物馆、教堂、学院、工作室；
 - 现有 `events`：展览、委托、迁徙、艺术宣言、战争/赞助制度等历史节点；
 - `artwork_event_links`：作品生命周期关联；作品是持续实体，事件以委托、创作、完成、展出、收藏、转移、修复等角色连接；
-- `artist_event_links`、`artist_relations`：艺术家参与事件，以及师承、影响和合作关系；
+- `artist_event_links`、`artist_relations`：艺术家参与事件，以及师承、影响和合作关系；R7 将其镜像到 `event_characters`、`character_relations`，并保持艺术史专用关系表作为来源记录；
 - `historical_place_names`：历史名称、语言、文字、有效年代和来源，与用户界面 `zh-CN/en` 分离；
 - 现有 `routes`：艺术家旅行路线、作品传播路线、城市网络；
 - 现有 `sources`：博物馆目录、公共领域学术书目、机构页面和地理来源。
 
-如果 schema 评审决定复用现有表，必须记录明确映射；不得无决策地把艺术实体塞进 `characters`。
+只有 `artist_kind=person` 且具有明确姓名的行进入 canonical 人物映射；工坊、集体或匿名大师仍可留在 `artists` 专用表而不伪造个人身份。
 
 ## 5. 地图与界面
 
@@ -91,11 +91,11 @@
 - 不重烘焙或重排现有三个站点的数据；
 - 不把艺术史内容写入现有三个站点；
 - 不先做大规模图片抓取或 3D 地球仪；
-- R1/R2/R3/R4/R5/R6 已落地：schema、双语 seed、48/96 内容、独立 profile、API、搜索、基础浏览 UI、时代筛选、实体深链接和静态烘焙已经具备；
+- R1/R2/R3/R4/R5/R6/R7 已落地：schema、双语 seed、48/96 内容、48/48 canonical 人物映射、18 条人物关系、独立 profile、API、搜索、基础浏览 UI、时代筛选、实体深链接和静态烘焙已经具备；
 - R3 的内容扩容与逐项来源复核已完成；完整路线网络不作为本次 48/96 验收的阻塞项，后续以增量 handoff 管理；
 - schema 决策已完成；后续新增 seed 仍必须先更新清单与来源复核记录；
 - 不把“欧洲美术史”拆成多个作品，除非未来明确需要国家/时期独立站。
 
 ## 9. 框架阶段验收
 
-范围、实体映射、版权边界、profile 名称、清单、schema 决策门和 Sprint 顺序均写入仓库。R3 验收为独立 profile 可构建、数据库可幂等 bootstrap、48/96 双语数据和来源/事件闭环、浏览器关键交互通过，且三个既有 profile 的静态产物与 seed 不发生变化。
+范围、实体映射、版权边界、profile 名称、清单、schema 决策门和 Sprint 顺序均写入仓库。R7 验收增加：48/48 艺术家映射 canonical 人物，96 个生命周期事件与 43 个地点关联进入人物链，18 条关系具备双语标签/摘要，所有艺术家翻译具备完整姓名；爵位字段只录入有来源支撑的称号。三个既有 profile 的静态产物与 seed 不发生变化。

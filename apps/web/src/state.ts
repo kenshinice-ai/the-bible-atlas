@@ -98,6 +98,13 @@ export function parseAtlasState(search: string): ExploreState {
   const until = untilValue !== null && Number.isInteger(untilValue) && untilValue > 0 && untilValue !== 999 ? untilValue : null;
   const rangeStart = optionalYear(q.get("from"));
   const rangeEnd = optionalYear(q.get("to"));
+  const parsedTab = tabValue && tabs.has(tabValue as Tab) ? (tabValue as Tab) : "events";
+  const tab = PROFILE.id === "european-art-history" && parsedTab === "artists" ? "characters" : parsedTab;
+  const parsedZoomLevel = zoomRaw && zoomValues.has(zoomRaw as ZoomLevel) ? (zoomRaw as ZoomLevel) : "group";
+  // The art-history profile has no character groups. Starting its relationship
+  // graph at the group tier would render an empty canvas, so normalize legacy
+  // era/group links to the finest useful people tier.
+  const zoomLevel = PROFILE.id === "european-art-history" && (parsedZoomLevel === "era" || parsedZoomLevel === "group") ? "all" : parsedZoomLevel;
   return {
     // The profile decides the default language; the other stays one tap away.
     locale: LocaleSchema.catch(PROFILE.defaultLocale).parse(q.get("locale") ?? q.get("lang") ?? PROFILE.defaultLocale),
@@ -105,7 +112,7 @@ export function parseAtlasState(search: string): ExploreState {
     works: normalizedWorks,
     active: requestedActive && normalizedWorks.includes(requestedActive) ? requestedActive
       : normalizedWorks.includes(PROFILE.active) ? PROFILE.active : normalizedWorks[0]!,
-    tab: tabValue && tabs.has(tabValue as Tab) ? (tabValue as Tab) : "events",
+    tab,
     selectedEntity: parseEntity(q.get("entity"), q.get("selected")),
     selectionSource: "url",
     until,
@@ -113,7 +120,7 @@ export function parseAtlasState(search: string): ExploreState {
     rangeStart,
     rangeEnd: rangeEnd !== null && rangeStart !== null && rangeEnd < rangeStart ? null : rangeEnd,
     mapLayers: requestedLayers.length > 0 ? requestedLayers : ["places", "routes", "landmarks"],
-    zoomLevel: zoomRaw && zoomValues.has(zoomRaw as ZoomLevel) ? (zoomRaw as ZoomLevel) : "group",
+    zoomLevel,
     chapter: q.get("era"),
     query: q.get("q") ?? "",
   };

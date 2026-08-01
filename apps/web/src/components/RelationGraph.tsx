@@ -436,9 +436,10 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
   }
 
   function changeTier(level: ZoomLevel) {
-    if (level === zoomLevel) { animateTo(fitTransformFor(model.nodes, sizeRef.current.width, sizeRef.current.height)); return; }
+    const normalizedLevel = level === "group" && atlas.groups.length === 0 ? "all" : level;
+    if (normalizedLevel === zoomLevel) { animateTo(fitTransformFor(model.nodes, sizeRef.current.width, sizeRef.current.height)); return; }
     intentRef.current = { kind: "fit" };
-    onZoomLevel(level);
+    onZoomLevel(normalizedLevel);
   }
 
   function activate(node: GraphNode) {
@@ -447,7 +448,9 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
     if (node.kind === "era") {
       if (node.x !== undefined && node.y !== undefined) intentRef.current = { kind: "drill", x: node.x, y: node.y };
       onChapter(node.slug);
-      onZoomLevel("group");
+      // Art history has no character groups; jump directly to people instead
+      // of leaving the user on an empty group canvas.
+      onZoomLevel(atlas.groups.length > 0 ? "group" : "all");
       return;
     }
     if (node.kind === "group") {
@@ -491,6 +494,7 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
           type="button"
           className={level === zoomLevel ? "active" : ""}
           aria-pressed={level === zoomLevel}
+          disabled={level === "group" && atlas.groups.length === 0}
           onClick={() => changeTier(level)}
         >{t(level === "era" ? "graphLevelEra" : level === "group" ? "graphLevelGroup" : level === "major" ? "graphLevelMajor" : "graphLevelAll", locale)}</button>)}
       </div>

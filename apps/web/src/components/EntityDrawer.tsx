@@ -62,6 +62,7 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
     const person = atlas.characters.find((item) => item.slug === entity.id);
     if (!person) return null;
     const relations = atlas.relations.filter((item) => item.fromSlug === person.slug || item.toSlug === person.slug);
+    const artist = person.artistSlug ? atlas.artists.find((item) => item.slug === person.artistSlug) : undefined;
     const groups = atlas.groups.filter((group) => person.groupSlugs.includes(group.slug));
     const era = chapterOf(person.chapterSlug);
     const birthPlace = atlas.locations.find((place) => place.slug === person.birthPlaceSlug);
@@ -81,7 +82,9 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
         <span>{label(person.ageStage, locale)}</span>
         <span>{label(person.roleType, locale)}</span>
         <span>{label(person.realityType, locale)}</span>
+        {artist && <span>{artist.modernStatus}</span>}
       </div>
+      {artist && artist.formalTitles.length > 0 && <p className="aliases"><strong>{t("formalTitles", locale)}:</strong> {artist.formalTitles.join(" · ")}</p>}
       <p>{person.summary}</p>
       {(detail.detail || person.detail) && <p>{detail.detail || person.detail}</p>}
       {(detail.motivation || person.motivation) && <section><h3>{t("motivation", locale)}</h3><p>{detail.motivation || person.motivation}</p></section>}
@@ -99,6 +102,7 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
         <button onClick={() => onSelect({ type: "character", workSlug: atlas.work.slug, id: person.slug }, "list")}>{t("locateOnMap", locale)}</button>
         <button onClick={() => onTab("relations")}>{t("openGraph", locale)}</button>
         <button onClick={() => onTab("events")}>{t("relatedEvents", locale)}</button>
+        {artist && <button onClick={() => onTab("artworks")}>{t("artworks", locale)}</button>}
       </div>
       {person.eventSlugs.length > 0 && <section>
         <h3>{t("relatedEvents", locale)} · {person.eventSlugs.length}</h3>
@@ -118,6 +122,15 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
             <small>{relation.summary}</small>
           </button>;
         })}
+      </section>}
+      {artist && artist.artworkSlugs.length > 0 && <section>
+        <h3>{t("artworks", locale)} · {artist.artworkSlugs.length}</h3>
+        <div className="drawer-links">
+          {artist.artworkSlugs.map((slug) => {
+            const artwork = atlas.artworks.find((item) => item.slug === slug);
+            return artwork ? <button key={slug} onClick={() => onSelect({ type: "artwork", workSlug: atlas.work.slug, id: slug }, "list")}>{artwork.title}</button> : null;
+          })}
+        </div>
       </section>}
       <Sources names={person.sourceTitles} locale={locale} />
     </Shell>;
@@ -183,8 +196,10 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
     if (!artist) return null;
     const era = chapterOf(artist.chapterSlug);
     return <Shell onClose={onClose} locale={locale}>
-      <small>{atlas.work.title}{era ? ` · ${era.title}` : ""}</small><h2>{artist.name}</h2>
+      <small>{atlas.work.title}{era ? ` · ${era.title}` : ""}</small><h2>{artist.fullName || artist.name}</h2>
+      {artist.aliases.length > 0 && <p className="aliases">{t("aliases", locale)}: {artist.aliases.join(" · ")}</p>}
       <div className="identity-tags"><span>{label(artist.artistKind, locale)}</span><span>{artist.modernStatus}</span>{artist.periodTitles.map((title) => <span key={title}>{title}</span>)}</div>
+      {artist.formalTitles.length > 0 && <p className="aliases"><strong>{t("formalTitles", locale)}:</strong> {artist.formalTitles.join(" · ")}</p>}
       <p>{artist.summary}</p>
       <dl><dt>{t("lifeRange", locale)}</dt><dd>{artist.birthYear !== null ? formatYear(artist.birthYear, locale) : "—"} — {artist.deathYear !== null ? formatYear(artist.deathYear, locale) : "—"}</dd><dt>{t("artworks", locale)}</dt><dd>{artist.artworkSlugs.length}</dd><dt>{t("relatedPlaces", locale)}</dt><dd>{artist.locationSlugs.length}</dd></dl>
       {artist.artworkSlugs.length > 0 && <section><h3>{t("artworks", locale)}</h3><div className="drawer-links">{artist.artworkSlugs.map((slug) => { const artwork = atlas.artworks.find((item) => item.slug === slug); return artwork ? <button key={slug} onClick={() => onSelect({ type: "artwork", workSlug: atlas.work.slug, id: slug }, "list")}>{artwork.title}</button> : null; })}</div></section>}
@@ -201,7 +216,7 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
       <small>{atlas.work.title}{era ? ` · ${era.title}` : ""}</small><h2>{artwork.title}</h2>
       <div className="identity-tags"><span>{label(artwork.status, locale)}</span><span>{artwork.medium}</span><span>{artwork.creationStartYear ?? "?"}{artwork.creationEndYear && artwork.creationEndYear !== artwork.creationStartYear ? `–${artwork.creationEndYear}` : ""}</span></div>
       <p>{artwork.summary}</p><dl><dt>{t("creationPlace", locale)}</dt><dd>{atlas.locations.find((place) => place.slug === artwork.creationLocationSlug)?.name ?? "—"}</dd><dt>{t("currentLocation", locale)}</dt><dd>{atlas.locations.find((place) => place.slug === artwork.currentLocationSlug)?.name ?? "—"}</dd><dt>{t("medium", locale)}</dt><dd>{artwork.medium}</dd></dl>
-      {artwork.artistSlugs.length > 0 && <section><h3>{t("artists", locale)}</h3><div className="drawer-links">{artwork.artistSlugs.map((slug) => { const artist = atlas.artists.find((item) => item.slug === slug); return artist ? <button key={slug} onClick={() => onSelect({ type: "artist", workSlug: atlas.work.slug, id: slug }, "list")}>{artist.name}</button> : null; })}</div></section>}
+      {artwork.artistSlugs.length > 0 && <section><h3>{t("artists", locale)}</h3><div className="drawer-links">{artwork.artistSlugs.map((slug) => { const artist = atlas.artists.find((item) => item.slug === slug); return artist ? <button key={slug} onClick={() => onSelect({ type: "artist", workSlug: atlas.work.slug, id: slug }, "list")}>{artist.fullName || artist.name}</button> : null; })}</div></section>}
       <Sources names={artwork.sourceTitles} locale={locale} />
     </Shell>;
   }
@@ -221,7 +236,7 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
       <div className="identity-tags"><span>{label(institution.institutionType, locale)}</span></div>
       <p>{institution.summary}</p>
       <dl><dt>{t("creationPlace", locale)}</dt><dd>{place?.name ?? "—"}</dd><dt>{t("lifeRange", locale)}</dt><dd>{institution.foundedYear !== null ? formatYear(institution.foundedYear, locale) : "—"} — {institution.closedYear !== null ? formatYear(institution.closedYear, locale) : (locale === "zh-CN" ? "至今" : "present")}</dd><dt>{t("artists", locale)}</dt><dd>{institution.artistSlugs.length}</dd></dl>
-      <div className="drawer-actions"><button onClick={() => onTab("artists")}>{t("artists", locale)}</button></div>
+      <div className="drawer-actions"><button onClick={() => onTab(atlas.work.category === "art_history" ? "characters" : "artists")}>{t(atlas.work.category === "art_history" ? "characters" : "artists", locale)}</button></div>
       <Sources names={institution.sourceTitles} locale={locale} />
     </Shell>;
   }

@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { STATIC_DATA, search } from "../api";
 import { t, type UIKey } from "../i18n";
+import { PROFILE } from "../profile";
 import { SINGLE_WORK, type SelectedEntity } from "../state";
 import type { Atlas, Locale, SearchResponse } from "../types";
 
@@ -29,7 +30,10 @@ function searchAtlases(atlases: Atlas[], query: string): SearchResponse["items"]
     for (const person of atlas.characters) if (hit(person.name, person.summary, ...person.aliases)) items.push({ kind: "character", slug: person.slug, label: person.name, context: person.summary, workSlug });
     for (const event of atlas.events) if (hit(event.title, event.summary, event.detail)) items.push({ kind: "event", slug: event.slug, label: event.title, context: event.summary, workSlug });
     for (const place of atlas.locations) if (hit(place.name, place.summary, ...place.aliases)) items.push({ kind: "location", slug: place.slug, label: place.name, context: place.summary, workSlug });
-    for (const artist of atlas.artists) if (hit(artist.name, artist.summary, artist.modernStatus, ...artist.periodTitles)) items.push({ kind: "artist", slug: artist.slug, label: artist.name, context: artist.summary, workSlug });
+    // In the art-history profile artists are canonical people, so their
+    // character row is the single searchable identity. Keep specialist artist
+    // results for any future profile that does not opt into that mapping.
+    if (PROFILE.id !== "european-art-history") for (const artist of atlas.artists) if (hit(artist.name, artist.fullName, artist.summary, artist.modernStatus, ...artist.aliases, ...artist.periodTitles, ...artist.formalTitles)) items.push({ kind: "artist", slug: artist.slug, label: artist.fullName || artist.name, context: artist.summary, workSlug });
     for (const artwork of atlas.artworks) if (hit(artwork.title, artwork.summary, artwork.medium)) items.push({ kind: "artwork", slug: artwork.slug, label: artwork.title, context: artwork.summary, workSlug });
     for (const movement of atlas.movements) if (hit(movement.name, movement.summary)) items.push({ kind: "movement", slug: movement.slug, label: movement.name, context: movement.summary, workSlug });
     for (const institution of atlas.institutions) if (hit(institution.name, institution.summary)) items.push({ kind: "institution", slug: institution.slug, label: institution.name, context: institution.summary, workSlug });

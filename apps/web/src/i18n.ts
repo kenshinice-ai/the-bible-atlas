@@ -61,7 +61,7 @@ const ENUMS: Record<string, Pair> = {
   // work + group
   historical_document: ["历史文献", "Historical document"], historical_fiction: ["历史小说", "Historical fiction"],
   realist_fiction: ["现实主义小说", "Realist fiction"], fantasy: ["奇幻", "Fantasy"], mythic_epic: ["神话史诗", "Mythic epic"], art_history: ["艺术史", "Art history"],
-  workshop: ["工坊", "Workshop"], anonymous_master: ["匿名大师", "Anonymous master"],
+  workshop: ["工坊", "Workshop"], anonymous_master: ["匿名大师", "Anonymous master"], artist: ["艺术家人物", "Artist person"],
   confirmed: ["已确认", "Confirmed"], attributed: ["归属推定", "Attributed"], destroyed: ["已毁损", "Destroyed"],
   commissioned: ["委托", "Commissioned"], produced: ["创作", "Produced"], completed: ["完成", "Completed"], exhibited: ["展出", "Exhibited"], acquired: ["收藏", "Acquired"], relocated: ["转移", "Relocated"], restored: ["修复", "Restored"],
   dynasty: ["王朝", "Dynasty"], circle: ["群体", "Circle"], tribe: ["支派", "Tribe"], institution: ["机构与势力", "Institution"],
@@ -146,6 +146,7 @@ export const UI = {
   characters: ["人物", "People"], events: ["事件", "Events"], locations: ["地点", "Places"],
   routes: ["路线", "Routes"], relations: ["关系", "Relations"], artists: ["艺术家", "Artists"], artworks: ["作品", "Artworks"], movements: ["流派", "Movements"],
   creationPlace: ["创作地点", "Creation place"], currentLocation: ["现藏地点", "Current collection"], medium: ["媒介", "Medium"],
+  formalTitles: ["正式爵位或荣誉称号", "Formal rank or honorific"],
   sources: ["出处与数据说明", "Sources and data notes"],
   copy: ["复制此景链接", "Copy link to this view"], copied: ["已复制", "Copied"],
   single: ["单部探索", "Single work"], multi: ["多部对照", "Compare works"],
