@@ -10,6 +10,8 @@
 
 独立站已发布到 Cloudflare Pages production `main`：**https://european-art-history-atlas.pages.dev**（deployment `1e046d1f`，2026-08-01）；线上首页、双语 atlas JSON、作品隔离和 48/96 计数均返回 200/正确值。交付代码提交为 `d23d91720dd6b6353967cf6e7fa6bf931eb71dae`；静态构建关键哈希：`index.html` `5c81b9cf…ca8ae7`、`index-DiB2dwAW.js` `fe413570…1b804c`。
 
+交付源码包：[European-Art-History-Atlas-R3-20260801-source.zip](../release/European-Art-History-Atlas-R3-20260801-source.zip)，SHA-256：`1d74081db6b5f8a9f11bf6848162790f26c5aca72d0db0ff79b7a65b2df5edf5`；独立 Blueprint：[EUROPEAN_ART_HISTORY_ATLAS_BLUEPRINT.md](../blueprint/european-art-history/EUROPEAN_ART_HISTORY_ATLAS_BLUEPRINT.md)。
+
 详细边界与文件清单见 [`docs/HANDOFF_DECISIONS_2026-08-01.md`](HANDOFF_DECISIONS_2026-08-01.md) 与 [`blueprint/european-art-history/IMPLEMENTATION_CHECKLIST.md`](../blueprint/european-art-history/IMPLEMENTATION_CHECKLIST.md)。
 
 v4 Bible-first 架构已落地并提交(commit `9b47ea0`):以「时代 → 人物群 → 个人」的缩放层级取代此前基于实体数量上限的展示方式。
