@@ -1,6 +1,34 @@
 # Handoff 决策补充 · 2026-08-02
 
-这是欧洲美术史 R7 人物统一阶段的执行记录；以本文件、`docs/HANDOFF.md` 和最终 Git 提交为准。
+这是欧洲美术史 R8 作品媒体与独立发布阶段的执行记录；R7 人物统一决策仍保留在下方。以本文件、`docs/HANDOFF.md` 和最终 Git 提交为准。
+
+## R8 作品媒体与发布（2026-08-02）
+
+### 决策
+
+- 每件作品保留一条 `media_links(entity_kind='artwork')`；作品详情抽屉按 `media_kind` 决定渲染本地图片或外部来源页。
+- Wikimedia Commons 只有在元数据明确为 Public Domain、CC0、CC BY 或 CC BY-SA 时才进入生产图片白名单；本地文件固定为 960px 缩略图并记录作者、署名、来源页、许可页、原始 URL、抓取时间和 SHA-256。
+- Google Arts & Culture 只作为研究线索或外部提供方参考，不从其可见页面推断再发布许可；没有单独可复用许可时只能 `external_link + pending`。
+- `portuguese-braque` 与 `violin-and-candlestick` 没有通过 Commons 开放许可门禁，保留官方 Braque 页面外链，不复制或渲染图片。
+
+### 实现与门禁
+
+- Migration：`db/migrations/011_artwork_media_rights.sql`
+- Seed：`db/seeds/054_european_artwork_media.sql`
+- 导入器：`scripts/import_commons_artwork_media.ts`
+- 验证器：`scripts/verify_artwork_media.ts`（`npm run verify:artwork-media`）
+- 96/96 作品各有一条媒体记录：94 条 `image + bundled + verified`，2 条 `external_link + pending`；94 个本地图片文件与数据库 checksum 全部一致，目录无残留或缺失文件。
+- 每条媒体均有中英文 published source translation、`artwork_sources` provenance、HTTPS 来源/原始 URL、作者、署名和中英文 alt text。
+- API atlas（隔离 PostgreSQL 18 + PostGIS）返回 48 艺术家、96 作品、96 事件、96 媒体；中英文 alt text 随 locale 切换。
+
+### 浏览器与发布
+
+- 静态构建 `apps/web/dist` 已烘焙双语 JSON 和 94 个图片文件；作品抽屉显示图片、署名、许可链接和来源页；外链作品显示不复制图片提示；英文切换保留当前作品；390px 视口 `body.scrollWidth === innerWidth`，作品图片加载成功，控制台 error/warn 为 0。
+- 完整门禁通过：`npm run typecheck`、`npm test`（API 5 + Web 32）、`npm run build`、`npm run test:start-command`、`docker compose config --quiet`、`npm run verify:postgis`、`npm run verify:artwork-media`。
+- Cloudflare Pages production `main` 已发布：[`https://european-art-history-atlas.pages.dev`](https://european-art-history-atlas.pages.dev)，deployment `a23e6912-c11e-4b29-8269-f5328fc89c53`，预览地址 `https://a23e6912.european-art-history-atlas.pages.dev`，Source `3ca34e5`。
+- 线上探针通过：首页与 deployment URL HTTP 200；`atlas.european-art-history.zh-CN.json` 返回 48 艺术家、96 作品、96 事件、96 媒体，其中 94 条 `bundled + verified`、2 条 external；`media/artworks/mona-lisa.jpg` 返回 HTTP 200、`image/jpeg`。
+- 静态构建 SHA-256：`index.html` `0c8a0950f135b86be6a00fe30fe84cfec85954718cdc1015b55bfa38efcda325`；`index-CBruIyTh.js` `0b712f6c0b6150f95504a259127e5fbe9512627f3315de7fde7b7b745fa60b52`；`index-C4eyKGdp.css` `a10fff2f82a506b7f7e817722f55b6ba433a0de06713db1f2f05d547f7b7f95f`。
+- R8 实现提交：`3ca34e533dbd6b1848cf12849e865d8a27b39afb`。源码包 `release/European-Art-History-Atlas-R8-20260802-source.zip` 已在生产 deployment 记录写入后重新生成并通过压缩完整性检查，SHA-256 `09a8a2c6f825dceb4975950a79893ab5eb08eb43824612caf0c81190a6d085c5`；三个既有 profile 的 seed、静态产物和生产站点不重烘焙。
 
 ## 决策
 

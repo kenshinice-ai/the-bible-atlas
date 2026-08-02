@@ -2,6 +2,14 @@
 
 ## 项目现状
 
+### 2026-08-02 阶段性交接：欧洲美术史 R8 作品媒体与独立发布（实现、上传与生产验收完成）
+
+R8 为 96 件欧洲美术史作品增加了权利审计的展示媒体链：94 条 Wikimedia Commons Public Domain/CC0/CC BY/CC BY-SA 图片以 960px 本地缩略图打包，2 条 Braque 作品因未验证到可再发布许可保留官方页面外链，不复制图片。`media_assets` 新增 `media_kind`、`usage_mode`、`license_status`、`license_url`、`source_page_url`、`original_url`、`retrieved_at` 与 `checksum_sha256`；每件作品恰好一条 `artwork` media link，来源翻译、`artwork_sources`、署名和中英文 alt text 完整。
+
+实现文件：`db/migrations/011_artwork_media_rights.sql`、`db/seeds/054_european_artwork_media.sql`、`scripts/import_commons_artwork_media.ts`、`scripts/verify_artwork_media.ts`、`docs/ARTWORK_MEDIA_RIGHTS.md`。前端作品抽屉渲染本地图片、署名、许可/来源链接；外链记录显示不复制图片提示。隔离数据库验证为 **48 艺术家 / 96 作品 / 96 事件 / 94 本地图片 / 2 外链参考**；`npm run typecheck`、API 5 + Web 32 tests、生产构建、`verify:postgis`、媒体 checksum/双语 provenance 门禁和生产静态包浏览器验收均通过。
+
+独立站已发布到 Cloudflare Pages production `main`：**https://european-art-history-atlas.pages.dev**，deployment `a23e6912-c11e-4b29-8269-f5328fc89c53`（预览地址 `https://a23e6912.european-art-history-atlas.pages.dev`），关联源码提交 `3ca34e533dbd6b1848cf12849e865d8a27b39afb`。线上首页、双语 atlas JSON 与实际作品图片均返回 HTTP 200；线上 JSON 为 **48 艺术家 / 96 作品 / 96 事件 / 96 媒体（94 bundled verified + 2 external）**。静态构建关键哈希：`index.html` `0c8a0950…a325`、`index-CBruIyTh.js` `0b712f6c…60b52`、`index-C4eyKGdp.css` `a10fff2f…f95f`。源码包：[European-Art-History-Atlas-R8-20260802-source.zip](../release/European-Art-History-Atlas-R8-20260802-source.zip)，SHA-256：`09a8a2c6f825dceb4975950a79893ab5eb08eb43824612caf0c81190a6d085c5`；圣经、三国、银河原力三个 profile 未改 seed、未重烘焙。
+
 ### 2026-08-02 阶段性交接：欧洲美术史 R7 人物统一（实现与审计完成）
 
 艺术史中的“艺术家”现在与“人物”统一为一条 canonical identity 链：`artists` 继续承载作品、流派和艺术目录专用字段，但每位具名艺术家通过 `artists.character_id` 映射到唯一 `characters` 行。人物关系、作品生命周期事件、地点、来源和搜索均以人物行作为公共入口；艺术家专业数据仍可从映射回溯。当前临时验证库为 **48 人物 / 48 艺术家 / 96 作品 / 96 事件 / 16 流派 / 24 地点 / 18 人物关系**，48/48 映射无空值，关系和翻译均为中英文 published。
