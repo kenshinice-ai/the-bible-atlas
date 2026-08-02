@@ -1,3 +1,8 @@
 # 欧洲美术史 Atlas
 
-框架与实施清单见同目录文件。
+框架、实施清单与下一阶段扩充规划见同目录文件：
+
+- `EUROPEAN_ART_HISTORY_ATLAS_BLUEPRINT.md`
+- `IMPLEMENTATION_CHECKLIST.md`
+- `TIME_SEED_DISCIPLINE.md`
+- `R9_R10_CONTENT_EXPANSION_PLAN.md`

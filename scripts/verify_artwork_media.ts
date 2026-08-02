@@ -17,9 +17,8 @@ import pg from "pg";
 const WORK_ID = "10000000-0000-4000-8000-000000000009";
 const ROOT = resolve(process.env.ATLAS_PROJECT_ROOT ?? process.cwd());
 const MEDIA_ROOT = resolve(process.env.MEDIA_DIR ?? join(ROOT, "apps/web/public/media/artworks"));
-const EXPECTED_ARTWORKS = 96;
-const EXPECTED_BUNDLED = 94;
-const EXPECTED_EXTERNAL = 2;
+const EXPECTED_ARTWORKS = Number(process.env.MEDIA_EXPECTED_ARTWORKS ?? "200");
+const MIN_BUNDLED = Number(process.env.MEDIA_MIN_BUNDLED ?? "94");
 const ACCEPTED_LICENSE = /^(?:Public domain|CC0|CC BY(?:-SA)? \d+(?:\.\d+)?)$/u;
 
 type MediaRow = {
@@ -83,8 +82,8 @@ async function main(): Promise<void> {
 
     const bundled = result.rows.filter((row) => row.mediaKind === "image");
     const external = result.rows.filter((row) => row.mediaKind === "external_link");
-    if (bundled.length !== EXPECTED_BUNDLED || external.length !== EXPECTED_EXTERNAL) {
-      fail(`expected ${EXPECTED_BUNDLED} bundled images and ${EXPECTED_EXTERNAL} external references, found ${bundled.length}/${external.length}`);
+    if (bundled.length < MIN_BUNDLED || bundled.length + external.length !== EXPECTED_ARTWORKS) {
+      fail(`expected at least ${MIN_BUNDLED} bundled images and ${EXPECTED_ARTWORKS} total media rows, found ${bundled.length}/${bundled.length + external.length}`);
     }
 
     const expectedFiles = new Set<string>();

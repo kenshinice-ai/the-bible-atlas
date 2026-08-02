@@ -146,6 +146,7 @@ export const UI = {
   characters: ["人物", "People"], events: ["事件", "Events"], locations: ["地点", "Places"],
   routes: ["路线", "Routes"], relations: ["关系", "Relations"], artists: ["艺术家", "Artists"], artworks: ["作品", "Artworks"], movements: ["流派", "Movements"],
   creationPlace: ["创作地点", "Creation place"], currentLocation: ["现藏地点", "Current collection"], medium: ["媒介", "Medium"],
+  artworkDescription: ["作品简介", "About this work"],
   artworkImage: ["作品展示图", "Artwork image"], imageAttribution: ["图片归属", "Image attribution"], viewSource: ["查看来源页", "View source page"],
   externalImageNote: ["图片由来源站点托管，本图集不复制该文件。", "The provider hosts this image; this atlas does not redistribute the file."],
   imageUnavailable: ["暂无可再发布的图片；请打开来源页查看。", "No redistributable image is available; open the source page to view it."],

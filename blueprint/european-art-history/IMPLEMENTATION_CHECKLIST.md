@@ -1,6 +1,6 @@
 # 欧洲美术史 Atlas 实施清单
 
-状态：R1/R2/R3/R4/R5/R6 已实现并完成本地验证；R7 人物统一与双语全名修正已完成，独立生产发布以本次交付的 Cloudflare Pages URL、commit 和构建哈希为准。2026-08-02 阶段性交接以 `docs/HANDOFF_DECISIONS_2026-08-02.md` 为准。
+状态：R1–R8 已完成并发布；R9/R10 的内容、媒体、fresh/repeat bootstrap、全量工程门禁和静态构建已完成，production 发布与线上验收待本次交付收尾。2026-08-02 阶段性交接以 `docs/HANDOFF_DECISIONS_2026-08-02.md` 为准。
 
 ## Gate 0：范围与保护边界
 
@@ -31,6 +31,8 @@
 - [x] 每个城市/机构确定坐标精度、历史名称和现代名称（24 个地点）。
 - [x] 每件作品绑定至少一个生命周期事件；路线网络作为后续增量清单。
 - [x] 争议年代、归属和现藏信息以 confidence/status/source 字段标注。
+- [x] R9/R10 按 8 个创作时期纪律扩到 82 位重要艺术家 / 200 件作品；第 9 个章节只承载 18 条战后治理事件。
+- [x] 200/200 作品补齐双语 summary + description；零作品艺术家为 0。
 
 ## Gate 3：骨架实现
 
@@ -62,6 +64,9 @@
 - [x] 48/48 艺术家均映射 canonical 人物，人物链覆盖 96 事件参与、43 地点关联、48 来源关联和 18 条双语关系。
 - [x] 真实地点使用 PostGIS，禁止虚构坐标混入。
 - [x] 跑来源、版权、孤儿关系、时间范围和坐标约束审计。
+- [x] 82 artists / 82 characters / 200 artworks / 218 events / 9 chapters / 23 movements / 36 relations 精确门禁。
+- [x] fresh database 完整执行 migration 001–012、seed 001–056；重复 bootstrap 全部 already applied。
+- [x] 200 条媒体完成许可、作者身份和原作匹配审计：160 bundled verified / 40 external-only pending。
 
 ## Gate 6：独立发布
 
@@ -71,6 +76,7 @@
 - [x] 独立站浏览器验收：中文/英文、地图、搜索、艺术家详情、时代筛选、时间轴、深链接与 390px 响应式布局。
 - [x] 独立 Cloudflare Pages 项目发布到 production `main`（`european-art-history-atlas`）。
 - [x] 发布后记录 URL、commit、数据计数和构建哈希（见 `docs/HANDOFF.md`）。
+- [ ] R9/R10 production 发布并记录新的 deployment UUID、commit、线上 82/200/218/9/200 与哈希。
 
 ## Gate 7：交付文档
 
@@ -98,4 +104,5 @@
 - [ ] 不修改三国数据。
 - [ ] 不修改银河原力数据。
 - [x] 艺术史 48/96 扩容已执行并通过审计。
+- [x] 艺术史 R9/R10 82/200 扩容、18 条战后事件和媒体审计已执行并通过本地门禁。
 - [ ] 不在 schema 评审完成前生成艺术史实体 seed。

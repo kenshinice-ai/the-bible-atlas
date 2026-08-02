@@ -1,6 +1,30 @@
 # Handoff 决策补充 · 2026-08-02
 
-这是欧洲美术史 R8 作品媒体与独立发布阶段的执行记录；R7 人物统一决策仍保留在下方。以本文件、`docs/HANDOFF.md` 和最终 Git 提交为准。
+这是欧洲美术史 R9/R10 内容扩充阶段的执行记录；R8 作品媒体与 R7 人物统一决策仍保留在下方。以本文件、`docs/HANDOFF.md` 和最终 Git 提交为准。
+
+## R9/R10 内容与媒体阶段（2026-08-02，最终门禁与部署进行中）
+
+### 内容冻结
+
+- 只增加艺术史叙事中的重要人物，不按数量补次要人物；总量冻结为 82 位 canonical 人物/艺术家与 200 件作品。
+- 8 个创作时期按纪律配额归一；新增第 9 个 event-first 章节“战后传播、修复与遗产治理”，不为填满栏目而增加仍在版权期的战后艺术家。
+- 新增 18 条 1945–2024 的博物馆、修复、返还、数字化与遗产治理事件；chronology 结构延伸到 2026。
+- 200 件作品均补齐中英文原创 summary 与 description；description 用于适量背景说明，不复制馆藏长文。
+
+### 数据与媒体门禁
+
+- 隔离数据库 `literary_atlas_eah_full_20260802`：82 artists / 82 characters / 200 artworks / 218 events / 9 chapters / 23 movements / 36 relations。
+- 纪律检查全部为 0：zero-work artist、artist/character 未映射、双语作品缺失、作品事件孤儿、事件来源孤儿、事件地点孤儿。
+- 200/200 作品具有一条 media link：160 bundled verified、40 external-only pending；160 个本地文件与数据库 SHA-256 完全一致。
+- Commons 导入器除 Public Domain、CC0、CC BY、CC BY-SA 白名单外，新增匿名作品空值保护、API/图片网络重试、断点续跑、作者身份匹配和失败关闭。
+- 人工复核发现的 21 个近似候选（临摹、局部习作、复制品、邮票图或其他作品）全部进入 `FORCE_EXTERNAL_SLUGS`，不复制、不渲染为目标原作；媒体目录已清除 28 个最终 Seed 未引用的临时文件。
+
+### 当前状态
+
+- 已生成：`055_european_art_disciplined_expansion.sql` 与 `056_european_art_expansion_media.sql`。
+- 已通过：扩充 Seed 隔离装载、内容计数/闭环门禁、生成器无漂移、fresh database 001–056 完整 bootstrap、repeat bootstrap、`typecheck`、API 5 + Web 32 tests、production build、`verify:postgis`、`verify:artwork-media`、start-command 与 Docker config。
+- 静态双语 JSON 已验证 82/82/200/218/9/23/36/200，160 bundled + 40 external，description 缺失 0，chronology end 2026；构建哈希为 `8242cc5b…e90e` / `527466da…0d96` / `448ddb73…c17`。
+- 本地 in-app browser 对 `127.0.0.1` 被环境安全策略拒绝，未将本地 UI 误记为已验收；尚待 Git 提交/推送、Cloudflare Pages 发布，并在公开 production URL 完成桌面/390px 浏览器与线上数据验收。
 
 ## R8 作品媒体与发布（2026-08-02）
 

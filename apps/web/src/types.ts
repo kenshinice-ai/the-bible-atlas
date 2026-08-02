@@ -80,7 +80,7 @@ const ArtworkSchema = z.object({
   id: z.string().uuid(), slug: z.string(), primaryArtistSlug: z.string().nullable(), chapterSlug: z.string().nullable(),
   creationStartYear: z.number().nullable(), creationEndYear: z.number().nullable(), creationTimeType: TimeTypeSchema, medium: z.string(), dimensions: z.string(),
   status: z.enum(["confirmed", "attributed", "workshop", "lost", "destroyed", "unknown"]), attributionConfidence: z.enum(["high", "medium", "low", "unknown"]), copyrightStatus: z.string(),
-  creationLocationSlug: z.string().nullable(), currentLocationSlug: z.string().nullable(), title: z.string(), summary: z.string(),
+  creationLocationSlug: z.string().nullable(), currentLocationSlug: z.string().nullable(), title: z.string(), summary: z.string(), description: z.string().default(""),
   artistSlugs: z.array(z.string()), movementSlugs: z.array(z.string()), eventSlugs: z.array(z.string()), sourceTitles: z.array(z.string()),
 }).and(TranslationMetaSchema);
 

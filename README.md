@@ -44,7 +44,7 @@ bash scripts/start_local.sh --dry-run --no-open
 - 人物身份卡、关系图、关系生命周期、地点类型/精度、事件现实性/置信度及来源详情。
 - 中文/English 切换保留上下文；明确 published fallback 和双语搜索。
 - 桌面及基础移动端、键盘焦点、减少动态效果适配。
-- 欧洲美术史独立 profile：48 位艺术家、96 件作品、作品生命周期事件；每件作品详情带权利审计展示图或明确的外部来源页。
+- 欧洲美术史独立 profile：82 位 canonical 人物/艺术家、200 件作品、218 个事件、9 个章节；作品详情含双语简介，并带权利审计展示图或明确的外部来源页。
 
 同层规则是硬约束：现实作品与虚构作品不能混在一张地图。当前目录中只有一部虚构作品，因此现实层最多可同时对照四部；系统容量仍为五，未来新增同层作品无需改状态模型。
 
@@ -103,10 +103,19 @@ docker compose config --quiet
 欧洲美术史媒体门禁（需指向隔离或本地已 bootstrap 的 PostgreSQL）：
 
 ```bash
-DATABASE_URL=postgresql:///literary_atlas_artwork_media_20260802 npm run verify:artwork-media
+DATABASE_URL=postgresql:///literary_atlas_eah_r10_release_20260802 \
+MEDIA_EXPECTED_ARTWORKS=200 \
+MEDIA_MIN_BUNDLED=160 \
+npm run verify:artwork-media
 ```
 
-该检查会验证 96/96 作品媒体覆盖、Commons 许可证白名单、双语来源、SHA-256 文件完整性和无残留图片。独立静态站发布：
+该检查会验证 200/200 作品媒体覆盖、Commons 许可证白名单、双语来源、SHA-256 文件完整性和无残留图片。R9/R10 扩充 Seed 可重复生成：
+
+```bash
+npm run generate:art-expansion
+```
+
+独立静态站发布：
 
 ```bash
 BAKE_API_URL=http://localhost:4000 \

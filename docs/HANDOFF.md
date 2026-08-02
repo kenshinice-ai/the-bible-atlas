@@ -2,6 +2,18 @@
 
 ## 项目现状
 
+### 2026-08-02 阶段性交接：欧洲美术史 R9/R10 内容扩充（媒体阶段完成，最终门禁与部署进行中）
+
+R9/R10 已把欧洲美术史内容扩到 **82 位 canonical 人物 / 82 位艺术家 / 200 件作品 / 218 个事件 / 9 个章节 / 23 个流派 / 36 条人物关系**。新增 34 位重要艺术家和 104 件代表作；原 8 个创作时期重新归一，第 9 章“战后传播、修复与遗产治理”以事件为主，新增 18 条 1945–2024 的近现代事件，并把图集时间范围延伸到 2026。第 9 章不为填满人物栏而加入版权期艺术家。
+
+作品双语翻译新增 `description`，200/200 件作品均具备中英文 published 标题、摘要和适量原创简介。前端作品抽屉新增“作品简介”，API 与搜索同时返回/检索 description。隔离库 `literary_atlas_eah_full_20260802` 已验证：各时期人物/作品达到冻结配额，零作品艺术家、未映射人物、缺失双语作品、孤儿作品事件、孤儿事件来源和孤儿事件地点均为 0。
+
+媒体阶段已完成严格审计：200/200 件作品各有一条媒体记录，其中 **160 条本地 bundled verified 图片 + 40 条 external-only pending 来源页**。新增批次先以开放许可白名单检索，再增加作者身份门禁；21 个虽与作者相关但属于临摹、习作、复制品、邮票图或同系列其他作品的候选被主动降级为外链，未以近似图冒充原作。160 个媒体文件均被 Seed 引用，目录无多余/缺失文件，SHA-256 与数据库完全一致。实现文件为 `db/migrations/012_artwork_descriptions.sql`、`db/seeds/055_european_art_disciplined_expansion.sql`、`db/seeds/056_european_art_expansion_media.sql`、`scripts/european_art_expansion_data.ts` 与 `scripts/generate_european_art_expansion.ts`。
+
+全量本地门禁已完成：`npm run generate:art-expansion` 可重复生成且无 diff；全新数据库完整执行 migration 001–012、seed 001–056，第二次 bootstrap 全部 already applied；`npm run typecheck`、`npm test`（API 5 + Web 32）、`npm run build`、`npm run verify:postgis`、`npm run verify:artwork-media`、`npm run test:start-command`、`docker compose config --quiet` 全部通过。双语静态数据已烘焙为 82 人物 / 82 艺术家 / 200 作品 / 218 事件 / 9 章节 / 23 流派 / 36 关系 / 200 媒体，description 缺失 0，chronology end 为 2026；最终 dist 约 47MB。静态构建哈希：`index.html` `8242cc5b…e90e`、`index-DX6vcQGh.js` `527466da…0d96`、`index-BhKuGuJj.css` `448ddb73…c17`。
+
+当前阶段仍未提交、未推送、未覆盖 R8 production。本地 in-app browser 对 `127.0.0.1` 的访问被环境安全策略拒绝，因此不把本地 UI 写成已验收；下一步先提交/推送并部署到公开 Cloudflare URL，再在 production 完成桌面与 390px、作品简介、外链不渲染图片、语言/深链接、横向溢出和 console 的浏览器验收。
+
 ### 2026-08-02 阶段性交接：欧洲美术史 R8 作品媒体与独立发布（实现、上传与生产验收完成）
 
 R8 为 96 件欧洲美术史作品增加了权利审计的展示媒体链：94 条 Wikimedia Commons Public Domain/CC0/CC BY/CC BY-SA 图片以 960px 本地缩略图打包，2 条 Braque 作品因未验证到可再发布许可保留官方页面外链，不复制图片。`media_assets` 新增 `media_kind`、`usage_mode`、`license_status`、`license_url`、`source_page_url`、`original_url`、`retrieved_at` 与 `checksum_sha256`；每件作品恰好一条 `artwork` media link，来源翻译、`artwork_sources`、署名和中英文 alt text 完整。

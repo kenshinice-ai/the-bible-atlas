@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { extname, join, resolve } from "node:path";
 import pg from "pg";
 
@@ -28,6 +28,8 @@ const outSeed = resolve(process.env.MEDIA_SEED_OUT ?? join(ROOT, "db/seeds/054_e
 const mediaDir = resolve(process.env.MEDIA_DIR ?? join(ROOT, "apps/web/public/media/artworks"));
 const retrievedAt = process.env.MEDIA_RETRIEVED_AT ?? "2026-08-02T00:00:00Z";
 const cachePath = resolve(process.env.MEDIA_CACHE ?? "/tmp/literary-atlas-commons-media-cache.json");
+const expectedArtworks = Number(process.env.MEDIA_EXPECTED_ARTWORKS ?? "96");
+const onlyUnlinked = process.env.MEDIA_ONLY_UNLINKED === "1";
 
 /** Search aliases for titles whose Commons category is more reliable than a
  * free-text title search (for example, Van Gogh's Google Art Project scan). */
@@ -50,6 +52,33 @@ const EXTERNAL_FALLBACKS: Record<string, { url: string; author: string }> = {
   "portuguese-braque": { url: "https://www.georgesbraque.org/the-portuguese.jsp", author: "Georges Braque" },
   "violin-and-candlestick": { url: "https://www.georgesbraque.org/violin-and-candlestick.jsp", author: "Georges Braque" },
 };
+
+/** Candidates that passed the licence/artist checks but represented a copy,
+ * study, replica, derivative or different work during the R9/R10 audit.
+ * Keep them external-only rather than presenting a near match as the work. */
+const FORCE_EXTERNAL_SLUGS = new Set([
+  "book-of-kells",
+  "assumption-virgin-titian",
+  "supper-at-emmaus-caravaggio",
+  "surrender-of-breda",
+  "apollo-and-daphne",
+  "pierrot-watteau",
+  "triumph-of-venus-boucher",
+  "death-of-marat",
+  "fighting-temeraire",
+  "apotheosis-of-homer",
+  "raft-of-medusa",
+  "newton-blake",
+  "judith-i-klimt",
+  "guernica",
+  "three-musicians-picasso",
+  "bicycle-wheel",
+  "fountain-duchamp",
+  "white-on-white",
+  "persistence-of-memory",
+  "metamorphosis-narcissus",
+  "joy-of-life",
+]);
 
 type ArtworkRow = {
   id: string;
@@ -89,6 +118,26 @@ type CommonsPayload = {
   };
 };
 
+function externalSearchFallback(artwork: ArtworkRow): CommonsCandidate {
+  const search = new URL("https://commons.wikimedia.org/w/index.php");
+  search.searchParams.set("search", `${artwork.titleEn} ${artwork.artistEn}`);
+  search.searchParams.set("title", "Special:MediaSearch");
+  search.searchParams.set("type", "image");
+  return {
+    title: `${artwork.titleEn} — external media search`,
+    descriptionUrl: search.toString(),
+    originalUrl: search.toString(),
+    thumbUrl: "",
+    licenseLabel: "Provider terms apply; no redistribution",
+    licenseUrl: "",
+    author: artwork.artistEn || "Unknown author",
+    score: 100,
+    mediaKind: "external_link",
+    usageMode: "external_link",
+    licenseStatus: "pending",
+  };
+}
+
 const sleep = (milliseconds: number) => new Promise((resolvePromise) => setTimeout(resolvePromise, milliseconds));
 
 function cleanHtml(value: string | undefined): string {
@@ -112,12 +161,22 @@ function conciseAuthor(value: string | undefined): string {
   return concise || "";
 }
 
-function normalise(value: string): string {
-  return value.normalize("NFKD").replace(/[\u0300-\u036f]/gu, "").toLowerCase();
+function normalise(value: string | null | undefined): string {
+  return (value ?? "").normalize("NFKD").replace(/[\u0300-\u036f]/gu, "").toLowerCase();
 }
 
 function tokens(value: string): string[] {
   return normalise(value).match(/[a-z0-9]+/gu) ?? [];
+}
+
+function artistIdentityToken(artistName: string): string {
+  const ignored = new Set(["artist", "da", "de", "der", "di", "elder", "le", "of", "saint", "the", "unknown", "van", "von", "younger"]);
+  return tokens(artistName).filter((token) => token.length > 2 && !ignored.has(token)).at(-1) ?? "";
+}
+
+function candidateMentionsArtist(artwork: ArtworkRow, candidateText: string): boolean {
+  const identity = artistIdentityToken(artwork.artistEn);
+  return !identity || normalise(candidateText).includes(identity);
 }
 
 function quoteSql(value: string): string {
@@ -167,13 +226,20 @@ function candidateScore(artwork: ArtworkRow, candidateTitle: string, metadata: E
 
 async function fetchCommonsJson(url: URL, artworkSlug: string): Promise<CommonsPayload> {
   for (let attempt = 0; attempt < 4; attempt += 1) {
-    const response = await fetch(url, { headers: { "user-agent": "LiteraryAtlas/3.1 artwork-media-import (contact: repository-maintainer)" } });
-    if (response.ok) return await response.json() as CommonsPayload;
-    if (response.status !== 429 && response.status < 500) throw new Error(`Commons API ${response.status} for ${artworkSlug}`);
-    const retryAfter = Number(response.headers.get("retry-after") ?? "0");
-    const wait = Math.max(retryAfter * 1000, 5000 * (attempt + 1));
-    console.warn(`Commons API ${response.status} for ${artworkSlug}; waiting ${wait}ms before retry ${attempt + 1}/3`);
-    await sleep(wait);
+    try {
+      const response = await fetch(url, { headers: { "user-agent": "LiteraryAtlas/3.1 artwork-media-import (contact: repository-maintainer)" } });
+      if (response.ok) return await response.json() as CommonsPayload;
+      if (response.status !== 429 && response.status < 500) throw new Error(`Commons API ${response.status} for ${artworkSlug}`);
+      const retryAfter = Number(response.headers.get("retry-after") ?? "0");
+      const wait = Math.max(retryAfter * 1000, 5000 * (attempt + 1));
+      console.warn(`Commons API ${response.status} for ${artworkSlug}; waiting ${wait}ms before retry ${attempt + 1}/3`);
+      await sleep(wait);
+    } catch (error: unknown) {
+      if (attempt === 3) throw error;
+      const wait = 5000 * (attempt + 1);
+      console.warn(`Commons API network error for ${artworkSlug}; waiting ${wait}ms before retry ${attempt + 1}/3`);
+      await sleep(wait);
+    }
   }
   throw new Error(`Commons API retries exhausted for ${artworkSlug}`);
 }
@@ -182,6 +248,8 @@ function candidateFromPage(artwork: ArtworkRow, page: { title?: string; imageinf
   const info = page.imageinfo?.[0];
   if (!page.title || !info?.thumburl || !info.url || !info.descriptionurl || /\.(?:pdf|djvu)(?:$|\s)/iu.test(page.title)) return null;
   const metadata = info.extmetadata ?? {};
+  const identityText = `${page.title} ${metadata.Artist?.value ?? ""} ${metadata.Credit?.value ?? ""} ${metadata.ObjectName?.value ?? ""} ${metadata.Categories?.value ?? ""}`;
+  if (!candidateMentionsArtist(artwork, identityText)) return null;
   const licence = licenceFor(metadata);
   if (!licence) return null;
   const author = conciseAuthor(metadata.Artist?.value) || conciseAuthor(metadata.Credit?.value) || "Unknown author";
@@ -189,6 +257,7 @@ function candidateFromPage(artwork: ArtworkRow, page: { title?: string; imageinf
 }
 
 async function commonsCandidates(artwork: ArtworkRow): Promise<CommonsCandidate[]> {
+  if (FORCE_EXTERNAL_SLUGS.has(artwork.slug)) return [externalSearchFallback(artwork)];
   const external = EXTERNAL_FALLBACKS[artwork.slug];
   if (external) return [{ title: `${artwork.titleEn} — external provider page`, descriptionUrl: external.url, originalUrl: external.url, thumbUrl: "", licenseLabel: "Provider terms apply; no redistribution", licenseUrl: "", author: external.author, score: 100, mediaKind: "external_link", usageMode: "external_link", licenseStatus: "pending" }];
   const override = SEARCH_OVERRIDES[artwork.slug];
@@ -245,27 +314,47 @@ function extensionFor(contentType: string, sourceUrl: string): string {
   return [".jpg", ".jpeg", ".png", ".webp", ".svg"].includes(extension) ? (extension === ".jpeg" ? ".jpg" : extension) : ".jpg";
 }
 
-async function download(candidate: CommonsCandidate, artwork: ArtworkRow): Promise<{ filename: string; checksumSha256: string }> {
-  const response = await fetch(candidate.thumbUrl, { headers: { "user-agent": "LiteraryAtlas/3.1 artwork-media-import" } });
-  if (!response.ok) throw new Error(`Commons image ${response.status} for ${artwork.slug}`);
-  const contentType = response.headers.get("content-type") ?? "";
-  if (!contentType.toLowerCase().startsWith("image/")) throw new Error(`Commons image for ${artwork.slug} returned ${contentType || "no content type"}`);
-  const bytes = Buffer.from(await response.arrayBuffer());
-  if (bytes.length < 1024) throw new Error(`Commons image for ${artwork.slug} is unexpectedly small (${bytes.length} bytes)`);
-  const filename = `${artwork.slug}${extensionFor(contentType, candidate.thumbUrl)}`;
-  await writeFile(join(mediaDir, filename), bytes, { flag: process.env.MEDIA_ALLOW_OVERWRITE === "1" ? "w" : "wx" }).catch(async (error: unknown) => {
-    if (!(error instanceof Error) || !("code" in error) || error.code !== "EEXIST") throw error;
-    const existing = await import("node:fs/promises").then(({ readFile }) => readFile(join(mediaDir, filename)));
-    if (!existing.equals(bytes)) throw new Error(`Refusing to overwrite changed media file ${filename}`);
-  });
-  return { filename, checksumSha256: createHash("sha256").update(bytes).digest("hex") };
+async function download(candidate: CommonsCandidate, artwork: ArtworkRow, reuseExisting: boolean): Promise<{ filename: string; checksumSha256: string }> {
+  const existingFilename = reuseExisting
+    ? (await readdir(mediaDir)).find((filename) => filename.startsWith(`${artwork.slug}.`))
+    : undefined;
+  if (existingFilename) {
+    const existing = await readFile(join(mediaDir, existingFilename));
+    return { filename: existingFilename, checksumSha256: createHash("sha256").update(existing).digest("hex") };
+  }
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    try {
+      const response = await fetch(candidate.thumbUrl, { headers: { "user-agent": "LiteraryAtlas/3.1 artwork-media-import" } });
+      if (!response.ok) {
+        if (response.status !== 429 && response.status < 500) throw new Error(`Commons image ${response.status} for ${artwork.slug}`);
+        throw new Error(`retryable Commons image ${response.status}`);
+      }
+      const contentType = response.headers.get("content-type") ?? "";
+      if (!contentType.toLowerCase().startsWith("image/")) throw new Error(`Commons image for ${artwork.slug} returned ${contentType || "no content type"}`);
+      const bytes = Buffer.from(await response.arrayBuffer());
+      if (bytes.length < 1024) throw new Error(`Commons image for ${artwork.slug} is unexpectedly small (${bytes.length} bytes)`);
+      const filename = `${artwork.slug}${extensionFor(contentType, candidate.thumbUrl)}`;
+      await writeFile(join(mediaDir, filename), bytes, { flag: process.env.MEDIA_ALLOW_OVERWRITE === "1" ? "w" : "wx" }).catch(async (error: unknown) => {
+        if (!(error instanceof Error) || !("code" in error) || error.code !== "EEXIST") throw error;
+        const existing = await import("node:fs/promises").then(({ readFile }) => readFile(join(mediaDir, filename)));
+        if (!existing.equals(bytes)) throw new Error(`Refusing to overwrite changed media file ${filename}`);
+      });
+      return { filename, checksumSha256: createHash("sha256").update(bytes).digest("hex") };
+    } catch (error: unknown) {
+      if (attempt === 3) throw error;
+      const wait = 5000 * (attempt + 1);
+      console.warn(`Commons image network error for ${artwork.slug}; waiting ${wait}ms before retry ${attempt + 1}/3`);
+      await sleep(wait);
+    }
+  }
+  throw new Error(`Commons image retries exhausted for ${artwork.slug}`);
 }
 
 function sqlFor(items: ImportedArtwork[]): string {
   const lines: string[] = [
     "BEGIN;",
     "",
-    "-- R8: one rights-audited artwork media record per artwork (bundled Commons image or explicit external reference).",
+    "-- R9/R10: one rights-audited artwork media record per newly expanded artwork (bundled Commons image or explicit external reference).",
     "-- Generated by scripts/import_commons_artwork_media.ts; do not hand-edit URLs or attribution.",
     "CREATE OR REPLACE FUNCTION pg_temp.stable_uuid(seed text) RETURNS uuid",
     "LANGUAGE sql IMMUTABLE AS $fn$",
@@ -278,7 +367,9 @@ function sqlFor(items: ImportedArtwork[]): string {
     const author = conciseAuthor(item.author) || "Unknown author";
     const sourceId = "pg_temp.stable_uuid(" + quoteSql(`source:commons:${item.slug}`) + ")";
     const mediaId = "pg_temp.stable_uuid(" + quoteSql(`media:commons:${item.slug}`) + ")";
-    const assetSource = external ? "Georges Braque official reference" : "Wikimedia Commons";
+    const assetSource = external
+      ? item.descriptionUrl.includes("georgesbraque.org") ? "Georges Braque official reference" : "External provider reference"
+      : "Wikimedia Commons";
     const sourceTitleZh = external ? `外部馆藏参考：${item.titleZh}` : `Wikimedia Commons：${item.titleZh}`;
     const sourceTitleEn = external ? `External reference: ${item.titleEn}` : `Wikimedia Commons: ${item.titleEn}`;
     const citationZh = external ? `作者：${author}；本页不复制图片，遵循来源站点条款：${item.descriptionUrl}` : `作者：${author}；许可：${item.licenseLabel}；图片文件页：${item.descriptionUrl}`;
@@ -315,30 +406,53 @@ async function main(): Promise<void> {
   try {
     const result = await pool.query<ArtworkRow>(
       `SELECT aw.id,aw.slug,COALESCE(en.title,zh.title) AS "titleEn",COALESCE(zh.title,en.title) AS "titleZh",
-        COALESCE(aen.full_name,aen.name,az.name) AS "artistEn",COALESCE(az.full_name,az.name,aen.name) AS "artistZh"
+        COALESCE(aen.name,aen.full_name,az.name,'Unknown artist') AS "artistEn",
+        COALESCE(az.name,az.full_name,aen.name,'佚名') AS "artistZh"
        FROM artworks aw
        LEFT JOIN artwork_translations en ON en.artwork_id=aw.id AND en.locale='en' AND en.status='published'
        LEFT JOIN artwork_translations zh ON zh.artwork_id=aw.id AND zh.locale='zh-CN' AND zh.status='published'
        LEFT JOIN artists a ON a.id=aw.primary_artist_id
        LEFT JOIN artist_translations aen ON aen.artist_id=a.id AND aen.locale='en' AND aen.status='published'
        LEFT JOIN artist_translations az ON az.artist_id=a.id AND az.locale='zh-CN' AND az.status='published'
-       WHERE aw.work_id=$1 ORDER BY aw.sort_order`,
-      [WORK_ID],
+       WHERE aw.work_id=$1
+         AND ($2::boolean=false OR NOT EXISTS (
+           SELECT 1 FROM media_links ml WHERE ml.entity_kind='artwork' AND ml.entity_id=aw.id
+         ))
+       ORDER BY aw.sort_order`,
+      [WORK_ID, onlyUnlinked],
     );
-    if (result.rows.length !== 96) throw new Error(`Expected 96 art-history artworks, found ${result.rows.length}`);
+    if (result.rows.length !== expectedArtworks) throw new Error(`Expected ${expectedArtworks} art-history artworks, found ${result.rows.length}`);
     const imported: ImportedArtwork[] = [];
     for (const artwork of result.rows) {
       const cached = selectionCache[artwork.slug];
       const reuseCache = process.env.MEDIA_REUSE_CACHE === "1";
-      const candidates = cached && (reuseCache || (!SEARCH_OVERRIDES[artwork.slug] && !EXTERNAL_FALLBACKS[artwork.slug])) ? [cached] : await commonsCandidates(artwork);
-      const selected = candidates[0];
+      const cachedIdentityIsSafe = !FORCE_EXTERNAL_SLUGS.has(artwork.slug)
+        && (cached?.mediaKind === "external_link" || (cached ? candidateMentionsArtist(artwork, `${cached.title} ${cached.author}`) : false));
+      const reuseCachedSelection = Boolean(cached && cachedIdentityIsSafe && (reuseCache || (!SEARCH_OVERRIDES[artwork.slug] && !EXTERNAL_FALLBACKS[artwork.slug])));
+      let candidates: CommonsCandidate[];
+      try {
+        candidates = reuseCachedSelection && cached ? [cached] : await commonsCandidates(artwork);
+      } catch (error: unknown) {
+        console.warn(`Open image lookup failed for ${artwork.slug}; using explicit external reference: ${error instanceof Error ? error.message : error}`);
+        candidates = [externalSearchFallback(artwork)];
+      }
+      let selected = candidates[0];
       if (!selected || selected.score < 18) {
         const details = candidates.slice(0, 5).map((candidate) => `${candidate.score}:${candidate.title}`).join(" | ");
-        throw new Error(`No sufficiently matched open image for ${artwork.slug} (${artwork.titleEn}); candidates: ${details || "none"}`);
+        console.warn(`No sufficiently matched open image for ${artwork.slug}; using explicit external reference. Candidates: ${details || "none"}`);
+        selected = externalSearchFallback(artwork);
+      }
+      let file = { filename: "", checksumSha256: "" };
+      if (selected.mediaKind !== "external_link") {
+        try {
+          file = await download(selected, artwork, reuseCachedSelection);
+        } catch (error: unknown) {
+          console.warn(`Open image download failed for ${artwork.slug}; using explicit external reference: ${error instanceof Error ? error.message : error}`);
+          selected = externalSearchFallback(artwork);
+        }
       }
       selectionCache[artwork.slug] = selected;
       await writeFile(cachePath, JSON.stringify(selectionCache, null, 2), "utf8");
-      const file = selected.mediaKind === "external_link" ? { filename: "", checksumSha256: "" } : await download(selected, artwork);
       imported.push({ ...artwork, ...selected, ...file });
       console.log(`media: ${artwork.slug} <- ${selected.title} (${selected.licenseLabel}, score ${selected.score})`);
     }

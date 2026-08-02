@@ -244,7 +244,9 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
       <small>{atlas.work.title}{era ? ` · ${era.title}` : ""}</small><h2>{artwork.title}</h2>
       <div className="identity-tags"><span>{label(artwork.status, locale)}</span><span>{artwork.medium}</span><span>{artwork.creationStartYear ?? "?"}{artwork.creationEndYear && artwork.creationEndYear !== artwork.creationStartYear ? `–${artwork.creationEndYear}` : ""}</span></div>
       <ArtworkMedia media={artworkMedia} locale={locale} />
-      <p>{artwork.summary}</p><dl><dt>{t("creationPlace", locale)}</dt><dd>{atlas.locations.find((place) => place.slug === artwork.creationLocationSlug)?.name ?? "—"}</dd><dt>{t("currentLocation", locale)}</dt><dd>{atlas.locations.find((place) => place.slug === artwork.currentLocationSlug)?.name ?? "—"}</dd><dt>{t("medium", locale)}</dt><dd>{artwork.medium}</dd></dl>
+      <p>{artwork.summary}</p>
+      {artwork.description && <section className="artwork-description"><h3>{t("artworkDescription", locale)}</h3><p>{artwork.description}</p></section>}
+      <dl><dt>{t("creationPlace", locale)}</dt><dd>{atlas.locations.find((place) => place.slug === artwork.creationLocationSlug)?.name ?? "—"}</dd><dt>{t("currentLocation", locale)}</dt><dd>{atlas.locations.find((place) => place.slug === artwork.currentLocationSlug)?.name ?? "—"}</dd><dt>{t("medium", locale)}</dt><dd>{artwork.medium}</dd></dl>
       {artwork.artistSlugs.length > 0 && <section><h3>{t("artists", locale)}</h3><div className="drawer-links">{artwork.artistSlugs.map((slug) => { const artist = atlas.artists.find((item) => item.slug === slug); return artist ? <button key={slug} onClick={() => onSelect({ type: "artist", workSlug: atlas.work.slug, id: slug }, "list")}>{artist.fullName || artist.name}</button> : null; })}</div></section>}
       <Sources names={artwork.sourceTitles} locale={locale} />
     </Shell>;

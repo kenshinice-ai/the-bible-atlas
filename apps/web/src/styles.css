@@ -846,6 +846,7 @@ main { max-width: 1560px; margin: auto; padding: var(--gap-l); }
 .artwork-media-external, .artwork-media-unavailable { padding: 12px; }
 .artwork-media-external p, .artwork-media-unavailable p { margin: 0 0 8px; font-size: 0.85rem; }
 .artwork-media-external small { display: block; margin-top: 8px; color: var(--muted); }
+.artwork-description p { margin: 0; color: var(--text); line-height: 1.75; }
 
 .person-avatar {
   position: relative; display: inline-grid; place-items: center;

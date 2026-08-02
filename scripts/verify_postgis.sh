@@ -50,11 +50,14 @@ for migration in "$ATLAS_ROOT"/db/migrations/*.sql; do
 done
 psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres -f "$ATLAS_ROOT/db/seeds/001_four_works.sql" >/dev/null
 psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres -f "$ATLAS_ROOT/db/seeds/002_bible_v3_1.sql" >/dev/null
+for seed in "$ATLAS_ROOT"/db/seeds/0{49,50,51,52,53,54,55,56}_*.sql; do
+  psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres -f "$seed" >/dev/null
+done
 
 psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres <<'SQL' >/dev/null
 DO $$
 BEGIN
-  IF (SELECT count(*) FROM works) <> 5 THEN RAISE EXCEPTION 'expected five works'; END IF;
+  IF (SELECT count(*) FROM works) <> 6 THEN RAISE EXCEPTION 'expected six works'; END IF;
   IF EXISTS (SELECT 1 FROM works w LEFT JOIN work_translations z ON z.work_id=w.id AND z.locale='zh-CN' AND z.status='published' LEFT JOIN work_translations e ON e.work_id=w.id AND e.locale='en' AND e.status='published' WHERE z.work_id IS NULL OR e.work_id IS NULL) THEN RAISE EXCEPTION 'missing published work translation'; END IF;
   IF EXISTS (SELECT 1 FROM locations l JOIN works w ON w.id=l.work_id WHERE w.slug='the-hobbit' AND (l.geom IS NOT NULL OR l.canvas_x IS NULL OR l.canvas_y IS NULL)) THEN RAISE EXCEPTION 'Hobbit location violates fictional canvas'; END IF;
   IF EXISTS (SELECT 1 FROM locations l JOIN works w ON w.id=l.work_id WHERE w.slug<>'the-hobbit' AND (l.geom IS NULL OR l.canvas_x IS NOT NULL OR l.canvas_y IS NOT NULL)) THEN RAISE EXCEPTION 'real work location violates PostGIS layer'; END IF;
@@ -66,6 +69,26 @@ BEGIN
   IF EXISTS (SELECT 1 FROM events e JOIN works w ON w.id=e.work_id LEFT JOIN event_locations el ON el.event_id=e.id LEFT JOIN event_characters ec ON ec.event_id=e.id LEFT JOIN event_sources es ON es.event_id=e.id WHERE w.slug='the-bible' GROUP BY e.id HAVING count(DISTINCT el.location_id)=0 OR count(DISTINCT ec.character_id)=0 OR count(DISTINCT es.source_id)=0) THEN RAISE EXCEPTION 'Bible event closure failed'; END IF;
   IF EXISTS (SELECT 1 FROM events e JOIN works w ON w.id=e.work_id WHERE w.slug='the-bible' AND (e.time_type IN ('approximate','range') AND e.start_date IS NOT NULL)) THEN RAISE EXCEPTION 'uncertain Bible time was stored as exact SQL date'; END IF;
   IF EXISTS (SELECT 1 FROM locations l JOIN works w ON w.id=l.work_id WHERE w.slug='the-bible' AND (l.layer<>'real' OR l.geom IS NULL OR l.coordinate_accuracy='fictional')) THEN RAISE EXCEPTION 'Bible geography layer failed'; END IF;
+  IF (SELECT count(*) FROM artists WHERE work_id='10000000-0000-4000-8000-000000000009') <> 82 THEN RAISE EXCEPTION 'European art artist count failed'; END IF;
+  IF (SELECT count(*) FROM characters WHERE work_id='10000000-0000-4000-8000-000000000009') <> 82 THEN RAISE EXCEPTION 'European art character count failed'; END IF;
+  IF (SELECT count(*) FROM artworks WHERE work_id='10000000-0000-4000-8000-000000000009') <> 200 THEN RAISE EXCEPTION 'European art artwork count failed'; END IF;
+  IF (SELECT count(*) FROM events WHERE work_id='10000000-0000-4000-8000-000000000009') <> 218 THEN RAISE EXCEPTION 'European art event count failed'; END IF;
+  IF (SELECT count(*) FROM chapters WHERE work_id='10000000-0000-4000-8000-000000000009') <> 9 THEN RAISE EXCEPTION 'European art chapter count failed'; END IF;
+  IF (SELECT count(*) FROM movements WHERE work_id='10000000-0000-4000-8000-000000000009') <> 23 THEN RAISE EXCEPTION 'European art movement count failed'; END IF;
+  IF (SELECT count(*) FROM character_relations WHERE work_id='10000000-0000-4000-8000-000000000009') <> 36 THEN RAISE EXCEPTION 'European art relation count failed'; END IF;
+  IF (SELECT count(*) FROM events e JOIN chapters c ON c.id=e.chapter_id WHERE e.work_id='10000000-0000-4000-8000-000000000009' AND c.slug='postwar-heritage') <> 18 THEN RAISE EXCEPTION 'European art postwar event count failed'; END IF;
+  IF EXISTS (SELECT 1 FROM artists a LEFT JOIN artist_artworks aa ON aa.artist_id=a.id WHERE a.work_id='10000000-0000-4000-8000-000000000009' GROUP BY a.id HAVING count(aa.artwork_id)=0) THEN RAISE EXCEPTION 'European art zero-work artist failed'; END IF;
+  IF EXISTS (SELECT 1 FROM artists a LEFT JOIN characters c ON c.id=a.character_id AND c.work_id=a.work_id WHERE a.work_id='10000000-0000-4000-8000-000000000009' AND c.id IS NULL) THEN RAISE EXCEPTION 'European art canonical person mapping failed'; END IF;
+  IF EXISTS (
+    SELECT 1 FROM artworks aw
+    LEFT JOIN artwork_translations z ON z.artwork_id=aw.id AND z.locale='zh-CN' AND z.status='published'
+    LEFT JOIN artwork_translations e ON e.artwork_id=aw.id AND e.locale='en' AND e.status='published'
+    WHERE aw.work_id='10000000-0000-4000-8000-000000000009'
+      AND (z.artwork_id IS NULL OR e.artwork_id IS NULL OR btrim(z.description)='' OR btrim(e.description)='')
+  ) THEN RAISE EXCEPTION 'European art bilingual artwork description failed'; END IF;
+  IF EXISTS (SELECT 1 FROM artworks aw LEFT JOIN artwork_event_links ae ON ae.artwork_id=aw.id WHERE aw.work_id='10000000-0000-4000-8000-000000000009' GROUP BY aw.id HAVING count(ae.event_id)=0) THEN RAISE EXCEPTION 'European art artwork event closure failed'; END IF;
+  IF EXISTS (SELECT 1 FROM events e LEFT JOIN event_sources es ON es.event_id=e.id LEFT JOIN event_locations el ON el.event_id=e.id WHERE e.work_id='10000000-0000-4000-8000-000000000009' GROUP BY e.id HAVING count(DISTINCT es.source_id)=0 OR count(DISTINCT el.location_id)=0) THEN RAISE EXCEPTION 'European art event source/location closure failed'; END IF;
+  IF (SELECT count(*) FROM media_links ml JOIN artworks aw ON aw.id=ml.entity_id WHERE ml.entity_kind='artwork' AND aw.work_id='10000000-0000-4000-8000-000000000009') <> 200 THEN RAISE EXCEPTION 'European art media count failed'; END IF;
 END $$;
 SQL
 
@@ -95,6 +118,8 @@ if [[ "$ATLAS_HTTP_STATUS" != "200" ]]; then
 fi
 echo "API smoke: Bible atlas"
 curl -fsS "http://127.0.0.1:$ATLAS_API_PORT/api/works/the-bible/atlas?locale=zh-CN" >"$ATLAS_TEMP/bible.json"
+echo "API smoke: European art atlas"
+curl -fsS "http://127.0.0.1:$ATLAS_API_PORT/api/works/european-art-history/atlas?locale=zh-CN" >"$ATLAS_TEMP/european-art.json"
 echo "API smoke: Chinese search"
 curl -fsS "http://127.0.0.1:$ATLAS_API_PORT/api/search?locale=zh-CN&q=%E5%B7%B4%E9%BB%8E" >"$ATLAS_TEMP/search-zh.json"
 echo "API smoke: English search"
@@ -110,9 +135,10 @@ const locales=read('locales');
 const works=read('works');
 const atlas=read('atlas');
 const bible=read('bible');
+const art=read('european-art');
 assert(health.status==='ok'&&health.version==='4.0.0','health contract failed');
 assert(JSON.stringify(locales.locales)===JSON.stringify(['zh-CN','en']),'locale contract failed');
-assert(works.items.length===5&&works.items.every((item)=>item.translationStatus==='published'&&item.resolvedLocale==='zh-CN'&&item.fallbackUsed===false),'work locale metadata failed');
+assert(works.items.length===6&&works.items.every((item)=>item.translationStatus==='published'&&item.resolvedLocale==='zh-CN'&&item.fallbackUsed===false),'work locale metadata failed');
 assert(atlas.characters.length===8&&atlas.events.length===6&&atlas.locations.length===6&&atlas.routes.length===1,'Tale atlas counts failed');
 assert(atlas.characters.every((item)=>item.eventSlugs.length>0&&item.translationStatus==='published'),'character closure or locale metadata failed');
 assert(atlas.events.every((item)=>item.locationSlugs.length>0&&item.sourceTitles.length>0&&item.translationStatus==='published'),'event location/source closure failed');
@@ -121,6 +147,10 @@ assert(atlas.locations.every((item)=>item.layer==='real'&&Number.isFinite(item.l
 assert(atlas.relations.length>=3&&atlas.relations.every((item)=>item.translationStatus==='published'),'relation contract failed');
 assert(bible.characters.length===13&&bible.events.length===14&&bible.locations.length===12&&bible.routes.length===3&&bible.relations.length===15,'Bible atlas counts failed');
 assert(bible.events.every((item)=>item.locationSlugs.length>0&&item.sourceTitles.length>0),'Bible event closure failed');
+assert(art.characters.length===82&&art.artists.length===82&&art.artworks.length===200&&art.events.length===218&&art.chapters.length===9&&art.movements.length===23&&art.relations.length===36,'European art atlas counts failed');
+assert(art.artworks.every((item)=>item.description.length>0&&item.eventSlugs.length>0&&item.sourceTitles.length>0),'European art artwork description/closure failed');
+assert(art.events.every((item)=>item.locationSlugs.length>0&&item.sourceTitles.length>0),'European art event closure failed');
+assert(art.media.length===200&&art.media.filter((item)=>item.usageMode==='bundled').length===160&&art.media.filter((item)=>item.usageMode==='external_link').length===40,'European art media contract failed');
 assert(read('search-zh').items.some((item)=>item.label.includes('巴黎')),'Chinese search failed');
 assert(read('search-en').items.some((item)=>item.label.includes('Paris')),'English search failed');
 NODE
@@ -137,4 +167,4 @@ const paris=atlas.locations.find((item)=>item.slug==='paris');
 if(!paris||paris.resolvedLocale!=='en'||paris.fallbackUsed!==true||paris.translationStatus!=='published')throw new Error('explicit entity fallback contract failed');
 NODE
 
-echo "PostGIS v3.0 upgrade, v3.1 migration, five-work seed, Bible closure, fallback, bilingual search and API smoke: PASS"
+echo "PostGIS v3.0 upgrade, v3.1 migration, six-work seed, Bible closure, European art 82/200/218/9 + media, fallback, bilingual search and API smoke: PASS"
