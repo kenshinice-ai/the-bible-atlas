@@ -39,4 +39,12 @@ describe("v4 atlas runtime contract", () => {
     delete (invalid.events[0] as Partial<(typeof invalid.events)[0]>).timeType;
     expect(AtlasResponseSchema.safeParse(invalid).success).toBe(false);
   });
+  it("accepts bundled artwork images and explicit external references", () => {
+    const media = [
+      { id: "a1000000-0000-4000-8000-000000000001", entityKind: "artwork", entityId: "b1000000-0000-4000-8000-000000000001", mediaKind: "image", usageMode: "bundled", licenseStatus: "verified", licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/", sourcePageUrl: "https://commons.wikimedia.org/wiki/File:Example.jpg", originalUrl: "https://upload.wikimedia.org/example.jpg", assetSource: "Wikimedia Commons", assetLicence: "CC0", assetAuthor: "Example", assetUrl: "/media/artworks/example.jpg", attributionText: "Example / Wikimedia Commons / CC0", altText: "示例作品（Example）" },
+      { id: "a1000000-0000-4000-8000-000000000002", entityKind: "artwork", entityId: "b1000000-0000-4000-8000-000000000002", mediaKind: "external_link", usageMode: "external_link", licenseStatus: "pending", licenseUrl: null, sourcePageUrl: "https://example.org/work", originalUrl: "https://example.org/work", assetSource: "Provider", assetLicence: "Provider terms apply; no redistribution", assetAuthor: "Example", assetUrl: "https://example.org/work", attributionText: "Example / external reference only / no image redistribution", altText: "外部作品（Example）" },
+    ] as const;
+    const atlas = AtlasResponseSchema.parse({ ...fixture, media });
+    expect(atlas.media.map((item) => item.mediaKind)).toEqual(["image", "external_link"]);
+  });
 });

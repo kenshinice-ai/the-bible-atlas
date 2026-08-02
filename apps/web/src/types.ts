@@ -96,7 +96,13 @@ const InstitutionSchema = z.object({
 
 const SourceSchema = z.object({ id: z.string().uuid(), title: z.string(), url: z.string().nullable(), citation: z.string(), evidenceGrade: z.string(), sourceType: z.enum(["primary_text", "scholarly", "historical", "reference", "map", "image"]) });
 const ChronologySchema = z.object({ id: z.string().uuid(), kind: z.enum(["historical", "narrative", "fictional"]), label: z.string(), startYear: z.number().nullable(), endYear: z.number().nullable(), calendarSystem: z.enum(["gregorian", "julian", "fictional", "unknown"]), isDefault: z.boolean() });
-const MediaSchema = z.object({ id: z.string().uuid(), entityKind: EntityTypeSchema, entityId: z.string().uuid(), assetSource: z.string(), assetLicence: z.string(), assetAuthor: z.string(), assetUrl: z.string().url(), attributionText: z.string(), altText: z.string() });
+const MediaSchema = z.object({
+  id: z.string().uuid(), entityKind: EntityTypeSchema, entityId: z.string().uuid(),
+  mediaKind: z.enum(["image", "external_link"]), usageMode: z.enum(["bundled", "remote", "external_link"]),
+  licenseStatus: z.enum(["verified", "pending", "rejected", "unknown"]), licenseUrl: z.string().url().nullable(),
+  sourcePageUrl: z.string().url().nullable(), originalUrl: z.string().url().nullable(),
+  assetSource: z.string(), assetLicence: z.string(), assetAuthor: z.string(), assetUrl: z.string(), attributionText: z.string(), altText: z.string(),
+});
 
 /** Era tier of the zoom hierarchy. */
 const ChapterSchema = z.object({
@@ -141,6 +147,7 @@ export type AtlasRoute = Atlas["routes"][number];
 export type AtlasRelation = Atlas["relations"][number];
 export type AtlasChapter = Atlas["chapters"][number];
 export type AtlasGroup = Atlas["groups"][number];
+export type AtlasMedia = Atlas["media"][number];
 export type AtlasArtist = Atlas["artists"][number];
 export type AtlasArtwork = Atlas["artworks"][number];
 export type AtlasMovement = Atlas["movements"][number];

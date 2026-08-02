@@ -16,6 +16,7 @@
     "start:local": "bash scripts/start_local.sh --no-open",
     "stop:local": "bash scripts/stop_local.sh",
     "test:start-command": "bash scripts/test_start_command.sh",
+    "verify:artwork-media": "tsx scripts/verify_artwork_media.ts",
     "db:migrate": "npm run db:migrate -w @literary-atlas/api",
     "db:seed": "npm run db:seed -w @literary-atlas/api",
     "db:bootstrap": "npm run db:bootstrap -w @literary-atlas/api",

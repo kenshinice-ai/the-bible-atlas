@@ -3,7 +3,7 @@ import { getEntityDetail } from "../api";
 import { colorForCharacter } from "../hierarchy";
 import { formatEventTime, formatYear, label, t } from "../i18n";
 import type { SelectedEntity, SelectionSource, Tab } from "../state";
-import type { Atlas, AtlasCharacter, Locale } from "../types";
+import type { Atlas, AtlasCharacter, AtlasMedia, Locale } from "../types";
 
 interface Props {
   atlas: Atlas;
@@ -44,6 +44,33 @@ function PersonAvatar({ person, color }: { person: AtlasCharacter; color: string
 function Sources({ names, locale }: { names: string[]; locale: Locale }) {
   if (names.length === 0) return null;
   return <section><h3>{t("sources", locale)}</h3>{names.map((name) => <p key={name} className="source-name">{name}</p>)}</section>;
+}
+
+function ArtworkMediaCard({ media, locale }: { media: AtlasMedia; locale: Locale }) {
+  const [failed, setFailed] = useState(false);
+  const sourceUrl = media.sourcePageUrl ?? media.originalUrl ?? (media.assetUrl.startsWith("http") ? media.assetUrl : null);
+  if (media.mediaKind === "external_link") {
+    return <div className="artwork-media artwork-media-external">
+      <p>{t("externalImageNote", locale)}</p>
+      {sourceUrl && <a className="link" href={sourceUrl} target="_blank" rel="noreferrer">{t("viewSource", locale)} ↗</a>}
+      <small>{media.assetSource} · {media.assetLicence}</small>
+    </div>;
+  }
+  if (failed) {
+    return <div className="artwork-media artwork-media-unavailable">
+      <p>{t("imageUnavailable", locale)}</p>
+      {sourceUrl && <a className="link" href={sourceUrl} target="_blank" rel="noreferrer">{t("viewSource", locale)} ↗</a>}
+    </div>;
+  }
+  return <figure className="artwork-media">
+    <img src={media.assetUrl} alt={media.altText} loading="lazy" decoding="async" onError={() => setFailed(true)} />
+    <figcaption><span><strong>{t("imageAttribution", locale)}:</strong> {media.attributionText}</span>{sourceUrl && <a href={sourceUrl} target="_blank" rel="noreferrer">{t("viewSource", locale)} ↗</a>}{media.licenseUrl && <a href={media.licenseUrl} target="_blank" rel="noreferrer">{media.assetLicence}</a>}</figcaption>
+  </figure>;
+}
+
+function ArtworkMedia({ media, locale }: { media: AtlasMedia[]; locale: Locale }) {
+  if (media.length === 0) return null;
+  return <section><h3>{t("artworkImage", locale)}</h3><div className="artwork-media-stack">{media.map((item) => <ArtworkMediaCard key={item.id} media={item} locale={locale} />)}</div></section>;
 }
 
 function Shell({ children, onClose, locale }: { children: React.ReactNode; onClose: () => void; locale: Locale }) {
@@ -212,9 +239,11 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
     const artwork = atlas.artworks.find((item) => item.slug === entity.id);
     if (!artwork) return null;
     const era = chapterOf(artwork.chapterSlug);
+    const artworkMedia = atlas.media.filter((item) => item.entityKind === "artwork" && item.entityId === artwork.id).sort((left, right) => left.id.localeCompare(right.id));
     return <Shell onClose={onClose} locale={locale}>
       <small>{atlas.work.title}{era ? ` · ${era.title}` : ""}</small><h2>{artwork.title}</h2>
       <div className="identity-tags"><span>{label(artwork.status, locale)}</span><span>{artwork.medium}</span><span>{artwork.creationStartYear ?? "?"}{artwork.creationEndYear && artwork.creationEndYear !== artwork.creationStartYear ? `–${artwork.creationEndYear}` : ""}</span></div>
+      <ArtworkMedia media={artworkMedia} locale={locale} />
       <p>{artwork.summary}</p><dl><dt>{t("creationPlace", locale)}</dt><dd>{atlas.locations.find((place) => place.slug === artwork.creationLocationSlug)?.name ?? "—"}</dd><dt>{t("currentLocation", locale)}</dt><dd>{atlas.locations.find((place) => place.slug === artwork.currentLocationSlug)?.name ?? "—"}</dd><dt>{t("medium", locale)}</dt><dd>{artwork.medium}</dd></dl>
       {artwork.artistSlugs.length > 0 && <section><h3>{t("artists", locale)}</h3><div className="drawer-links">{artwork.artistSlugs.map((slug) => { const artist = atlas.artists.find((item) => item.slug === slug); return artist ? <button key={slug} onClick={() => onSelect({ type: "artist", workSlug: atlas.work.slug, id: slug }, "list")}>{artist.fullName || artist.name}</button> : null; })}</div></section>}
       <Sources names={artwork.sourceTitles} locale={locale} />
