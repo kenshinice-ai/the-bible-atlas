@@ -181,6 +181,20 @@ button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-v
 }
 :root[data-profile="european-art-history"] ::selection { background: #D8A45E; color: #17120D; }
 
+/* European Classical Music History: dark concert-hall ground, brass accents,
+   and a high-contrast ivory score surface. */
+:root[data-profile="european-classical-music-history"] {
+  --bg: #15110E; --bg-raise: #201915; --panel: #211A17; --panel-raise: #2B221D;
+  --overlay: rgba(21, 17, 14, 0.95); --line: #5A4739; --line-soft: #3D3028;
+  --text: #F2EBDD; --text-dim: #D8CCBA; --muted: #B6A792; --faint: #978874;
+  --accent: #D8A85F; --accent-strong: #E6B970; --accent-deep: #A95C3A;
+  --violet: #A58EBE; --violet-soft: #D5C5E4; --neutral-rel: #978874;
+}
+:root[data-profile="european-classical-music-history"] body {
+  background: radial-gradient(1050px 540px at 18% -8%, #35251B 0%, transparent 58%), radial-gradient(900px 420px at 96% 0%, #2B1B19 0%, transparent 52%), var(--bg);
+}
+:root[data-profile="european-classical-music-history"] ::selection { background: #D8A85F; color: #15110E; }
+
 /* ---------------------------------------------------------------- layout -- */
 
 main { max-width: 1560px; margin: auto; padding: var(--gap-l); }
@@ -847,6 +861,18 @@ main { max-width: 1560px; margin: auto; padding: var(--gap-l); }
 .artwork-media-external p, .artwork-media-unavailable p { margin: 0 0 8px; font-size: 0.85rem; }
 .artwork-media-external small { display: block; margin-top: 8px; color: var(--muted); }
 .artwork-description p { margin: 0; color: var(--text); line-height: 1.75; }
+
+.score-fragment {
+  border: 1px solid var(--line); border-radius: var(--radius-m); padding: 12px;
+  background: #17120f; display: grid; gap: 10px;
+}
+.score-fragment img {
+  display: block; width: 100%; height: auto; border-radius: 10px;
+  background: #fffaf0; border: 1px solid #d8cbb8;
+}
+.score-fragment audio { width: 100%; min-height: 44px; }
+.score-fragment > small { color: var(--muted); line-height: 1.5; }
+.score-fragment ul { margin: 0; padding-left: 20px; color: var(--text-dim); font-size: 0.85rem; }
 
 .person-avatar {
   position: relative; display: inline-grid; place-items: center;

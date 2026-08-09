@@ -1,0 +1,19 @@
+{
+  "fragment": "prokofiev-classical",
+  "composition": "classical-symphony",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-modern-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 11.429,
+  "checksums": {
+    "mei": "ab20962b7844f59ee906b3addc2063ce2f991defd855d7de4fa28e9064bf9d05",
+    "svg": "cac0d7291157c4b8bdb23ce20a7d403c03252ad5cc8b2f143c4c1e75b4f6fa29",
+    "timing": "0bcb5f14ba050741f9f199e11429b60a34a21a9c1192acb3268f2c86493e95b5",
+    "audio": "5ae0b842ccb745fdf2e9f293139733b5f6fdf8fc534b1abf063adf6ba4eec6cc"
+  }
+}

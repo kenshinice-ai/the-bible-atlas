@@ -1,0 +1,19 @@
+{
+  "fragment": "beethoven-fifth",
+  "composition": "symphony-no5",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-classical-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 10,
+  "checksums": {
+    "mei": "ce22dcd6a4e4baa546e1b0c5b2ffbc2da82ca21767ccfb961cda6f5e51acbe6b",
+    "svg": "55330538baefaabc5f1b7287361806b8f0c84538509372fc49f2a1d228ee2a6c",
+    "timing": "a91170e0d0607c5fa4cef933e49d12197fd44e96cceed5ce59509864c2fbc882",
+    "audio": "9820da9c709216e43bc45adb705bec79a6b118c6b0fc73b09f821f9f53ac23c1"
+  }
+}

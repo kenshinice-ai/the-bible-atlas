@@ -1,0 +1,19 @@
+{
+  "fragment": "schubert-erlkonig",
+  "composition": "erlkonig",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-romantic-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 13.333,
+  "checksums": {
+    "mei": "c510acc900d9cd0f4c5519c4770e1df7e9539a391dbb8fd7fc8bd23fdd38ce2c",
+    "svg": "ad236104915784444e90bae9939719aab5c82f3bcf3f59fa76e0a56bc968fe88",
+    "timing": "eeb3860990aa3304b5fd8b51cc9e47ea713b637e9aae4b044ed96e5b4c994cd0",
+    "audio": "32a56ae506b4c20e3563a2a6a43090510c2f3a58774e14609359ee88cd601ba4"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "fragment": "machaut-mass",
+  "composition": "messe-de-nostre-dame",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-polyphony-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 12.632,
+  "checksums": {
+    "mei": "e2aa7df54d9b67d7c2f40a90dd24c47b0ddeab57a4bb595b2e24a6c4f561f9a5",
+    "svg": "b12fb679e13b33d8d8d7a943e937b867f241583df9b5e14d8a64c193c5873f21",
+    "timing": "9fa0c4de15bfb88b234973521a7e3adb4de2103c788808585daedc552c3fe87b",
+    "audio": "163922893d209ef34fd2f5b910a13ce1739d5a173606969fc00c187ad7282c7e"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "fragment": "bach-brandenburg",
+  "composition": "brandenburg-concerto-no3",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-continuo-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 10.909,
+  "checksums": {
+    "mei": "230d25d6b88ea683dbd2c8a9562b972206bcf9b69a78eb210108bfd5fdd711ba",
+    "svg": "f22d22d2a8841b78eadf1f124db6cebb118259974c92c1a317d37757b09e2354",
+    "timing": "e017303302ad82ededd9b66187a0e87ee0d8b29a18f1448525b6a0a3d66bda89",
+    "audio": "04245dfb4b01852cb417081c32b5a90a7ee2368cd9ea5f52721720059cb02a6d"
+  }
+}

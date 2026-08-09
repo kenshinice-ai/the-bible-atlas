@@ -1,0 +1,103 @@
+{
+  "fragment": "handel-water",
+  "tempoBpm": 104,
+  "durationSeconds": 9.231,
+  "notes": [
+    {
+      "id": "handel-water-note-1",
+      "midi": 60,
+      "start": 0,
+      "end": 0.531
+    },
+    {
+      "id": "handel-water-note-2",
+      "midi": 60,
+      "start": 0.577,
+      "end": 1.108
+    },
+    {
+      "id": "handel-water-note-3",
+      "midi": 67,
+      "start": 1.154,
+      "end": 1.685
+    },
+    {
+      "id": "handel-water-note-4",
+      "midi": 67,
+      "start": 1.731,
+      "end": 2.262
+    },
+    {
+      "id": "handel-water-note-5",
+      "midi": 69,
+      "start": 2.308,
+      "end": 2.838
+    },
+    {
+      "id": "handel-water-note-6",
+      "midi": 67,
+      "start": 2.885,
+      "end": 3.415
+    },
+    {
+      "id": "handel-water-note-7",
+      "midi": 65,
+      "start": 3.462,
+      "end": 3.992
+    },
+    {
+      "id": "handel-water-note-8",
+      "midi": 64,
+      "start": 4.038,
+      "end": 4.569
+    },
+    {
+      "id": "handel-water-note-9",
+      "midi": 62,
+      "start": 4.615,
+      "end": 5.146
+    },
+    {
+      "id": "handel-water-note-10",
+      "midi": 62,
+      "start": 5.192,
+      "end": 5.723
+    },
+    {
+      "id": "handel-water-note-11",
+      "midi": 69,
+      "start": 5.769,
+      "end": 6.3
+    },
+    {
+      "id": "handel-water-note-12",
+      "midi": 69,
+      "start": 6.346,
+      "end": 6.877
+    },
+    {
+      "id": "handel-water-note-13",
+      "midi": 71,
+      "start": 6.923,
+      "end": 7.454
+    },
+    {
+      "id": "handel-water-note-14",
+      "midi": 69,
+      "start": 7.5,
+      "end": 8.031
+    },
+    {
+      "id": "handel-water-note-15",
+      "midi": 67,
+      "start": 8.077,
+      "end": 8.608
+    },
+    {
+      "id": "handel-water-note-16",
+      "midi": 65,
+      "start": 8.654,
+      "end": 9.185
+    }
+  ]
+}

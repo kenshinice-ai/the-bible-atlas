@@ -1,0 +1,103 @@
+{
+  "fragment": "ravel-bolero",
+  "tempoBpm": 84,
+  "durationSeconds": 11.429,
+  "notes": [
+    {
+      "id": "ravel-bolero-note-1",
+      "midi": 60,
+      "start": 0,
+      "end": 0.657
+    },
+    {
+      "id": "ravel-bolero-note-2",
+      "midi": 61,
+      "start": 0.714,
+      "end": 1.371
+    },
+    {
+      "id": "ravel-bolero-note-3",
+      "midi": 67,
+      "start": 1.429,
+      "end": 2.086
+    },
+    {
+      "id": "ravel-bolero-note-4",
+      "midi": 66,
+      "start": 2.143,
+      "end": 2.8
+    },
+    {
+      "id": "ravel-bolero-note-5",
+      "midi": 62,
+      "start": 2.857,
+      "end": 3.514
+    },
+    {
+      "id": "ravel-bolero-note-6",
+      "midi": 69,
+      "start": 3.571,
+      "end": 4.229
+    },
+    {
+      "id": "ravel-bolero-note-7",
+      "midi": 63,
+      "start": 4.286,
+      "end": 4.943
+    },
+    {
+      "id": "ravel-bolero-note-8",
+      "midi": 70,
+      "start": 5,
+      "end": 5.657
+    },
+    {
+      "id": "ravel-bolero-note-9",
+      "midi": 64,
+      "start": 5.714,
+      "end": 6.371
+    },
+    {
+      "id": "ravel-bolero-note-10",
+      "midi": 71,
+      "start": 6.429,
+      "end": 7.086
+    },
+    {
+      "id": "ravel-bolero-note-11",
+      "midi": 65,
+      "start": 7.143,
+      "end": 7.8
+    },
+    {
+      "id": "ravel-bolero-note-12",
+      "midi": 72,
+      "start": 7.857,
+      "end": 8.514
+    },
+    {
+      "id": "ravel-bolero-note-13",
+      "midi": 66,
+      "start": 8.571,
+      "end": 9.229
+    },
+    {
+      "id": "ravel-bolero-note-14",
+      "midi": 73,
+      "start": 9.286,
+      "end": 9.943
+    },
+    {
+      "id": "ravel-bolero-note-15",
+      "midi": 67,
+      "start": 10,
+      "end": 10.657
+    },
+    {
+      "id": "ravel-bolero-note-16",
+      "midi": 74,
+      "start": 10.714,
+      "end": 11.371
+    }
+  ]
+}

@@ -1,7 +1,7 @@
-import { PROFILE } from "./profile";
+import { PROFILE, type ProfileTab, type ProfileZoomLevel } from "./profile";
 import { EntityTypeSchema, LocaleSchema, type Atlas, type EntityType, type Locale } from "./types";
 
-export type Tab = "characters" | "artists" | "artworks" | "movements" | "events" | "locations" | "routes" | "relations";
+export type Tab = ProfileTab;
 export type SelectionMode = "single" | "multi";
 export type MapLayer = "real" | "fictional";
 export type SelectionSource = "map" | "timeline" | "list" | "graph" | "search" | "url";
@@ -13,7 +13,7 @@ export type MapContentLayer = "places" | "routes" | "landmarks";
  * entity caps with a tier means a screen never has to draw more than the tier's
  * worth of objects, however large the work grows.
  */
-export type ZoomLevel = "era" | "group" | "major" | "all";
+export type ZoomLevel = ProfileZoomLevel;
 export const ZOOM_LEVELS: readonly ZoomLevel[] = ["era", "group", "major", "all"];
 
 export interface SelectedEntity { type: EntityType; id: string; workSlug: string }
@@ -56,7 +56,7 @@ export const SINGLE_WORK = PROFILE.mode === "single";
 
 export const MAX_SELECTED_WORKS = 5;
 export const FALLBACK_RANGE = { start: -3000, end: 2026 } as const;
-const tabs = new Set<Tab>(["characters", "artists", "artworks", "movements", "events", "locations", "routes", "relations"]);
+const tabs = new Set<Tab>(PROFILE.tabs);
 const mapLayerValues = new Set<MapContentLayer>(["places", "routes", "landmarks"]);
 const zoomValues = new Set<ZoomLevel>(ZOOM_LEVELS);
 
@@ -98,13 +98,10 @@ export function parseAtlasState(search: string): ExploreState {
   const until = untilValue !== null && Number.isInteger(untilValue) && untilValue > 0 && untilValue !== 999 ? untilValue : null;
   const rangeStart = optionalYear(q.get("from"));
   const rangeEnd = optionalYear(q.get("to"));
-  const parsedTab = tabValue && tabs.has(tabValue as Tab) ? (tabValue as Tab) : "events";
-  const tab = PROFILE.id === "european-art-history" && parsedTab === "artists" ? "characters" : parsedTab;
-  const parsedZoomLevel = zoomRaw && zoomValues.has(zoomRaw as ZoomLevel) ? (zoomRaw as ZoomLevel) : "group";
-  // The art-history profile has no character groups. Starting its relationship
-  // graph at the group tier would render an empty canvas, so normalize legacy
-  // era/group links to the finest useful people tier.
-  const zoomLevel = PROFILE.id === "european-art-history" && (parsedZoomLevel === "era" || parsedZoomLevel === "group") ? "all" : parsedZoomLevel;
+  const parsedTab = tabValue && tabs.has(tabValue as Tab) ? (tabValue as Tab) : PROFILE.defaultTab;
+  const tab = PROFILE.canonicalArtistPeople && parsedTab === "artists" ? "characters" : parsedTab;
+  const parsedZoomLevel = zoomRaw && zoomValues.has(zoomRaw as ZoomLevel) ? (zoomRaw as ZoomLevel) : PROFILE.defaultGraphLevel;
+  const zoomLevel = PROFILE.graphLevels.includes(parsedZoomLevel) ? parsedZoomLevel : PROFILE.defaultGraphLevel;
   return {
     // The profile decides the default language; the other stays one tap away.
     locale: LocaleSchema.catch(PROFILE.defaultLocale).parse(q.get("locale") ?? q.get("lang") ?? PROFILE.defaultLocale),

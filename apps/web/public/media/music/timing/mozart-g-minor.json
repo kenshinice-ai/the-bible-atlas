@@ -1,0 +1,103 @@
+{
+  "fragment": "mozart-g-minor",
+  "tempoBpm": 96,
+  "durationSeconds": 10,
+  "notes": [
+    {
+      "id": "mozart-g-minor-note-1",
+      "midi": 60,
+      "start": 0,
+      "end": 0.575
+    },
+    {
+      "id": "mozart-g-minor-note-2",
+      "midi": 60,
+      "start": 0.625,
+      "end": 1.2
+    },
+    {
+      "id": "mozart-g-minor-note-3",
+      "midi": 67,
+      "start": 1.25,
+      "end": 1.825
+    },
+    {
+      "id": "mozart-g-minor-note-4",
+      "midi": 65,
+      "start": 1.875,
+      "end": 2.45
+    },
+    {
+      "id": "mozart-g-minor-note-5",
+      "midi": 64,
+      "start": 2.5,
+      "end": 3.075
+    },
+    {
+      "id": "mozart-g-minor-note-6",
+      "midi": 64,
+      "start": 3.125,
+      "end": 3.7
+    },
+    {
+      "id": "mozart-g-minor-note-7",
+      "midi": 62,
+      "start": 3.75,
+      "end": 4.325
+    },
+    {
+      "id": "mozart-g-minor-note-8",
+      "midi": 60,
+      "start": 4.375,
+      "end": 4.95
+    },
+    {
+      "id": "mozart-g-minor-note-9",
+      "midi": 67,
+      "start": 5,
+      "end": 5.575
+    },
+    {
+      "id": "mozart-g-minor-note-10",
+      "midi": 67,
+      "start": 5.625,
+      "end": 6.2
+    },
+    {
+      "id": "mozart-g-minor-note-11",
+      "midi": 69,
+      "start": 6.25,
+      "end": 6.825
+    },
+    {
+      "id": "mozart-g-minor-note-12",
+      "midi": 71,
+      "start": 6.875,
+      "end": 7.45
+    },
+    {
+      "id": "mozart-g-minor-note-13",
+      "midi": 72,
+      "start": 7.5,
+      "end": 8.075
+    },
+    {
+      "id": "mozart-g-minor-note-14",
+      "midi": 71,
+      "start": 8.125,
+      "end": 8.7
+    },
+    {
+      "id": "mozart-g-minor-note-15",
+      "midi": 69,
+      "start": 8.75,
+      "end": 9.325
+    },
+    {
+      "id": "mozart-g-minor-note-16",
+      "midi": 67,
+      "start": 9.375,
+      "end": 9.95
+    }
+  ]
+}

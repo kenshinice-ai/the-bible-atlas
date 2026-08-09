@@ -1,0 +1,19 @@
+{
+  "fragment": "rameau-hippolyte",
+  "composition": "hippolyte-et-aricie",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-dance-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 9.231,
+  "checksums": {
+    "mei": "94e2cbc86c1022c5d520462a9684bb1283e4c9e8d017212a29a709680634c004",
+    "svg": "04d69e867dc57202c67e7cd0c6ba8ed163da27653ba6aec52d2d3c0067dd1957",
+    "timing": "d484dad3cfea14acbd30a541a1836d05a24a985a2903431f689af3c9f85f16ac",
+    "audio": "be6c3c44b617175ac6ac222e6c44c9b6ec7dbca6836c539a492d43997d85b136"
+  }
+}

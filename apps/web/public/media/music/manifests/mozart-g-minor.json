@@ -1,0 +1,19 @@
+{
+  "fragment": "mozart-g-minor",
+  "composition": "symphony-no40",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-classical-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 10,
+  "checksums": {
+    "mei": "9bee77dd76c6a45d41072a71961dd29862e2fb0cca8736e6afa96e3f293b150b",
+    "svg": "cdd047a53a2b49e2cbac8479f6fcf90d7a57d23c0a2b5b2ddc45fd7f9339743a",
+    "timing": "4238d4ed4867da0b42aa5b12e1ac990f467c0c827c990dfade2d9ef91542c124",
+    "audio": "9820da9c709216e43bc45adb705bec79a6b118c6b0fc73b09f821f9f53ac23c1"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "fragment": "tallis-spem",
+  "composition": "spem-in-alium",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-polyphony-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 12.632,
+  "checksums": {
+    "mei": "bb1a54e40a29eda1af96d8aea5431f5ef65406c58bce74ab067a988b67341c85",
+    "svg": "9fdcefa8f4cd3340815f089e3c14d13ed361920fbece743f31998fa3e6461fea",
+    "timing": "f27dd80c5faad454cebd736d7b6a5451907ad84efe01e5a1a37b2c8088f9ab5d",
+    "audio": "163922893d209ef34fd2f5b910a13ce1739d5a173606969fc00c187ad7282c7e"
+  }
+}

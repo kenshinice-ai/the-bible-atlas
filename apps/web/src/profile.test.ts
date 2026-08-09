@@ -17,8 +17,8 @@ import { PROFILES } from "./profile";
  */
 const DISPLAYED_ENUM_VALUES = [
   // work_category, source_type, route_certainty
-  "historical_document", "historical_fiction", "realist_fiction", "fantasy", "mythic_epic",
-  "primary_text", "scholarly", "historical", "reference", "map", "image",
+  "historical_document", "historical_fiction", "realist_fiction", "fantasy", "mythic_epic", "art_history", "music_history",
+  "primary_text", "scholarly", "historical", "reference", "map", "image", "score", "instrument_catalog",
   "documented", "text_explicit", "inferred",
   // person_gender, age_stage, person_role_type, person_reality_type
   "male", "female", "unknown", "na",
@@ -28,6 +28,8 @@ const DISPLAYED_ENUM_VALUES = [
   // literary_event_type, event_reality, confidence_level
   "birth", "death", "meeting", "journey", "battle", "trial", "imprisonment", "escape",
   "marriage", "betrayal", "discovery", "political", "social", "religious", "migration", "other",
+  "composition", "commission", "premiere", "performance", "publication", "revision", "appointment",
+  "institution_founding", "instrument_innovation", "musical_debate", "festival", "recording", "revival",
   "verified_historical", "reported_historical", "fictional_narrative",
   "fictional_with_historical_context", "legendary_or_mythic", "symbolic_or_dream", "contested",
   "high", "medium", "low",
@@ -40,13 +42,20 @@ const DISPLAYED_ENUM_VALUES = [
   "bidirectional", "source_to_target", "target_to_source",
   "positive", "negative", "mixed", "neutral",
   "active", "ended", "changed",
-  "family", "dynasty", "circle", "tribe", "institution",
+  "family", "dynasty", "circle", "tribe", "institution", "school", "court", "conservatory", "ensemble", "national_tradition", "city_network",
   // characters.icon_variant
   "patriarch", "matriarch", "king", "queen", "prophet", "priest", "judge", "disciple",
   "missionary", "ruler", "soldier", "teacher", "lawgiver", "person",
   "jedi", "sith", "droid", "pilot", "senator", "smuggler", "bounty_hunter",
   // character_relations.relation_type
   "spouse", "sibling", "ally", "adversary", "mentor", "romantic", "liege", "double",
+  // music specialist values rendered through label()
+  "composer", "performer", "conductor", "theorist", "librettist", "patron", "publisher", "instrument_maker", "educator", "critic",
+  "mentorship", "influence", "collaboration", "institutional_peer", "aesthetic_opposition", "reception_advocacy",
+  "strings", "woodwinds", "brass", "percussion", "keyboards", "plucked_and_early", "voice", "mechanical_and_electronic",
+  "historical_style", "genre", "form", "technique", "church", "opera_house", "concert_hall", "archive",
+  "confirmed", "sketch", "fragment", "lost", "arrangement", "contested",
+  "common", "mensural", "neume", "source_marking", "editorial_learning", "verified", "pending", "rejected",
 ] as const;
 
 describe("bilingual enum coverage", () => {
@@ -72,6 +81,12 @@ describe("deployment profiles", () => {
   it("locks the galaxy build to one work, so it has no work picker to hide", () => {
     expect(PROFILES.galaxy?.works).toEqual(["skywalker-saga"]);
     expect(PROFILES.galaxy?.mode).toBe("single");
+  });
+
+  it("gives the music profile its five curated entrances and Chinese default", () => {
+    expect(PROFILES["european-classical-music-history"]?.tabs).toEqual(["characters", "compositions", "instruments", "events", "relations"]);
+    expect(PROFILES["european-classical-music-history"]?.defaultLocale).toBe("zh-CN");
+    expect(PROFILES["european-classical-music-history"]?.specialization).toBe("music");
   });
 
   it("keeps a house epigraph for each of the twelve galaxy eras", () => {

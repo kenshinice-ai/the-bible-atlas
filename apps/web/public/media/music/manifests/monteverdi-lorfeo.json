@@ -1,0 +1,19 @@
+{
+  "fragment": "monteverdi-lorfeo",
+  "composition": "lorfeo",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-continuo-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 10.909,
+  "checksums": {
+    "mei": "01a2c09cc04b598fdc28bcc196ab5deb6ea0447647e7c23ba2176fb8bdfbd9e7",
+    "svg": "df673c2029ba8cceb5397b84fb82fe186533a8ebd24bdebef9e70039ff5b1094",
+    "timing": "9a72f43963ef254b90de57650ae5284e11efc5e5c3d7d3572dfef8279786270f",
+    "audio": "04245dfb4b01852cb417081c32b5a90a7ee2368cd9ea5f52721720059cb02a6d"
+  }
+}

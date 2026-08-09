@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { colorForCharacter, colorForEvent } from "../hierarchy";
 import { formatEventTime, label, t } from "../i18n";
 import type { SelectedEntity, Tab } from "../state";
-import type { Atlas, AtlasArtist, AtlasArtwork, AtlasCharacter, AtlasEvent, AtlasLocation, AtlasMovement, AtlasRoute, Locale } from "../types";
+import type { Atlas, AtlasArtist, AtlasArtwork, AtlasCharacter, AtlasComposition, AtlasEvent, AtlasInstrument, AtlasLocation, AtlasMovement, AtlasRoute, Locale } from "../types";
 
 type Row =
   | { kind: "characters"; item: AtlasCharacter }
@@ -12,7 +12,9 @@ type Row =
   | { kind: "routes"; item: AtlasRoute }
   | { kind: "artists"; item: AtlasArtist }
   | { kind: "artworks"; item: AtlasArtwork }
-  | { kind: "movements"; item: AtlasMovement };
+  | { kind: "movements"; item: AtlasMovement }
+  | { kind: "compositions"; item: AtlasComposition }
+  | { kind: "instruments"; item: AtlasInstrument };
 
 interface Props {
   atlas: Atlas;
@@ -25,6 +27,8 @@ interface Props {
   artists: readonly AtlasArtist[];
   artworks: readonly AtlasArtwork[];
   movements: readonly AtlasMovement[];
+  compositions: readonly AtlasComposition[];
+  instruments: readonly AtlasInstrument[];
   selected: SelectedEntity | null;
   onSelect: (entity: SelectedEntity) => void;
 }
@@ -40,7 +44,7 @@ function activate(event: React.KeyboardEvent<HTMLElement>, action: () => void) {
  * only the rows in view are mounted. Row heights are measured rather than
  * assumed, because event summaries wrap to different depths.
  */
-export function EntityList({ atlas, tab, locale, characters, events, locations, routes, artists, artworks, movements, selected, onSelect }: Props) {
+export function EntityList({ atlas, tab, locale, characters, events, locations, routes, artists, artworks, movements, compositions, instruments, selected, onSelect }: Props) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const rows: Row[] =
@@ -48,6 +52,8 @@ export function EntityList({ atlas, tab, locale, characters, events, locations, 
       : tab === "artists" ? artists.map((item) => ({ kind: "artists", item }))
         : tab === "artworks" ? artworks.map((item) => ({ kind: "artworks", item }))
           : tab === "movements" ? movements.map((item) => ({ kind: "movements", item }))
+            : tab === "compositions" ? compositions.map((item) => ({ kind: "compositions", item }))
+              : tab === "instruments" ? instruments.map((item) => ({ kind: "instruments", item }))
             : tab === "events" ? events.map((item) => ({ kind: "events", item }))
         : tab === "locations" ? locations.map((item) => ({ kind: "locations", item }))
           : routes.map((item) => ({ kind: "routes", item }));
@@ -127,6 +133,30 @@ function renderRow(row: Row, atlas: Atlas, locale: Locale, selected: SelectedEnt
     const choose = () => onSelect({ type: "movement", workSlug, id: movement.slug });
     return <article role="button" tabIndex={0} className={isSelected ? "card selected" : "card"} onClick={choose} onKeyDown={(event) => activate(event, choose)}>
       <h3>{movement.name}</h3><p>{movement.summary}</p><small>{movement.startYear ?? "?"}–{movement.endYear ?? "?"} · {movement.artistSlugs.length} {t("artists", locale)}</small>
+    </article>;
+  }
+
+  if (row.kind === "compositions") {
+    const composition = row.item;
+    const era = atlas.chapters.find((item) => item.slug === composition.chapterSlug);
+    const composer = atlas.characters.find((item) => item.slug === composition.primaryComposerSlug);
+    const isSelected = selected?.type === "composition" && selected.id === composition.slug;
+    const choose = () => onSelect({ type: "composition", workSlug, id: composition.slug });
+    return <article role="button" tabIndex={0} className={isSelected ? "card selected" : "card"} onClick={choose} onKeyDown={(event) => activate(event, choose)}>
+      <span className="sequence" aria-hidden="true" />
+      <h3>{composition.title}</h3><p>{composition.summary}</p>
+      <small>{composition.compositionStartYear ?? "?"}{composer ? ` · ${composer.name}` : ""}{era ? ` · ${era.title}` : ""} · {composition.scoreFragmentSlugs.length} {locale === "zh-CN" ? "乐谱片段" : "score excerpts"}</small>
+    </article>;
+  }
+
+  if (row.kind === "instruments") {
+    const instrument = row.item;
+    const isSelected = selected?.type === "instrument" && selected.id === instrument.slug;
+    const choose = () => onSelect({ type: "instrument", workSlug, id: instrument.slug });
+    return <article role="button" tabIndex={0} className={isSelected ? "card selected" : "card"} onClick={choose} onKeyDown={(event) => activate(event, choose)}>
+      <span className="place-type type-building" aria-hidden="true" />
+      <h3>{instrument.name}</h3><p>{instrument.summary}</p>
+      <small>{label(instrument.family, locale)}{instrument.hornbostelSachsCode ? ` · H–S ${instrument.hornbostelSachsCode}` : ""} · {instrument.compositionSlugs.length} {locale === "zh-CN" ? "部相关曲目" : "related works"}</small>
     </article>;
   }
 

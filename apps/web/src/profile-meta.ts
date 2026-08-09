@@ -59,4 +59,11 @@ export const PROFILE_META: Record<string, ProfileMeta> = {
     ogDescription: "按时代连接艺术家、作品与地点。Artists, artworks and places across time.",
     themeColor: "#17120D",
   },
+  "european-classical-music-history": {
+    lang: "zh-CN",
+    title: "欧洲古典音乐史 Atlas · European Classical Music History Atlas",
+    description: "欧洲古典音乐史 Atlas——连接七个时期、人物、曲目、乐器、机构、地点、关系与代表性乐谱及自产学习声音片段。European Classical Music History Atlas: eras, people, compositions, instruments, institutions, places, relations, and short analytical score/audio studies.",
+    ogDescription: "聆听时代，连接人物、曲目与乐器。Hear the eras through people, works and instruments.",
+    themeColor: "#15110E",
+  },
 };

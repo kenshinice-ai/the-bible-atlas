@@ -1,0 +1,19 @@
+{
+  "fragment": "haydn-surprise",
+  "composition": "symphony-no94-surprise",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-classical-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 10,
+  "checksums": {
+    "mei": "4c976eb16d9885bb9d8d5944d224bad204e9e0c2ff0ef264d9047f97a610f3aa",
+    "svg": "ae0a62d0069ab37db3b54eac6a02e2fc5a9971cbaa2e7a099b0be002b6cdc9e3",
+    "timing": "dd67c64f04ce65e4b6e37c6ef068df84f347d30c1c5ccbd90125a042c5e68f51",
+    "audio": "9820da9c709216e43bc45adb705bec79a6b118c6b0fc73b09f821f9f53ac23c1"
+  }
+}

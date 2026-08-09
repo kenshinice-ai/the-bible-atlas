@@ -1,0 +1,19 @@
+{
+  "fragment": "berlioz-fantastique",
+  "composition": "symphonie-fantastique",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-romantic-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 13.333,
+  "checksums": {
+    "mei": "5f30b8057c109fe2893231b4cf663e896485e03e568129ab06939ff423a1bb7c",
+    "svg": "2dd8507ae4e8e086413c750311c2652c74a8bc456b342bbb7c4cef93f5aa3fdc",
+    "timing": "06be16c472068bd9449bb4b65663311740f8dd244a516818739aae0bbabc5ab6",
+    "audio": "32a56ae506b4c20e3563a2a6a43090510c2f3a58774e14609359ee88cd601ba4"
+  }
+}

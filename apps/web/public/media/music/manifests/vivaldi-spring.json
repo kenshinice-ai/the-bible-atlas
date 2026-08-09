@@ -1,0 +1,19 @@
+{
+  "fragment": "vivaldi-spring",
+  "composition": "four-seasons",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-dance-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 9.231,
+  "checksums": {
+    "mei": "4e9f3c416b25f182bd9b6229832cd268c0ac46c2f0a0f5d2548ea4e16cc7a744",
+    "svg": "0052c6223b485bf9552d783cdc3c3f25a7aed3064f183eef0610cad8d2fcd383",
+    "timing": "1db576dd80765c91f47f68eb5bbec6c5e5b51f0bbdd0a1b3fda1e52376398046",
+    "audio": "be6c3c44b617175ac6ac222e6c44c9b6ec7dbca6836c539a492d43997d85b136"
+  }
+}

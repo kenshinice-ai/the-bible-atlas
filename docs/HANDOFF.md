@@ -2,6 +2,43 @@
 
 ## 项目现状
 
+### 2026-08-04 阶段性交接：欧洲古典音乐史 Atlas ECM-0 Blueprint
+
+已按用户决定启动第五条独立内容线：`european-classical-music-history`，站名冻结为“欧洲古典音乐史 Atlas / European Classical Music History Atlas”，默认中文、保留英文、使用真实地图和独立静态构建。ECM-0 只完成范围、数据、关系、乐器、乐谱与自产声音方案，不把规划状态写成已经实现。
+
+Blueprint 与执行清单已建立：
+
+- `blueprint/european-classical-music-history/EUROPEAN_CLASSICAL_MUSIC_HISTORY_ATLAS_BLUEPRINT.md`
+- `blueprint/european-classical-music-history/IMPLEMENTATION_CHECKLIST.md`
+- `docs/HANDOFF_DECISIONS_2026-08-04.md`
+
+Foundation 冻结为 **7 个时期 / 48 位 canonical 人物 / 72 部曲目 / 20 个风格或主要体裁 / 24 类乐器 / 16 个机构或乐团 / 24 个地点 / 96 个事件 / 80 条人物关系 / 8 条路线 / 28 个乐谱片段 / 28 个自产合成声音片段**。全局关系图只显示人物，曲目使用局部作品星图；音乐专业人物映射到唯一 `characters`，不复制人物节点，也不把乐团、宫廷、教堂、歌剧院或出版社伪造成个人。
+
+用户已拍板 Foundation 只做有代表性的短片段和自产合成声音，未来再考虑完整版本。技术边界冻结为：MEI canonical、MusicXML 导入、Verovio 构建时生成 SVG；每段 2–8 小节、声音 8–30 秒，乐谱与声音来自同一 note data；使用无第三方采样的中性程序化合成音，不使用商业录音、来源不明 SoundFont/采样包，不制作完整乐章或完整总谱。每段必须有来源、权利状态、checksum 与 generation manifest，并固定声明声音仅供学习，不代表历史演奏、真实乐器音色或权威速度。
+
+当前尚未创建 `music_history` category、profile、migration、seed、API、前端组件、MEI、SVG 或声音文件，也未运行实现阶段门禁。本段记录时的下一步是 ECM-1；该评审已在下方阶段完成。圣经、三国、银河原力和欧洲美术史四个现有 profile 未修改、未重烘焙。
+
+### 2026-08-04 阶段性交接：欧洲古典音乐史 Atlas ECM-1 Schema/API/资产评审完成
+
+ECM-1 设计评审已完成，详细记录见：
+
+- `blueprint/european-classical-music-history/ECM_1_SCHEMA_API_ASSET_DESIGN.md`
+- `docs/HANDOFF_DECISIONS_2026-08-04.md`
+
+本阶段冻结 migration 分层：`013_european_classical_music.sql` 负责 `music_history` category、音乐人物、曲目、风格、乐器、机构、连接表和关系上下文；`014_music_score_assets.sql` 负责 score fragments、annotations、generation manifests 与资产约束。Foundation seed 从 `057` 开始，不修改或复用已装载的 `001–056`。
+
+音乐人物通过 `music_person_profiles.character_id` 映射唯一 canonical `characters`；全局人物关系继续使用共享 `character_relations`，曲目/事件/机构语境使用 `relation_contexts`。图片继续使用 `media_assets`；乐谱和声音使用独立专业表，避免把 MEI xml:id、小节、timing map、合成器版本和生成 checksum 压入通用图片媒体模型。
+
+自产声音最终冻结为 **22050 Hz / 16-bit / mono PCM WAV**，不引入第三方 SoundFont、采样包、商业录音或来源不明音色；临时 MIDI/PCM 不入库。静态路径为 `/media/music/scores/`、`/media/music/timing/`、`/media/music/audio/`、`/media/music/manifests/`。只有 `rights_status='verified'` 的片段才返回可播放音频路径。
+
+当前仍未创建 migration、profile、seed、API、前端组件、MEI、SVG 或声音文件，也未运行数据库、构建、测试或发布门禁。下一步进入 Gate 2 策展清单：先冻结 48 人物、72 曲目、20 风格、24 乐器、16 机构、80 关系和 28 个片段，再进入 `013/014` migration 与 skeleton；不得跳过清单直接写 seed。现有四个 profile 未修改、未重烘焙。
+
+### 2026-08-04 阶段性交接：欧洲古典音乐史 Atlas Gate 2 策展清单冻结
+
+Foundation 机器清单已写入 `scripts/european_music_foundation_data.ts`，策展说明写入 `blueprint/european-classical-music-history/GATE2_FOUNDATION_CURATORIAL_LIST.md`。静态审计确认 **48 人物 / 72 曲目 / 20 风格 / 24 乐器 / 16 机构 / 24 地点 / 80 关系 / 28 乐谱声音片段**，所有作品—人物、实体—地点、关系两端和片段—作品引用完整；72 个作品事件与 24 个锚点人物事件组成 96 个 Foundation 事件。
+
+片段清单只选择 Foundation 权利边界允许的历史作品，战后版权期作品保留元数据和事件但不生成可播放片段。下一步进入 Gate 3：创建 `013_european_classical_music.sql`、`014_music_score_assets.sql` 与 `057` seed，并执行 fresh/repeat schema/seed 验证；验证通过前不接前端。
+
 ### 2026-08-02 阶段性交接：欧洲美术史 R9/R10 内容扩充（媒体阶段完成，最终门禁与部署进行中）
 
 R9/R10 已把欧洲美术史内容扩到 **82 位 canonical 人物 / 82 位艺术家 / 200 件作品 / 218 个事件 / 9 个章节 / 23 个流派 / 36 条人物关系**。新增 34 位重要艺术家和 104 件代表作；原 8 个创作时期重新归一，第 9 章“战后传播、修复与遗产治理”以事件为主，新增 18 条 1945–2024 的近现代事件，并把图集时间范围延伸到 2026。第 9 章不为填满人物栏而加入版权期艺术家。
@@ -202,5 +239,5 @@ npx tsx src/db-cli.ts seed
 
 ---
 
-更新时间:2026-08-02
+更新时间:2026-08-04
 本文档由代理在每个阶段完成后自动更新。

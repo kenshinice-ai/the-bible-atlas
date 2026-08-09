@@ -343,6 +343,10 @@ const DATA_NOTES: Record<string, readonly [string, string] | null> = {
     "凡推定年代与地点均已明确标注;条目为本站原创结构化摘要,以艺术史编年与馆藏来源整理,不收录受版权保护的大段原文。",
     "Inferred dates and places are explicitly marked. Entries are original structured summaries organized by art-historical chronology and collection sources; no substantial copyrighted text is reproduced.",
   ],
+  "european-classical-music-history": [
+    "年代、地点与人物关系按来源和置信度标注；乐谱为项目自行编码的短分析片段，声音为自产中性合成，不代表历史演奏或真实乐器音色。",
+    "Dates, places, and relationships are source-graded. Scores are short project-encoded analytical studies, and audio is neutral project synthesis rather than historical performance or authentic instrument timbre.",
+  ],
 };
 
 /** Footer source note per profile; null falls back to i18n scriptureNote. */
@@ -364,11 +368,18 @@ const SOURCE_NOTES: Record<string, readonly [string, string] | null> = {
     "来源包括博物馆馆藏目录与艺术史参考资料;年代、地点与作品归属按证据等级标注。",
     "Sources include museum collection catalogues and art-history references; dates, places and attributions are marked by evidence grade.",
   ],
+  "european-classical-music-history": [
+    "来源包括数字乐谱档案、图书馆音乐馆藏、机构目录与本项目生成记录；完整总谱与商业录音不在 Foundation 范围内。",
+    "Sources include digital score archives, library music collections, institutional catalogues, and project generation records. Full scores and commercial recordings are outside the Foundation scope.",
+  ],
 };
 
 const ART_WELCOME: Epigraph = { zh: "艺术使时间留下形状。", zhRef: "欧洲美术史 Atlas · 策展摘要", en: "Art gives time a shape.", enRef: "European Art History Atlas · curatorial note" };
 const ART_LOADING: readonly Epigraph[] = [ART_WELCOME];
 const ART_FOOTER: Epigraph = { zh: "本图集保存结构化摘要、时代信息与来源，不替代博物馆目录或学术研究。", zhRef: "数据说明", en: "This atlas preserves structured summaries, period metadata and sources; it does not replace museum catalogues or scholarship.", enRef: "Data note" };
+const MUSIC_WELCOME: Epigraph = { zh: "时间留下事件，音乐让时代被听见。", zhRef: "欧洲古典音乐史 Atlas · 策展摘要", en: "History leaves events; music lets an era be heard.", enRef: "European Classical Music History Atlas · curatorial note" };
+const MUSIC_LOADING: readonly Epigraph[] = [MUSIC_WELCOME];
+const MUSIC_FOOTER: Epigraph = { zh: "短乐谱与自产声音用于学习和比较，不替代正式乐谱、演出或录音。", zhRef: "声音与乐谱说明", en: "Short scores and project-generated audio support study and comparison; they do not replace editions, performances, or recordings.", enRef: "Score and audio note" };
 
 // ---------------------------------------------------------------------------
 // Profile resolution: the rest of the app imports these four names unchanged.
@@ -380,6 +391,7 @@ export const SETS_BY_PROFILE = {
   "three-kingdoms": { era: THREE_KINGDOMS_ERA_EPIGRAPHS, welcome: THREE_KINGDOMS_WELCOME, loading: THREE_KINGDOMS_LOADING, footer: THREE_KINGDOMS_FOOTER },
   galaxy: { era: GALAXY_ERA_EPIGRAPHS, welcome: GALAXY_WELCOME, loading: GALAXY_LOADING, footer: GALAXY_FOOTER },
   "european-art-history": { era: {}, welcome: ART_WELCOME, loading: ART_LOADING, footer: ART_FOOTER },
+  "european-classical-music-history": { era: {}, welcome: MUSIC_WELCOME, loading: MUSIC_LOADING, footer: MUSIC_FOOTER },
 } as const;
 
 const ACTIVE = SETS_BY_PROFILE[PROFILE.id as keyof typeof SETS_BY_PROFILE] ?? SETS_BY_PROFILE.bible;

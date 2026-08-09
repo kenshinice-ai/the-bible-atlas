@@ -1,0 +1,103 @@
+{
+  "fragment": "organum-viderunt-leonin",
+  "tempoBpm": 72,
+  "durationSeconds": 13.333,
+  "notes": [
+    {
+      "id": "organum-viderunt-leonin-note-1",
+      "midi": 48,
+      "start": 0,
+      "end": 0.767
+    },
+    {
+      "id": "organum-viderunt-leonin-note-2",
+      "midi": 55,
+      "start": 0.833,
+      "end": 1.6
+    },
+    {
+      "id": "organum-viderunt-leonin-note-3",
+      "midi": 50,
+      "start": 1.667,
+      "end": 2.433
+    },
+    {
+      "id": "organum-viderunt-leonin-note-4",
+      "midi": 57,
+      "start": 2.5,
+      "end": 3.267
+    },
+    {
+      "id": "organum-viderunt-leonin-note-5",
+      "midi": 52,
+      "start": 3.333,
+      "end": 4.1
+    },
+    {
+      "id": "organum-viderunt-leonin-note-6",
+      "midi": 59,
+      "start": 4.167,
+      "end": 4.933
+    },
+    {
+      "id": "organum-viderunt-leonin-note-7",
+      "midi": 53,
+      "start": 5,
+      "end": 5.767
+    },
+    {
+      "id": "organum-viderunt-leonin-note-8",
+      "midi": 60,
+      "start": 5.833,
+      "end": 6.6
+    },
+    {
+      "id": "organum-viderunt-leonin-note-9",
+      "midi": 55,
+      "start": 6.667,
+      "end": 7.433
+    },
+    {
+      "id": "organum-viderunt-leonin-note-10",
+      "midi": 62,
+      "start": 7.5,
+      "end": 8.267
+    },
+    {
+      "id": "organum-viderunt-leonin-note-11",
+      "midi": 53,
+      "start": 8.333,
+      "end": 9.1
+    },
+    {
+      "id": "organum-viderunt-leonin-note-12",
+      "midi": 60,
+      "start": 9.167,
+      "end": 9.933
+    },
+    {
+      "id": "organum-viderunt-leonin-note-13",
+      "midi": 52,
+      "start": 10,
+      "end": 10.767
+    },
+    {
+      "id": "organum-viderunt-leonin-note-14",
+      "midi": 59,
+      "start": 10.833,
+      "end": 11.6
+    },
+    {
+      "id": "organum-viderunt-leonin-note-15",
+      "midi": 50,
+      "start": 11.667,
+      "end": 12.433
+    },
+    {
+      "id": "organum-viderunt-leonin-note-16",
+      "midi": 57,
+      "start": 12.5,
+      "end": 13.267
+    }
+  ]
+}

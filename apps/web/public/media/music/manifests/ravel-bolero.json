@@ -1,0 +1,19 @@
+{
+  "fragment": "ravel-bolero",
+  "composition": "bolero",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-modern-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 11.429,
+  "checksums": {
+    "mei": "227a7b6dd1a2d843faaca140941c434e3b3473ecde8ca5653cf6c05535e6fd77",
+    "svg": "96d1ba00f7a9b0983fed756f7ce5427432293ee157ca03ec1cc42866dc032b24",
+    "timing": "379f9d13c40fa838a5765f72014b8bb0bde719a7b9e7ed29012d65205c9fb1e6",
+    "audio": "5ae0b842ccb745fdf2e9f293139733b5f6fdf8fc534b1abf063adf6ba4eec6cc"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "fragment": "wagner-tristan",
+  "composition": "tristan-und-isolde",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-romantic-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 13.333,
+  "checksums": {
+    "mei": "0453a09dc50b8c5faa594f1734d0a0b1c5d8c90a2b211b16b13d651a59cfbe85",
+    "svg": "cea55825c3c1670264d9e33acc64f14bbfbc141a4ff5cdd911db5c95bcce7e60",
+    "timing": "a7c45f174969fac99630bc9e2d9ae195b11d58fb65c66f0fa7c8abc64d8eb924",
+    "audio": "32a56ae506b4c20e3563a2a6a43090510c2f3a58774e14609359ee88cd601ba4"
+  }
+}

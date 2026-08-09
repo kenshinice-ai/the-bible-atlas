@@ -1,0 +1,19 @@
+{
+  "fragment": "bartok-celesta",
+  "composition": "music-for-strings-percussion-celesta",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-modern-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 11.429,
+  "checksums": {
+    "mei": "a796a58d2c815ffb8d5d79a7298a539ed055a35df247a4e4938387d644f51565",
+    "svg": "d8339d95d1194d40b954a7dee888122d48c405557a56106c86aef719e41ad468",
+    "timing": "820a7149706b2e2e321b45bf00bd3bf8abf8cbb567aa5110c5820093948816e5",
+    "audio": "5ae0b842ccb745fdf2e9f293139733b5f6fdf8fc534b1abf063adf6ba4eec6cc"
+  }
+}

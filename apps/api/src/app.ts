@@ -3,11 +3,12 @@ import express, { type NextFunction, type Request, type Response } from "express
 import type pg from "pg";
 import { ZodError, z } from "zod";
 import { resolveLocale, supportedLocales } from "./locale.js";
+import { loadMusicAtlas } from "./music.js";
 
 const SlugSchema = z.string().regex(/^[a-z0-9-]+$/);
 const SearchSchema = z.object({ q: z.string().trim().min(2).max(100), locale: z.string().optional() });
 const DetailSchema = z.enum(["lite", "full"]).catch("lite");
-const EntityKindSchema = z.enum(["character", "event", "location", "route", "relationship", "artist", "artwork", "movement", "institution"]);
+const EntityKindSchema = z.enum(["character", "event", "location", "route", "relationship", "artist", "artwork", "movement", "institution", "composition", "music_style", "instrument", "music_institution", "score_fragment"]);
 type Database = Pick<pg.Pool, "query">;
 
 /**
@@ -63,7 +64,12 @@ export function createApp(db: Database, corsOrigin: string = process.env.CORS_OR
           (SELECT count(*)::int FROM locations l WHERE l.work_id=w.id) AS "locationCount",
           (SELECT count(*)::int FROM artists a WHERE a.work_id=w.id) AS "artistCount",
           (SELECT count(*)::int FROM artworks aw WHERE aw.work_id=w.id) AS "artworkCount",
-          (SELECT count(*)::int FROM movements m WHERE m.work_id=w.id) AS "movementCount"
+          (SELECT count(*)::int FROM movements m WHERE m.work_id=w.id) AS "movementCount",
+          (SELECT count(*)::int FROM compositions co WHERE co.work_id=w.id) AS "compositionCount",
+          (SELECT count(*)::int FROM music_styles ms WHERE ms.work_id=w.id) AS "musicStyleCount",
+          (SELECT count(*)::int FROM instruments i WHERE i.work_id=w.id) AS "instrumentCount",
+          (SELECT count(*)::int FROM music_institutions mi WHERE mi.work_id=w.id) AS "musicInstitutionCount",
+          (SELECT count(*)::int FROM score_fragments sf WHERE sf.work_id=w.id) AS "scoreFragmentCount"
         FROM works w
         LEFT JOIN work_translations req ON req.work_id=w.id AND req.locale=$1 AND req.status='published'
         LEFT JOIN work_translations fb ON fb.work_id=w.id AND fb.locale=w.default_locale AND fb.status='published'
@@ -184,11 +190,13 @@ export function createApp(db: Database, corsOrigin: string = process.env.CORS_OR
         db.query(`SELECT m.id,m.slug,m.chapter_id, (SELECT ch.slug FROM chapters ch WHERE ch.id=m.chapter_id) AS "chapterSlug",m.start_year AS "startYear",m.end_year AS "endYear",COALESCE(t.name,f.name) name,COALESCE(t.summary,f.summary) summary,CASE WHEN t.name IS NULL THEN $3::locale_code ELSE $2::locale_code END AS "resolvedLocale",(t.name IS NULL) AS "fallbackUsed",COALESCE(t.status,f.status) AS "translationStatus",COALESCE((SELECT json_agg(DISTINCT a.slug) FROM artist_movements am JOIN artists a ON a.id=am.artist_id WHERE am.movement_id=m.id),'[]'::json) AS "artistSlugs",COALESCE((SELECT json_agg(DISTINCT aw.slug) FROM artwork_movements am JOIN artworks aw ON aw.id=am.artwork_id WHERE am.movement_id=m.id),'[]'::json) AS "artworkSlugs",COALESCE((SELECT json_agg(${sourceTitle} ORDER BY ${sourceTitle}) FROM movement_sources ms JOIN sources s ON s.id=ms.source_id ${sourceJoin("s")} WHERE ms.movement_id=m.id),'[]'::json) AS "sourceTitles" FROM movements m LEFT JOIN movement_translations t ON t.movement_id=m.id AND t.locale=$2 AND t.status='published' LEFT JOIN movement_translations f ON f.movement_id=m.id AND f.locale=$3 AND f.status='published' WHERE m.work_id=$1 AND (t.name IS NOT NULL OR f.name IS NOT NULL) ORDER BY m.sort_order`, args),
         db.query(`SELECT i.id,i.slug,i.location_id AS "locationId",i.institution_type AS "institutionType",i.founded_year AS "foundedYear",i.closed_year AS "closedYear",l.slug AS "locationSlug",COALESCE(t.name,f.name) name,COALESCE(t.summary,f.summary) summary,CASE WHEN t.name IS NULL THEN $3::locale_code ELSE $2::locale_code END AS "resolvedLocale",(t.name IS NULL) AS "fallbackUsed",COALESCE(t.status,f.status) AS "translationStatus",COALESCE((SELECT json_agg(DISTINCT a.slug) FROM artist_institutions ai JOIN artists a ON a.id=ai.artist_id WHERE ai.institution_id=i.id),'[]'::json) AS "artistSlugs",COALESCE((SELECT json_agg(${sourceTitle} ORDER BY ${sourceTitle}) FROM institution_sources isrc JOIN sources s ON s.id=isrc.source_id ${sourceJoin("s")} WHERE isrc.institution_id=i.id),'[]'::json) AS "sourceTitles" FROM art_institutions i JOIN locations l ON l.id=i.location_id LEFT JOIN art_institution_translations t ON t.institution_id=i.id AND t.locale=$2 AND t.status='published' LEFT JOIN art_institution_translations f ON f.institution_id=i.id AND f.locale=$3 AND f.status='published' WHERE i.work_id=$1 AND (t.name IS NOT NULL OR f.name IS NOT NULL) ORDER BY i.slug`, args),
       ]);
+      const music = await loadMusicAtlas(db, workId, requestedLocale, fallbackLocale);
       response.json({
         requestedLocale, detail, work,
         characters: characters.rows, locations: locations.rows, events: events.rows, routes: routes.rows,
         relations: relations.rows, sources: sources.rows, chronologies: chronologies.rows, media: media.rows,
         chapters: chapters.rows, groups: groups.rows, artists: artists.rows, artworks: artworks.rows, movements: movements.rows, institutions: institutions.rows,
+        ...music,
       });
     } catch (error) { next(error); }
   });
@@ -234,6 +242,11 @@ export function createApp(db: Database, corsOrigin: string = process.env.CORS_OR
           artwork: `SELECT aw.medium,aw.dimensions,aw.copyright_status AS "copyrightStatus" FROM artworks aw WHERE aw.work_id=$1 AND aw.slug=$4`,
           movement: `SELECT m.start_year::text AS "startYear",m.end_year::text AS "endYear" FROM movements m WHERE m.work_id=$1 AND m.slug=$4`,
           institution: `SELECT i.institution_type AS "institutionType",i.founded_year::text AS "foundedYear",i.closed_year::text AS "closedYear" FROM art_institutions i WHERE i.work_id=$1 AND i.slug=$4`,
+          composition: `SELECT co.genre,co.form,co.key_signature AS "keySignature",co.composition_start_year::text AS "compositionStartYear",co.composition_end_year::text AS "compositionEndYear",COALESCE(t.description,f.description,'') description FROM compositions co LEFT JOIN composition_translations t ON t.composition_id=co.id AND t.locale=$2 AND t.status='published' LEFT JOIN composition_translations f ON f.composition_id=co.id AND f.locale=$3 AND f.status='published' WHERE co.work_id=$1 AND co.slug=$4`,
+          music_style: `SELECT ms.style_kind AS "styleKind",ms.start_year::text AS "startYear",ms.end_year::text AS "endYear" FROM music_styles ms WHERE ms.work_id=$1 AND ms.slug=$4`,
+          instrument: `SELECT i.family,i.hornbostel_sachs_code AS "hornbostelSachsCode",i.mimo_term AS "mimoTerm",i.start_year::text AS "startYear",i.end_year::text AS "endYear" FROM instruments i WHERE i.work_id=$1 AND i.slug=$4`,
+          music_institution: `SELECT i.institution_type AS "institutionType",i.founded_year::text AS "foundedYear",i.closed_year::text AS "closedYear" FROM music_institutions i WHERE i.work_id=$1 AND i.slug=$4`,
+          score_fragment: `SELECT sf.notation_kind AS "notationKind",sf.duration_seconds::text AS "durationSeconds",sf.tempo_bpm::text AS "tempoBpm",sf.rights_status AS "rightsStatus",COALESCE(t.analysis_note,f.analysis_note,'') AS "analysisNote",COALESCE(t.playback_disclaimer,f.playback_disclaimer,'') AS "playbackDisclaimer" FROM score_fragments sf LEFT JOIN score_fragment_translations t ON t.fragment_id=sf.id AND t.locale=$2 AND t.status='published' LEFT JOIN score_fragment_translations f ON f.fragment_id=sf.id AND f.locale=$3 AND f.status='published' WHERE sf.work_id=$1 AND sf.slug=$4`,
         };
         const result = await db.query(queries[kind]!, args);
         row = result.rows[0];
@@ -255,7 +268,12 @@ export function createApp(db: Database, corsOrigin: string = process.env.CORS_OR
         UNION ALL SELECT 'artist',a.slug,COALESCE(at.full_name,at.name),at.summary,w.slug FROM artist_translations at JOIN artists a ON a.id=at.artist_id JOIN works w ON w.id=a.work_id WHERE w.category <> 'art_history' AND at.locale=$1 AND at.status='published' AND (COALESCE(at.full_name,at.name)||' '||at.name||' '||at.summary||' '||at.modern_status||' '||array_to_string(at.period_titles,' ')||' '||array_to_string(at.aliases,' ')) ILIKE '%'||$2||'%'
         UNION ALL SELECT 'artwork',aw.slug,wt.title,wt.summary,w.slug FROM artwork_translations wt JOIN artworks aw ON aw.id=wt.artwork_id JOIN works w ON w.id=aw.work_id WHERE wt.locale=$1 AND wt.status='published' AND (wt.title||' '||wt.summary||' '||wt.description||' '||aw.medium) ILIKE '%'||$2||'%'
         UNION ALL SELECT 'movement',m.slug,mt.name,mt.summary,w.slug FROM movement_translations mt JOIN movements m ON m.id=mt.movement_id JOIN works w ON w.id=m.work_id WHERE mt.locale=$1 AND mt.status='published' AND (mt.name||' '||mt.summary) ILIKE '%'||$2||'%'
-        UNION ALL SELECT 'institution',i.slug,it.name,it.summary,w.slug FROM art_institution_translations it JOIN art_institutions i ON i.id=it.institution_id JOIN works w ON w.id=i.work_id WHERE it.locale=$1 AND it.status='published' AND (it.name||' '||it.summary) ILIKE '%'||$2||'%') s LIMIT 200`, [requestedLocale, parsed.q]);
+        UNION ALL SELECT 'institution',i.slug,it.name,it.summary,w.slug FROM art_institution_translations it JOIN art_institutions i ON i.id=it.institution_id JOIN works w ON w.id=i.work_id WHERE it.locale=$1 AND it.status='published' AND (it.name||' '||it.summary) ILIKE '%'||$2||'%'
+        UNION ALL SELECT 'composition',co.slug,ct.title,ct.summary,w.slug FROM composition_translations ct JOIN compositions co ON co.id=ct.composition_id JOIN works w ON w.id=co.work_id WHERE ct.locale=$1 AND ct.status='published' AND (ct.title||' '||ct.summary||' '||ct.description||' '||co.genre||' '||co.form) ILIKE '%'||$2||'%'
+        UNION ALL SELECT 'music_style',ms.slug,mst.name,mst.summary,w.slug FROM music_style_translations mst JOIN music_styles ms ON ms.id=mst.style_id JOIN works w ON w.id=ms.work_id WHERE mst.locale=$1 AND mst.status='published' AND (mst.name||' '||mst.summary||' '||ms.style_kind) ILIKE '%'||$2||'%'
+        UNION ALL SELECT 'instrument',i.slug,it.name,it.summary,w.slug FROM instrument_translations it JOIN instruments i ON i.id=it.instrument_id JOIN works w ON w.id=i.work_id WHERE it.locale=$1 AND it.status='published' AND (it.name||' '||it.summary||' '||array_to_string(it.aliases,' ')||' '||i.family||' '||i.hornbostel_sachs_code) ILIKE '%'||$2||'%'
+        UNION ALL SELECT 'music_institution',i.slug,it.name,it.summary,w.slug FROM music_institution_translations it JOIN music_institutions i ON i.id=it.institution_id JOIN works w ON w.id=i.work_id WHERE it.locale=$1 AND it.status='published' AND (it.name||' '||it.summary||' '||i.institution_type) ILIKE '%'||$2||'%'
+        UNION ALL SELECT 'score_fragment',sf.slug,sft.title,sft.summary,w.slug FROM score_fragment_translations sft JOIN score_fragments sf ON sf.id=sft.fragment_id JOIN works w ON w.id=sf.work_id WHERE sft.locale=$1 AND sft.status='published' AND (sft.title||' '||sft.summary||' '||sft.analysis_note) ILIKE '%'||$2||'%') s LIMIT 200`, [requestedLocale, parsed.q]);
       response.json({ locale: requestedLocale, query: parsed.q, items: result.rows });
     } catch (error) { next(error); }
   });

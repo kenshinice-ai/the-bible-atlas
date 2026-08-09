@@ -1,0 +1,19 @@
+{
+  "fragment": "debussy-faun",
+  "composition": "prelude-afternoon-faun",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-modern-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 11.429,
+  "checksums": {
+    "mei": "baa774be07cfb68fcd2273131ccb6ae5be1f3532776225778adceb4198893b12",
+    "svg": "19b5562fc4c82bc174dffdb2eed3f307aab64f28d2e17c6fdd4a8f1fd5b6d092",
+    "timing": "91b8ae40bd9384d4faa33e436a041f3d69b32485813a367f37570e43fd3a0ea9",
+    "audio": "5ae0b842ccb745fdf2e9f293139733b5f6fdf8fc534b1abf063adf6ba4eec6cc"
+  }
+}

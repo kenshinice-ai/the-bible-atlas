@@ -1,0 +1,19 @@
+{
+  "fragment": "brahms-clarinet",
+  "composition": "clarinet-quintet-brahms",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-romantic-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 13.333,
+  "checksums": {
+    "mei": "32b82dae67603582158e67acfe6c5b62672a7aa32e6da02003579d38c43171db",
+    "svg": "50fc8fd1093ded6ca184a4c0baa8c09b1849a3d79f6213f83063594af8f8393f",
+    "timing": "b94d7b72434bd51928e3dbb5d0efaa2f9a63eea74a7a46f2d7f1eb5abe19372e",
+    "audio": "32a56ae506b4c20e3563a2a6a43090510c2f3a58774e14609359ee88cd601ba4"
+  }
+}

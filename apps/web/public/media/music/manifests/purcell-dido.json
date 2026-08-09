@@ -1,0 +1,19 @@
+{
+  "fragment": "purcell-dido",
+  "composition": "dido-and-aeneas",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-dance-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 9.231,
+  "checksums": {
+    "mei": "5b0950e09ac18e0fba692bcbf096c96dd9cffd30668c3f548828424aaea0d2f4",
+    "svg": "45e502a10f0f60c59f99b49333cec3832d89f5e7471855fd4e21797790f7d119",
+    "timing": "a3b7f6300d73e385c343099327eb4aa814bc5d108706f2da3e06c8fb4a593163",
+    "audio": "be6c3c44b617175ac6ac222e6c44c9b6ec7dbca6836c539a492d43997d85b136"
+  }
+}

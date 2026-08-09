@@ -1,0 +1,103 @@
+{
+  "fragment": "chant-viridissima",
+  "tempoBpm": 60,
+  "durationSeconds": 16,
+  "notes": [
+    {
+      "id": "chant-viridissima-note-1",
+      "midi": 60,
+      "start": 0,
+      "end": 0.92
+    },
+    {
+      "id": "chant-viridissima-note-2",
+      "midi": 62,
+      "start": 1,
+      "end": 1.92
+    },
+    {
+      "id": "chant-viridissima-note-3",
+      "midi": 64,
+      "start": 2,
+      "end": 2.92
+    },
+    {
+      "id": "chant-viridissima-note-4",
+      "midi": 65,
+      "start": 3,
+      "end": 3.92
+    },
+    {
+      "id": "chant-viridissima-note-5",
+      "midi": 67,
+      "start": 4,
+      "end": 4.92
+    },
+    {
+      "id": "chant-viridissima-note-6",
+      "midi": 65,
+      "start": 5,
+      "end": 5.92
+    },
+    {
+      "id": "chant-viridissima-note-7",
+      "midi": 64,
+      "start": 6,
+      "end": 6.92
+    },
+    {
+      "id": "chant-viridissima-note-8",
+      "midi": 62,
+      "start": 7,
+      "end": 7.92
+    },
+    {
+      "id": "chant-viridissima-note-9",
+      "midi": 60,
+      "start": 8,
+      "end": 8.92
+    },
+    {
+      "id": "chant-viridissima-note-10",
+      "midi": 62,
+      "start": 9,
+      "end": 9.92
+    },
+    {
+      "id": "chant-viridissima-note-11",
+      "midi": 64,
+      "start": 10,
+      "end": 10.92
+    },
+    {
+      "id": "chant-viridissima-note-12",
+      "midi": 67,
+      "start": 11,
+      "end": 11.92
+    },
+    {
+      "id": "chant-viridissima-note-13",
+      "midi": 65,
+      "start": 12,
+      "end": 12.92
+    },
+    {
+      "id": "chant-viridissima-note-14",
+      "midi": 64,
+      "start": 13,
+      "end": 13.92
+    },
+    {
+      "id": "chant-viridissima-note-15",
+      "midi": 62,
+      "start": 14,
+      "end": 14.92
+    },
+    {
+      "id": "chant-viridissima-note-16",
+      "midi": 60,
+      "start": 15,
+      "end": 15.92
+    }
+  ]
+}

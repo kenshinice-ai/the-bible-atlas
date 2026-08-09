@@ -1,0 +1,19 @@
+{
+  "fragment": "corelli-christmas",
+  "composition": "corelli-concerto-grosso-op6-no8",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-dance-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 9.231,
+  "checksums": {
+    "mei": "f512a6391759178ad803974698133f8a1d227c579da55e64c4b9e44f6a4bea3e",
+    "svg": "b82931668f8cfcc6acf709b537fa907a81f81bc685fe48e5f00ca467338742d9",
+    "timing": "c0f504a948eae651d34d07556ac53b9e9b2600782afdfafac4f209947b3ca9b2",
+    "audio": "be6c3c44b617175ac6ac222e6c44c9b6ec7dbca6836c539a492d43997d85b136"
+  }
+}

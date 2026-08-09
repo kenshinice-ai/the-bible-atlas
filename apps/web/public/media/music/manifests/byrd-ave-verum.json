@@ -1,0 +1,19 @@
+{
+  "fragment": "byrd-ave-verum",
+  "composition": "ave-verum-corpus-byrd",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-polyphony-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 12.632,
+  "checksums": {
+    "mei": "7f313b15789f8a0827447710281a9fa5503262e4de9c356a0c726b77a851d0b4",
+    "svg": "6cb8cc26682a03499e2783e39bc1b48deaf43ce10fa9d9706d35a45f7130a472",
+    "timing": "689a991da1f232ef627b005a2cf8033d6c3506101d7e0e26cf4d3f06da55e4b6",
+    "audio": "163922893d209ef34fd2f5b910a13ce1739d5a173606969fc00c187ad7282c7e"
+  }
+}

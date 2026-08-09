@@ -53,11 +53,14 @@ psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres -f "$ATLAS_
 for seed in "$ATLAS_ROOT"/db/seeds/0{49,50,51,52,53,54,55,56}_*.sql; do
   psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres -f "$seed" >/dev/null
 done
+for seed in "$ATLAS_ROOT"/db/seeds/0{57,58,59}_*.sql; do
+  psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres -f "$seed" >/dev/null
+done
 
 psql -v ON_ERROR_STOP=1 -h 127.0.0.1 -p "$ATLAS_DB_PORT" -d postgres <<'SQL' >/dev/null
 DO $$
 BEGIN
-  IF (SELECT count(*) FROM works) <> 6 THEN RAISE EXCEPTION 'expected six works'; END IF;
+  IF (SELECT count(*) FROM works) <> 7 THEN RAISE EXCEPTION 'expected seven works'; END IF;
   IF EXISTS (SELECT 1 FROM works w LEFT JOIN work_translations z ON z.work_id=w.id AND z.locale='zh-CN' AND z.status='published' LEFT JOIN work_translations e ON e.work_id=w.id AND e.locale='en' AND e.status='published' WHERE z.work_id IS NULL OR e.work_id IS NULL) THEN RAISE EXCEPTION 'missing published work translation'; END IF;
   IF EXISTS (SELECT 1 FROM locations l JOIN works w ON w.id=l.work_id WHERE w.slug='the-hobbit' AND (l.geom IS NOT NULL OR l.canvas_x IS NULL OR l.canvas_y IS NULL)) THEN RAISE EXCEPTION 'Hobbit location violates fictional canvas'; END IF;
   IF EXISTS (SELECT 1 FROM locations l JOIN works w ON w.id=l.work_id WHERE w.slug<>'the-hobbit' AND (l.geom IS NULL OR l.canvas_x IS NOT NULL OR l.canvas_y IS NOT NULL)) THEN RAISE EXCEPTION 'real work location violates PostGIS layer'; END IF;
@@ -89,6 +92,35 @@ BEGIN
   IF EXISTS (SELECT 1 FROM artworks aw LEFT JOIN artwork_event_links ae ON ae.artwork_id=aw.id WHERE aw.work_id='10000000-0000-4000-8000-000000000009' GROUP BY aw.id HAVING count(ae.event_id)=0) THEN RAISE EXCEPTION 'European art artwork event closure failed'; END IF;
   IF EXISTS (SELECT 1 FROM events e LEFT JOIN event_sources es ON es.event_id=e.id LEFT JOIN event_locations el ON el.event_id=e.id WHERE e.work_id='10000000-0000-4000-8000-000000000009' GROUP BY e.id HAVING count(DISTINCT es.source_id)=0 OR count(DISTINCT el.location_id)=0) THEN RAISE EXCEPTION 'European art event source/location closure failed'; END IF;
   IF (SELECT count(*) FROM media_links ml JOIN artworks aw ON aw.id=ml.entity_id WHERE ml.entity_kind='artwork' AND aw.work_id='10000000-0000-4000-8000-000000000009') <> 200 THEN RAISE EXCEPTION 'European art media count failed'; END IF;
+  IF (SELECT count(*) FROM music_person_profiles WHERE work_id='10000000-0000-4000-8000-000000000010') <> 48 THEN RAISE EXCEPTION 'European music people count failed'; END IF;
+  IF (SELECT count(*) FROM compositions WHERE work_id='10000000-0000-4000-8000-000000000010') <> 72 THEN RAISE EXCEPTION 'European music composition count failed'; END IF;
+  IF (SELECT count(*) FROM music_styles WHERE work_id='10000000-0000-4000-8000-000000000010') <> 20 THEN RAISE EXCEPTION 'European music style count failed'; END IF;
+  IF (SELECT count(*) FROM instruments WHERE work_id='10000000-0000-4000-8000-000000000010') <> 24 THEN RAISE EXCEPTION 'European music instrument count failed'; END IF;
+  IF (SELECT count(*) FROM music_institutions WHERE work_id='10000000-0000-4000-8000-000000000010') <> 16 THEN RAISE EXCEPTION 'European music institution count failed'; END IF;
+  IF (SELECT count(*) FROM events WHERE work_id='10000000-0000-4000-8000-000000000010') <> 96 THEN RAISE EXCEPTION 'European music event count failed'; END IF;
+  IF (SELECT count(*) FROM character_relations WHERE work_id='10000000-0000-4000-8000-000000000010') <> 80 THEN RAISE EXCEPTION 'European music relation count failed'; END IF;
+  IF (SELECT count(*) FROM routes WHERE work_id='10000000-0000-4000-8000-000000000010') <> 8 THEN RAISE EXCEPTION 'European music route count failed'; END IF;
+  IF (SELECT count(*) FROM score_fragments WHERE work_id='10000000-0000-4000-8000-000000000010') <> 28 THEN RAISE EXCEPTION 'European music score fragment count failed'; END IF;
+  IF EXISTS (
+    SELECT 1 FROM score_fragments sf
+    LEFT JOIN score_generation_manifests gm ON gm.fragment_id=sf.id
+    LEFT JOIN score_fragment_translations z ON z.fragment_id=sf.id AND z.locale='zh-CN' AND z.status='published'
+    LEFT JOIN score_fragment_translations e ON e.fragment_id=sf.id AND e.locale='en' AND e.status='published'
+    WHERE sf.work_id='10000000-0000-4000-8000-000000000010'
+      AND (sf.rights_status<>'verified' OR sf.duration_seconds NOT BETWEEN 8 AND 30
+        OR gm.fragment_id IS NULL OR gm.renderer_version NOT LIKE 'Verovio 6.%'
+        OR z.fragment_id IS NULL OR e.fragment_id IS NULL)
+  ) THEN RAISE EXCEPTION 'European music score rights/manifest/translation gate failed'; END IF;
+  IF EXISTS (
+    SELECT 1 FROM compositions co
+    LEFT JOIN composition_translations z ON z.composition_id=co.id AND z.locale='zh-CN' AND z.status='published'
+    LEFT JOIN composition_translations e ON e.composition_id=co.id AND e.locale='en' AND e.status='published'
+    LEFT JOIN composition_event_links cel ON cel.composition_id=co.id
+    LEFT JOIN composition_sources cs ON cs.composition_id=co.id
+    WHERE co.work_id='10000000-0000-4000-8000-000000000010'
+    GROUP BY co.id,z.composition_id,e.composition_id
+    HAVING z.composition_id IS NULL OR e.composition_id IS NULL OR count(DISTINCT cel.event_id)=0 OR count(DISTINCT cs.source_id)=0
+  ) THEN RAISE EXCEPTION 'European music composition closure failed'; END IF;
 END $$;
 SQL
 
@@ -120,10 +152,14 @@ echo "API smoke: Bible atlas"
 curl -fsS "http://127.0.0.1:$ATLAS_API_PORT/api/works/the-bible/atlas?locale=zh-CN" >"$ATLAS_TEMP/bible.json"
 echo "API smoke: European art atlas"
 curl -fsS "http://127.0.0.1:$ATLAS_API_PORT/api/works/european-art-history/atlas?locale=zh-CN" >"$ATLAS_TEMP/european-art.json"
+echo "API smoke: European music atlas"
+curl -fsS "http://127.0.0.1:$ATLAS_API_PORT/api/works/european-classical-music-history/atlas?locale=zh-CN&detail=full" >"$ATLAS_TEMP/european-music.json"
 echo "API smoke: Chinese search"
 curl -fsS "http://127.0.0.1:$ATLAS_API_PORT/api/search?locale=zh-CN&q=%E5%B7%B4%E9%BB%8E" >"$ATLAS_TEMP/search-zh.json"
 echo "API smoke: English search"
 curl -fsS "http://127.0.0.1:$ATLAS_API_PORT/api/search?locale=en&q=Paris" >"$ATLAS_TEMP/search-en.json"
+echo "API smoke: Music search"
+curl -fsS "http://127.0.0.1:$ATLAS_API_PORT/api/search?locale=en&q=Bach" >"$ATLAS_TEMP/search-music.json"
 
 node - "$ATLAS_TEMP" <<'NODE'
 const fs=require('node:fs');
@@ -136,9 +172,10 @@ const works=read('works');
 const atlas=read('atlas');
 const bible=read('bible');
 const art=read('european-art');
+const music=read('european-music');
 assert(health.status==='ok'&&health.version==='4.0.0','health contract failed');
 assert(JSON.stringify(locales.locales)===JSON.stringify(['zh-CN','en']),'locale contract failed');
-assert(works.items.length===6&&works.items.every((item)=>item.translationStatus==='published'&&item.resolvedLocale==='zh-CN'&&item.fallbackUsed===false),'work locale metadata failed');
+assert(works.items.length===7&&works.items.every((item)=>item.translationStatus==='published'&&item.resolvedLocale==='zh-CN'&&item.fallbackUsed===false),'work locale metadata failed');
 assert(atlas.characters.length===8&&atlas.events.length===6&&atlas.locations.length===6&&atlas.routes.length===1,'Tale atlas counts failed');
 assert(atlas.characters.every((item)=>item.eventSlugs.length>0&&item.translationStatus==='published'),'character closure or locale metadata failed');
 assert(atlas.events.every((item)=>item.locationSlugs.length>0&&item.sourceTitles.length>0&&item.translationStatus==='published'),'event location/source closure failed');
@@ -151,8 +188,12 @@ assert(art.characters.length===82&&art.artists.length===82&&art.artworks.length=
 assert(art.artworks.every((item)=>item.description.length>0&&item.eventSlugs.length>0&&item.sourceTitles.length>0),'European art artwork description/closure failed');
 assert(art.events.every((item)=>item.locationSlugs.length>0&&item.sourceTitles.length>0),'European art event closure failed');
 assert(art.media.length===200&&art.media.filter((item)=>item.usageMode==='bundled').length===160&&art.media.filter((item)=>item.usageMode==='external_link').length===40,'European art media contract failed');
+assert(music.characters.length===48&&music.events.length===96&&music.locations.length===24&&music.routes.length===8&&music.relations.length===80&&music.chapters.length===7&&music.groups.length===7,'European music shared atlas counts failed');
+assert(music.musicPeople.length===48&&music.compositions.length===72&&music.musicStyles.length===20&&music.instruments.length===24&&music.musicInstitutions.length===16&&music.scoreFragments.length===28,'European music specialist counts failed');
+assert(music.scoreFragments.every((item)=>item.rightsStatus==='verified'&&item.audioAssetPath&&item.annotations.length===2&&item.sourceTitles.length>0),'European music score/audio contract failed');
 assert(read('search-zh').items.some((item)=>item.label.includes('巴黎')),'Chinese search failed');
 assert(read('search-en').items.some((item)=>item.label.includes('Paris')),'English search failed');
+assert(read('search-music').items.some((item)=>item.workSlug==='european-classical-music-history'),'Music search failed');
 NODE
 
 test "$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:$ATLAS_API_PORT/api/works?locale=fr")" = "400"
@@ -167,4 +208,4 @@ const paris=atlas.locations.find((item)=>item.slug==='paris');
 if(!paris||paris.resolvedLocale!=='en'||paris.fallbackUsed!==true||paris.translationStatus!=='published')throw new Error('explicit entity fallback contract failed');
 NODE
 
-echo "PostGIS v3.0 upgrade, v3.1 migration, six-work seed, Bible closure, European art 82/200/218/9 + media, fallback, bilingual search and API smoke: PASS"
+echo "PostGIS v3.0 upgrade, v3.1 migration, seven-work seed, Bible closure, European art 82/200/218/9 + media, European music 48/72/96/28 + Verovio/audio, fallback, bilingual search and API smoke: PASS"

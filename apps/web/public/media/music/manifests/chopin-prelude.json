@@ -1,0 +1,19 @@
+{
+  "fragment": "chopin-prelude",
+  "composition": "prelude-op28-no4",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-romantic-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 13.333,
+  "checksums": {
+    "mei": "e5427327a73c7cf5f7c4ca92b2e4e80912590ec16952f1a12934adb45e28b41d",
+    "svg": "23e1fa385d58cb3eac38ca7d87e7db74affa3e459fca0b9e8b87bfc9a54256f5",
+    "timing": "3c2cc04dcb712af6bb2686976fdbf6ed50b68dd8f8c97c3bd7df1f60ba71744a",
+    "audio": "32a56ae506b4c20e3563a2a6a43090510c2f3a58774e14609359ee88cd601ba4"
+  }
+}

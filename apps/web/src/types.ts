@@ -3,13 +3,10 @@ import { z } from "zod";
 export const LocaleSchema = z.enum(["zh-CN", "en"]);
 export type Locale = z.infer<typeof LocaleSchema>;
 export const MapLayerSchema = z.enum(["real", "fictional"]);
-export const WorkCategorySchema = z.enum(["historical_document", "historical_fiction", "realist_fiction", "fantasy", "mythic_epic", "art_history"]);
+export const WorkCategorySchema = z.enum(["historical_document", "historical_fiction", "realist_fiction", "fantasy", "mythic_epic", "art_history", "music_history"]);
 export const TimeTypeSchema = z.enum(["exact", "approximate", "range", "relative", "fictional_calendar", "unknown"]);
-// Mirrors the location_type enum in the database. It is strict on purpose — an
-// unknown value fails the whole atlas parse rather than rendering a raw string
-// — so widening it in db/migrations means widening it here in the same change.
 export const LocationTypeSchema = z.enum(["country", "region", "city", "district", "street", "building", "landmark", "prison", "station", "port", "battlefield", "residence", "school", "religious_site", "fictional_place", "route_node", "planet", "moon", "space_station"]);
-export const EntityTypeSchema = z.enum(["work", "character", "event", "location", "route", "relationship", "artist", "artwork", "movement", "institution"]);
+export const EntityTypeSchema = z.enum(["work", "character", "event", "location", "route", "relationship", "artist", "artwork", "movement", "institution", "composition", "music_style", "instrument", "music_institution", "score_fragment"]);
 
 const TranslationMetaSchema = z.object({ resolvedLocale: LocaleSchema, fallbackUsed: z.boolean(), translationStatus: z.enum(["draft", "reviewed", "published"]) });
 const WorkCoreSchema = z.object({
@@ -20,7 +17,12 @@ const WorkCoreSchema = z.object({
 
 export const WorksResponseSchema = z.object({
   locale: LocaleSchema,
-  items: z.array(WorkCoreSchema.and(z.object({ alternateTitle: z.string().nullable(), characterCount: z.number(), eventCount: z.number(), locationCount: z.number(), artistCount: z.number().optional(), artworkCount: z.number().optional(), movementCount: z.number().optional() }))),
+  items: z.array(WorkCoreSchema.and(z.object({
+    alternateTitle: z.string().nullable(), characterCount: z.number(), eventCount: z.number(), locationCount: z.number(),
+    artistCount: z.number().optional(), artworkCount: z.number().optional(), movementCount: z.number().optional(),
+    compositionCount: z.number().optional(), musicStyleCount: z.number().optional(), instrumentCount: z.number().optional(),
+    musicInstitutionCount: z.number().optional(), scoreFragmentCount: z.number().optional(),
+  }))),
 });
 
 const CharacterSchema = z.object({
@@ -29,9 +31,7 @@ const CharacterSchema = z.object({
   realityType: z.enum(["historical", "fictional", "fictionalised_historical", "unknown"]),
   birthYear: z.number().nullable(), deathYear: z.number().nullable(), birthPlaceSlug: z.string().nullable(), deathPlaceSlug: z.string().nullable(),
   iconVariant: z.string(), importance: z.number(), artistSlug: z.string().nullable(), name: z.string(), summary: z.string(), aliases: z.array(z.string()), detail: z.string(), motivation: z.string(),
-  eventSlugs: z.array(z.string()), locationSlugs: z.array(z.string()), sourceTitles: z.array(z.string()),
-  // v4 hierarchy: which era a person first appears in, and which groups collapse them.
-  groupSlugs: z.array(z.string()), chapterSlug: z.string().nullable(),
+  eventSlugs: z.array(z.string()), locationSlugs: z.array(z.string()), sourceTitles: z.array(z.string()), groupSlugs: z.array(z.string()), chapterSlug: z.string().nullable(),
   firstSequence: z.number().nullable(), lastSequence: z.number().nullable(),
 }).and(TranslationMetaSchema);
 
@@ -58,8 +58,7 @@ const EventSchema = z.object({
 
 const RouteSchema = z.object({
   id: z.string().uuid(), slug: z.string(), layer: MapLayerSchema, certainty: z.enum(["documented", "text_explicit", "inferred"]),
-  name: z.string(), summary: z.string(),
-  waypoints: z.array(z.object({ position: z.number(), locationSlug: z.string(), eventSlug: z.string().nullable() })),
+  name: z.string(), summary: z.string(), waypoints: z.array(z.object({ position: z.number(), locationSlug: z.string(), eventSlug: z.string().nullable() })),
 }).and(TranslationMetaSchema);
 
 const RelationSchema = z.object({
@@ -94,7 +93,56 @@ const InstitutionSchema = z.object({
   name: z.string(), summary: z.string(), artistSlugs: z.array(z.string()), sourceTitles: z.array(z.string()),
 }).and(TranslationMetaSchema);
 
-const SourceSchema = z.object({ id: z.string().uuid(), title: z.string(), url: z.string().nullable(), citation: z.string(), evidenceGrade: z.string(), sourceType: z.enum(["primary_text", "scholarly", "historical", "reference", "map", "image"]) });
+const MusicPersonSchema = z.object({
+  characterSlug: z.string(), primaryRole: z.string(), roleCodes: z.array(z.string()), chapterSlug: z.string().nullable(),
+  compositionSlugs: z.array(z.string()), styleSlugs: z.array(z.string()), instrumentSlugs: z.array(z.string()),
+  institutionSlugs: z.array(z.string()), eventSlugs: z.array(z.string()), sourceTitles: z.array(z.string()),
+});
+
+const CompositionSchema = z.object({
+  id: z.string().uuid(), slug: z.string(), primaryComposerSlug: z.string().nullable(), chapterSlug: z.string().nullable(),
+  compositionStartYear: z.number().nullable(), compositionEndYear: z.number().nullable(), compositionTimeType: TimeTypeSchema,
+  confidence: z.enum(["high", "medium", "low"]), catalogueNumber: z.string(), genre: z.string(), form: z.string(),
+  keySignature: z.string(), workStatus: z.enum(["confirmed", "sketch", "fragment", "lost", "arrangement", "contested", "unknown"]),
+  title: z.string(), alternateTitles: z.array(z.string()), summary: z.string(), description: z.string(),
+  contributorSlugs: z.array(z.string()), styleSlugs: z.array(z.string()), instrumentSlugs: z.array(z.string()),
+  institutionSlugs: z.array(z.string()), eventSlugs: z.array(z.string()), scoreFragmentSlugs: z.array(z.string()), sourceTitles: z.array(z.string()),
+}).and(TranslationMetaSchema);
+
+const MusicStyleSchema = z.object({
+  id: z.string().uuid(), slug: z.string(), styleKind: z.string(), chapterSlug: z.string().nullable(),
+  startYear: z.number().nullable(), endYear: z.number().nullable(), name: z.string(), summary: z.string(),
+  characterSlugs: z.array(z.string()), compositionSlugs: z.array(z.string()), sourceTitles: z.array(z.string()),
+}).and(TranslationMetaSchema);
+
+const InstrumentSchema = z.object({
+  id: z.string().uuid(), slug: z.string(), family: z.string(), hornbostelSachsCode: z.string(), mimoTerm: z.string(),
+  startYear: z.number().nullable(), endYear: z.number().nullable(), transposition: z.string(), rangeLow: z.string(), rangeHigh: z.string(),
+  name: z.string(), aliases: z.array(z.string()), summary: z.string(), characterSlugs: z.array(z.string()),
+  compositionSlugs: z.array(z.string()), sourceTitles: z.array(z.string()),
+}).and(TranslationMetaSchema);
+
+const MusicInstitutionSchema = z.object({
+  id: z.string().uuid(), slug: z.string(), locationSlug: z.string(), institutionType: z.string(),
+  foundedYear: z.number().nullable(), closedYear: z.number().nullable(), name: z.string(), summary: z.string(),
+  characterSlugs: z.array(z.string()), compositionSlugs: z.array(z.string()), sourceTitles: z.array(z.string()),
+}).and(TranslationMetaSchema);
+
+const ScoreAnnotationSchema = z.object({
+  id: z.string().uuid(), targetXmlId: z.string().nullable(), startBeat: z.coerce.number().nullable(), endBeat: z.coerce.number().nullable(),
+  annotationType: z.string(), label: z.string(), explanation: z.string(),
+});
+
+const ScoreFragmentSchema = z.object({
+  id: z.string().uuid(), slug: z.string(), compositionSlug: z.string(), startMeasure: z.number(), endMeasure: z.number(),
+  notationKind: z.enum(["common", "mensural", "neume", "mixed"]), svgAssetPath: z.string(), timingAssetPath: z.string(),
+  audioAssetPath: z.string().nullable(), durationSeconds: z.coerce.number(), tempoBpm: z.coerce.number().nullable(),
+  tempoBasis: z.enum(["source_marking", "editorial_learning", "unknown"]), rightsStatus: z.enum(["verified", "pending", "rejected", "unknown"]),
+  title: z.string(), summary: z.string(), analysisNote: z.string(), playbackDisclaimer: z.string(),
+  annotations: z.array(ScoreAnnotationSchema), sourceTitles: z.array(z.string()),
+}).and(TranslationMetaSchema);
+
+const SourceSchema = z.object({ id: z.string().uuid(), title: z.string(), url: z.string().nullable(), citation: z.string(), evidenceGrade: z.string(), sourceType: z.enum(["primary_text", "scholarly", "historical", "reference", "map", "image", "score", "instrument_catalog"]) });
 const ChronologySchema = z.object({ id: z.string().uuid(), kind: z.enum(["historical", "narrative", "fictional"]), label: z.string(), startYear: z.number().nullable(), endYear: z.number().nullable(), calendarSystem: z.enum(["gregorian", "julian", "fictional", "unknown"]), isDefault: z.boolean() });
 const MediaSchema = z.object({
   id: z.string().uuid(), entityKind: EntityTypeSchema, entityId: z.string().uuid(),
@@ -104,16 +152,14 @@ const MediaSchema = z.object({
   assetSource: z.string(), assetLicence: z.string(), assetAuthor: z.string(), assetUrl: z.string(), attributionText: z.string(), altText: z.string(),
 });
 
-/** Era tier of the zoom hierarchy. */
 const ChapterSchema = z.object({
   id: z.string().uuid(), slug: z.string(), sequence: z.number(), referenceLabel: z.string(),
   eraStartYear: z.number().nullable(), eraEndYear: z.number().nullable(), accentColor: z.string(),
   title: z.string(), summary: z.string(), eventCount: z.number(), firstSequence: z.number().nullable(), lastSequence: z.number().nullable(),
 });
 
-/** Group tier of the zoom hierarchy. */
 const GroupSchema = z.object({
-  id: z.string().uuid(), slug: z.string(), groupType: z.enum(["family", "dynasty", "circle", "tribe", "institution", "other"]),
+  id: z.string().uuid(), slug: z.string(), groupType: z.enum(["family", "dynasty", "circle", "tribe", "institution", "other", "school", "court", "conservatory", "ensemble", "national_tradition", "city_network"]),
   sortOrder: z.number(), accentColor: z.string(), anchorCharacterSlug: z.string().nullable(),
   name: z.string(), summary: z.string(), characterSlugs: z.array(z.string()),
 });
@@ -125,16 +171,15 @@ export const AtlasResponseSchema = z.object({
   relations: z.array(RelationSchema), sources: z.array(SourceSchema), chronologies: z.array(ChronologySchema), media: z.array(MediaSchema),
   chapters: z.array(ChapterSchema), groups: z.array(GroupSchema),
   artists: z.array(ArtistSchema).default([]), artworks: z.array(ArtworkSchema).default([]), movements: z.array(MovementSchema).default([]), institutions: z.array(InstitutionSchema).default([]),
+  musicPeople: z.array(MusicPersonSchema).default([]), compositions: z.array(CompositionSchema).default([]),
+  musicStyles: z.array(MusicStyleSchema).default([]), instruments: z.array(InstrumentSchema).default([]),
+  musicInstitutions: z.array(MusicInstitutionSchema).default([]), scoreFragments: z.array(ScoreFragmentSchema).default([]),
 });
 
-export const EntityDetailSchema = z.object({
-  requestedLocale: LocaleSchema, kind: z.string(), slug: z.string(),
-  fields: z.record(z.string(), z.string()),
-});
-
+export const EntityDetailSchema = z.object({ requestedLocale: LocaleSchema, kind: z.string(), slug: z.string(), fields: z.record(z.string(), z.string()) });
 export const SearchResponseSchema = z.object({
   locale: LocaleSchema, query: z.string(),
-  items: z.array(z.object({ kind: z.enum(["work", "character", "event", "location", "artist", "artwork", "movement", "institution"]), slug: z.string(), label: z.string(), context: z.string().nullable(), workSlug: z.string() })),
+  items: z.array(z.object({ kind: z.enum(["work", "character", "event", "location", "artist", "artwork", "movement", "institution", "composition", "music_style", "instrument", "music_institution", "score_fragment"]), slug: z.string(), label: z.string(), context: z.string().nullable(), workSlug: z.string() })),
 });
 
 export type WorksResponse = z.infer<typeof WorksResponseSchema>;
@@ -152,6 +197,12 @@ export type AtlasArtist = Atlas["artists"][number];
 export type AtlasArtwork = Atlas["artworks"][number];
 export type AtlasMovement = Atlas["movements"][number];
 export type AtlasInstitution = Atlas["institutions"][number];
+export type AtlasMusicPerson = Atlas["musicPeople"][number];
+export type AtlasComposition = Atlas["compositions"][number];
+export type AtlasMusicStyle = Atlas["musicStyles"][number];
+export type AtlasInstrument = Atlas["instruments"][number];
+export type AtlasMusicInstitution = Atlas["musicInstitutions"][number];
+export type AtlasScoreFragment = Atlas["scoreFragments"][number];
 export type EntityDetail = z.infer<typeof EntityDetailSchema>;
 export type SearchResponse = z.infer<typeof SearchResponseSchema>;
 export type EntityType = z.infer<typeof EntityTypeSchema>;

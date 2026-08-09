@@ -1,0 +1,19 @@
+{
+  "fragment": "handel-water",
+  "composition": "water-music",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-dance-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 9.231,
+  "checksums": {
+    "mei": "591c44b0196e26537e611bb44ffe93d6709ea3bd8dea478caaf3dac748988146",
+    "svg": "e7e7853a1a5c0dba4689346126ba1056936d67b28583d2e4c1612ca83b08b3e8",
+    "timing": "7b91ff0b47fab0c450a897c4adc0c9f47f3542b04be89f1f03a8b5f3f19adbf3",
+    "audio": "be6c3c44b617175ac6ac222e6c44c9b6ec7dbca6836c539a492d43997d85b136"
+  }
+}

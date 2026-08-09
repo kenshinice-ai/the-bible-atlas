@@ -1,0 +1,19 @@
+{
+  "fragment": "josquin-ave-maria",
+  "composition": "ave-maria-virgo-serena",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-polyphony-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 12.632,
+  "checksums": {
+    "mei": "042d6ac41cb243c82c9744504d562dddcf8e39a3cfab979245556ce985b57ba7",
+    "svg": "ff172144ba211f65bb6ce1ccc14451b184d5ebd7cdaa290153d707fcb416d7d0",
+    "timing": "51cf3f8e97be386cb97c2ba94b5fb9ebd3e6b1541d8734a22cdc2c0e49ef4807",
+    "audio": "163922893d209ef34fd2f5b910a13ce1739d5a173606969fc00c187ad7282c7e"
+  }
+}

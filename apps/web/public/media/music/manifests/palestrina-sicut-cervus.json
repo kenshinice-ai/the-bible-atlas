@@ -1,0 +1,19 @@
+{
+  "fragment": "palestrina-sicut-cervus",
+  "composition": "sicut-cervus",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-polyphony-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 12.632,
+  "checksums": {
+    "mei": "3f322e27d8caee89d050aead163c97b547a37a932cc44fb9cec8f9248fa9f72c",
+    "svg": "7430b22fdc5ecba5477e5c48711b3c1091d8076dd0ae5d991c2342b3e717217c",
+    "timing": "68bd34c669ed60d98ccfe20b9e336aa623bb0ed5c17d52c0208194f20a019df4",
+    "audio": "163922893d209ef34fd2f5b910a13ce1739d5a173606969fc00c187ad7282c7e"
+  }
+}

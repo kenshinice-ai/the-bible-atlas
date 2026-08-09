@@ -272,6 +272,83 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
     </Shell>;
   }
 
+  if (entity.type === "composition") {
+    const composition = atlas.compositions.find((item) => item.slug === entity.id);
+    if (!composition) return null;
+    const era = chapterOf(composition.chapterSlug);
+    const composer = atlas.characters.find((item) => item.slug === composition.primaryComposerSlug);
+    const fragments = atlas.scoreFragments.filter((item) => composition.scoreFragmentSlugs.includes(item.slug));
+    return <Shell onClose={onClose} locale={locale}>
+      <small>{atlas.work.title}{era ? ` · ${era.title}` : ""}</small>
+      <h2>{composition.title}</h2>
+      <div className="identity-tags">
+        <span>{label(composition.workStatus, locale)}</span><span>{composition.genre}</span><span>{composition.form}</span>
+        <span>{composition.compositionStartYear ?? "?"}{composition.compositionEndYear && composition.compositionEndYear !== composition.compositionStartYear ? `–${composition.compositionEndYear}` : ""}</span>
+      </div>
+      <p>{composition.summary}</p>
+      {composition.description && <section><h3>{locale === "zh-CN" ? "曲目简介" : "About this work"}</h3><p>{composition.description}</p></section>}
+      <dl>
+        {composer && <><dt>{locale === "zh-CN" ? "作曲家" : "Composer"}</dt><dd><button className="link" onClick={() => onSelect({ type: "character", workSlug: atlas.work.slug, id: composer.slug }, "list")}>{composer.name}</button></dd></>}
+        <dt>{locale === "zh-CN" ? "调性" : "Key"}</dt><dd>{composition.keySignature || "—"}</dd>
+        <dt>{locale === "zh-CN" ? "乐谱片段" : "Score excerpts"}</dt><dd>{fragments.length}</dd>
+      </dl>
+      {composition.instrumentSlugs.length > 0 && <section>
+        <h3>{locale === "zh-CN" ? "编制与乐器" : "Instrumentation"}</h3>
+        <div className="drawer-links">{composition.instrumentSlugs.map((slug) => {
+          const instrument = atlas.instruments.find((item) => item.slug === slug);
+          return instrument ? <button key={slug} onClick={() => onSelect({ type: "instrument", workSlug: atlas.work.slug, id: slug }, "list")}>{instrument.name}</button> : null;
+        })}</div>
+      </section>}
+      {fragments.map((fragment) => <section className="score-fragment" key={fragment.slug}>
+        <h3>{fragment.title}</h3>
+        <p>{fragment.analysisNote}</p>
+        <img src={fragment.svgAssetPath} alt={`${fragment.title} · ${locale === "zh-CN" ? "四小节分析乐谱" : "four-measure analytical score"}`} loading="lazy" />
+        {fragment.audioAssetPath && <audio controls preload="none" src={fragment.audioAssetPath} aria-label={fragment.title} />}
+        <small>{fragment.playbackDisclaimer}</small>
+        {fragment.annotations.length > 0 && <ul>{fragment.annotations.map((annotation) => <li key={annotation.id}><strong>{annotation.label}:</strong> {annotation.explanation}</li>)}</ul>}
+      </section>)}
+      <Sources names={composition.sourceTitles} locale={locale} />
+    </Shell>;
+  }
+
+  if (entity.type === "instrument") {
+    const instrument = atlas.instruments.find((item) => item.slug === entity.id);
+    if (!instrument) return null;
+    return <Shell onClose={onClose} locale={locale}>
+      <small>{atlas.work.title} · {label(instrument.family, locale)}</small><h2>{instrument.name}</h2>
+      <div className="identity-tags"><span>{label(instrument.family, locale)}</span>{instrument.hornbostelSachsCode && <span>H–S {instrument.hornbostelSachsCode}</span>}{instrument.mimoTerm && <span>{instrument.mimoTerm}</span>}</div>
+      <p>{instrument.summary}</p>
+      <dl>
+        <dt>{locale === "zh-CN" ? "历史范围" : "Historical range"}</dt><dd>{instrument.startYear ?? "—"} — {instrument.endYear ?? "—"}</dd>
+        <dt>{locale === "zh-CN" ? "相关曲目" : "Related works"}</dt><dd>{instrument.compositionSlugs.length}</dd>
+      </dl>
+      <div className="drawer-links">{instrument.compositionSlugs.slice(0, 16).map((slug) => {
+        const composition = atlas.compositions.find((item) => item.slug === slug);
+        return composition ? <button key={slug} onClick={() => onSelect({ type: "composition", workSlug: atlas.work.slug, id: slug }, "list")}>{composition.title}</button> : null;
+      })}</div>
+      <Sources names={instrument.sourceTitles} locale={locale} />
+    </Shell>;
+  }
+
+  if (entity.type === "music_style") {
+    const style = atlas.musicStyles.find((item) => item.slug === entity.id);
+    if (!style) return null;
+    return <Shell onClose={onClose} locale={locale}><small>{atlas.work.title} · {label(style.styleKind, locale)}</small><h2>{style.name}</h2><p>{style.summary}</p><dl><dt>{t("lifeRange", locale)}</dt><dd>{style.startYear ?? "—"} — {style.endYear ?? "—"}</dd><dt>{locale === "zh-CN" ? "相关曲目" : "Related works"}</dt><dd>{style.compositionSlugs.length}</dd></dl><Sources names={style.sourceTitles} locale={locale} /></Shell>;
+  }
+
+  if (entity.type === "music_institution") {
+    const institution = atlas.musicInstitutions.find((item) => item.slug === entity.id);
+    if (!institution) return null;
+    const place = atlas.locations.find((item) => item.slug === institution.locationSlug);
+    return <Shell onClose={onClose} locale={locale}><small>{atlas.work.title} · {label(institution.institutionType, locale)}</small><h2>{institution.name}</h2><p>{institution.summary}</p><dl><dt>{t("creationPlace", locale)}</dt><dd>{place?.name ?? "—"}</dd><dt>{t("lifeRange", locale)}</dt><dd>{institution.foundedYear ?? "—"} — {institution.closedYear ?? (locale === "zh-CN" ? "至今" : "present")}</dd></dl><Sources names={institution.sourceTitles} locale={locale} /></Shell>;
+  }
+
+  if (entity.type === "score_fragment") {
+    const fragment = atlas.scoreFragments.find((item) => item.slug === entity.id);
+    if (!fragment) return null;
+    return <Shell onClose={onClose} locale={locale}><small>{atlas.work.title} · {label(fragment.notationKind, locale)}</small><h2>{fragment.title}</h2><p>{fragment.analysisNote}</p><section className="score-fragment"><img src={fragment.svgAssetPath} alt={fragment.title} />{fragment.audioAssetPath && <audio controls preload="none" src={fragment.audioAssetPath} />}<small>{fragment.playbackDisclaimer}</small></section><Sources names={fragment.sourceTitles} locale={locale} /></Shell>;
+  }
+
   if (entity.type === "location") {
     const place = atlas.locations.find((item) => item.slug === entity.id);
     if (!place) return null;

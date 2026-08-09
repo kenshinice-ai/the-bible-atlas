@@ -1,0 +1,19 @@
+{
+  "fragment": "chant-viridissima",
+  "composition": "o-viridissima-virga",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-chant-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 16,
+  "checksums": {
+    "mei": "2c7e89c20588548750251c5ac2e392d6707eef7fa9576d9a27627e3abdbc6960",
+    "svg": "b332777ecf743907c3d6fe90c0e48fcfda63ffb52565d2a233086f673150992d",
+    "timing": "a6f6da3025d7806d6c178bab325a95f50f379810ba413f328aab0b1a52e5f3ba",
+    "audio": "87608a85ae38d2aeab775614e559a59a5662e77664f659c675afd4ca5575c93a"
+  }
+}

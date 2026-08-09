@@ -19,17 +19,19 @@ import { type Atlas, type Locale, type WorksResponse } from "./types";
 
 function tabForEntity(entity: SelectedEntity): Tab {
   return entity.type === "character" ? "characters"
-    : entity.type === "artist" ? (PROFILE.id === "european-art-history" ? "characters" : "artists")
+    : entity.type === "artist" ? (PROFILE.canonicalArtistPeople ? "characters" : "artists")
       : entity.type === "artwork" ? "artworks"
         : entity.type === "movement" ? "movements"
+          : entity.type === "composition" || entity.type === "score_fragment" || entity.type === "music_style" ? "compositions"
+            : entity.type === "instrument" ? "instruments"
+              : entity.type === "music_institution" ? "events"
     : entity.type === "event" ? "events"
       : entity.type === "location" ? "locations"
         : entity.type === "route" ? "routes"
           : entity.type === "relationship" ? "relations" : "events";
 }
 
-const TABS: readonly Tab[] = ["characters", "artists", "artworks", "movements", "events", "locations", "routes", "relations"];
-const VISIBLE_TABS: readonly Tab[] = PROFILE.id === "european-art-history" ? ["characters", "artworks", "movements", "events", "locations", "routes", "relations"] : ["characters", "events", "locations", "routes", "relations"];
+const VISIBLE_TABS: readonly Tab[] = PROFILE.tabs;
 
 /**
  * A scripture epigraph as a typographic event: quotation plus attribution,
@@ -132,11 +134,11 @@ export default function App() {
   // the person mapping is present, normalize those links to the canonical
   // character so the drawer, graph, events and places all share one identity.
   useEffect(() => {
-    if (PROFILE.id === "european-art-history" && activeAtlas && activeAtlas.groups.length === 0 && explore.zoomLevel === "group") {
-      commit({ ...explore, zoomLevel: "all" });
+    if (activeAtlas && !PROFILE.graphLevels.includes(explore.zoomLevel)) {
+      commit({ ...explore, zoomLevel: PROFILE.defaultGraphLevel });
       return;
     }
-    if (PROFILE.id !== "european-art-history" || !activeAtlas || explore.selectedEntity?.type !== "artist") return;
+    if (!PROFILE.canonicalArtistPeople || !activeAtlas || explore.selectedEntity?.type !== "artist") return;
     const artist = activeAtlas.artists.find((item) => item.slug === explore.selectedEntity?.id);
     if (artist?.characterSlug) commit({ ...explore, selectedEntity: { ...explore.selectedEntity, type: "character", id: artist.characterSlug }, tab: "characters" });
   }, [activeAtlas, explore]);
@@ -160,8 +162,11 @@ export default function App() {
     const artists = activeAtlas.artists.filter((artist) => inEra(artist.chapterSlug));
     const artworks = activeAtlas.artworks.filter((artwork) => inEra(artwork.chapterSlug));
     const movements = activeAtlas.movements.filter((movement) => inEra(movement.chapterSlug));
+    const compositions = activeAtlas.compositions.filter((composition) => inEra(composition.chapterSlug));
+    const instruments = activeAtlas.instruments;
     const artLocationSlugs = new Set([...artists.flatMap((artist) => artist.locationSlugs), ...artworks.flatMap((artwork) => [artwork.creationLocationSlug, artwork.currentLocationSlug].filter((slug): slug is string => Boolean(slug))), ...activeAtlas.institutions.map((institution) => institution.locationSlug)]);
-    return { events, eventSlugs, characters, characterSlugs, locations, relations, routes, artists, artworks, movements, locationSlugs: new Set([...locations.map((place) => place.slug), ...artLocationSlugs]) };
+    const musicLocationSlugs = new Set(activeAtlas.musicInstitutions.map((institution) => institution.locationSlug));
+    return { events, eventSlugs, characters, characterSlugs, locations, relations, routes, artists, artworks, movements, compositions, instruments, locationSlugs: new Set([...locations.map((place) => place.slug), ...artLocationSlugs, ...musicLocationSlugs]) };
   }, [activeAtlas, filters]);
 
   const selectedAtlas = explore.selectedEntity ? atlases.find((atlas) => atlas.work.slug === explore.selectedEntity?.workSlug) : null;
@@ -332,7 +337,7 @@ export default function App() {
               <nav aria-label="panels">
                 {VISIBLE_TABS.map((key) => <button key={key} className={explore.tab === key ? "active" : ""} aria-pressed={explore.tab === key} onClick={() => setTab(key)}>
                   {t(key, locale)}
-                  <b>{key === "characters" ? derived.characters.length : key === "artists" ? derived.artists.length : key === "artworks" ? derived.artworks.length : key === "movements" ? derived.movements.length : key === "events" ? derived.events.length : key === "locations" ? derived.locations.length : key === "routes" ? derived.routes.length : derived.relations.length}</b>
+                  <b>{key === "characters" ? derived.characters.length : key === "artists" ? derived.artists.length : key === "artworks" ? derived.artworks.length : key === "movements" ? derived.movements.length : key === "compositions" ? derived.compositions.length : key === "instruments" ? derived.instruments.length : key === "events" ? derived.events.length : key === "locations" ? derived.locations.length : key === "routes" ? derived.routes.length : derived.relations.length}</b>
                 </button>)}
               </nav>
 
@@ -370,6 +375,8 @@ export default function App() {
                   artists={derived.artists}
                   artworks={derived.artworks}
                   movements={derived.movements}
+                  compositions={derived.compositions}
+                  instruments={derived.instruments}
                   selected={explore.selectedEntity}
                   onSelect={(entity) => selectEntity(entity, "list")}
                 />}
