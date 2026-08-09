@@ -2,7 +2,24 @@
 
 ## 项目现状
 
-### 2026-08-09 阶段性交接：欧洲古典音乐史 Atlas Foundation 实现与 production 发布完成
+### 2026-08-09 最终交接：欧洲古典音乐史 Atlas Phase 2 扩容、同步与 production 发布完成
+
+Phase 2 已按扩展审计完成实现、验证、Git 同步和 Cloudflare Pages production 发布。Foundation `057–059` 未被改写；新增 `017/018` migration、`060–062` seed、28 组乐谱/自产声音资产与 12 个学习单元。圣经、三国、银河原力和欧洲美术史四个既有 profile 未修改、未重烘焙。
+
+- 当前目标 profile 计数：**72 人物 / 120 曲目 / 32 风格 / 36 乐器 / 24 机构 / 36 地点 / 180 事件 / 160 人物关系 / 12 路线 / 56 乐谱片段 / 12 学习单元**；cross-work link audit 为 0。
+- 本地 PostgreSQL `literary_atlas` 大小为 39,024,319 bytes（约 37.2 MiB）；56/56 乐谱与自产音频 bundle 通过 checksum、时长和 rights gate，音频约 27.7 MiB。
+- UI 已加入学习路径、音乐目录和首层乐谱入口；桌面工作区使用 61.8% / 38.2% 黄金分割比例，移动端堆叠；production 390px 无横向溢出，键盘搜索、抽屉焦点陷阱/恢复和 console 均通过。
+- 本地门禁：`npm run typecheck`、`npm test`（API 5 + Web 33）、`npm run build`、`npm run verify:postgis`、`npm run verify:music`、静态构建与 `git diff --check` 均通过。
+
+Git 与 Cloudflare Pages：
+
+- commit `d2fb145`（`feat: expand European classical music atlas phase 2`）已推送到远程 `main`。
+- production：[european-classical-music-history-atlas.pages.dev](https://european-classical-music-history-atlas.pages.dev)。本次 deployment `845d780b-fd9a-49ea-9f71-b983c101070e`，预览地址：[845d780b.european-classical-music-history-atlas.pages.dev](https://845d780b.european-classical-music-history-atlas.pages.dev)，Cloudflare source `d2fb145`。
+- production 首页 HTTP 200；中文 JSON 679,003 bytes、英文 JSON 687,565 bytes，双语计数完整且 work slug 均为 `european-classical-music-history`；280 个唯一音乐媒体 URL 全部 HTTP 200。
+- 当前静态构建目录约 78M。关键 SHA-256：`index.html` `0af7094d2ba3b19fa09857c9bdd0432c95f3ac42302be4ca931b070a8772a804`，JS `d797786ab29ab15c3394e62ec227c9b0d069aafe04ebfab42fd6f11f9a568bbf`，CSS `df5b7eec681ae1fc263f95fa3a1b071ebc16f988dfb2a1be44b01f3576cc1d94`。
+- 回滚点：上一版 production deployment `1e29ca49-1689-48f9-9282-344b4a9fe648` 仍保留。
+
+### 2026-08-09 阶段性交接：欧洲古典音乐史 Atlas Foundation 基线实现与 production 发布完成
 
 欧洲古典音乐史独立 profile `european-classical-music-history` 已从 Blueprint 进入可发布实现，未修改圣经、三国、银河原力和欧洲美术史的既有 seed 或静态站点。当前实现包含：
 
@@ -22,7 +39,7 @@ Cloudflare Pages 已创建并发布 production `main`：
 - 线上中文静态 JSON：48 人物、72 曲目、20 风格、24 乐器、16 机构、96 事件、80 关系、28 片段；英文 JSON `translationStatus=published`；works 入口计数与 profile 元数据一致。
 - 线上 28 组 MEI/SVG/timing/WAV/manifest 全部 HTTP 200，逐项 checksum 匹配，WAV `Content-Type: audio/wav`，线上音频总量 14,448,676 bytes。
 
-剩余证据边界：本环境应用内浏览器首次打开 production 时返回一次 Cloudflare 522，HTTP 重试已稳定为 200；随后浏览器 URL policy 阻断同页 reload，因此未把桌面/390px 视觉、横向溢出和 console 结果写成已验收。线上 HTTP、JSON、媒体和 checksum 门禁已完成；浏览器 UI 验收是唯一待环境解除后的补验项。
+本段记录 Foundation 基线发布时的证据边界；Phase 2 已在上方重新完成 production HTTP、媒体、桌面/390px 视觉、横向溢出与 console 验收。
 
 ### 2026-08-04 阶段性交接：欧洲古典音乐史 Atlas ECM-0 Blueprint
 

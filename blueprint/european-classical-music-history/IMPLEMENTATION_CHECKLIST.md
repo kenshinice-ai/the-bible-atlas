@@ -1,7 +1,7 @@
 # 欧洲古典音乐史 Atlas 实施清单
 
 日期：2026-08-09
-状态：Foundation Gate 0–7 已完成；Phase 2 Gate 8–10 已完成，Gate 11 正在执行最终验证与 production 发布
+状态：Foundation Gate 0–7 与 Phase 2 Gate 8–11 全部完成；已同步 `main` 并发布 Cloudflare Pages production
 纪律：前一 Gate 未通过，不进入后一 Gate；每个 Gate 完成即更新 `docs/HANDOFF.md` 与当日决策记录。
 
 ## Gate 0：范围与 Blueprint
@@ -92,7 +92,7 @@
 - [x] 地图、时间轴、关系图、乐谱使用共享 selection。
 - [x] 深链接恢复时期、时间范围、实体和片段。
 - [x] 键盘、ARIA、表格替代和 reduced-motion。
-- [x] 390px 本地浏览器实测与无页面横向溢出；production UI 仍需在发布后复验。
+- [x] 390px 本地与 production 浏览器实测，无页面横向溢出。
 
 ## Gate 7：验证与发布
 
@@ -107,7 +107,7 @@
 - [x] 现有 profile 回归（10 works / health / API smoke）
 - [x] 独立静态烘焙无其他 work 数据
 - [x] production build 无 localhost
-- [ ] 桌面与 390px 线上浏览器验收：受本环境 Browser URL policy 阻断
+- [x] 桌面与 390px production 浏览器验收；console 无 error/warn
 - [x] Cloudflare Pages production 发布
 - [x] 记录 deployment、commit、数据计数和构建哈希
 - [x] 更新 HANDOFF、决策记录与交付包
@@ -135,12 +135,12 @@
 - [x] 五个主要入口更新为人物 / 曲目 / 乐谱片段 / 事件 / 关系，并在乐谱入口加入学习路径与音乐目录。
 - [x] 工作区桌面比例固定为 **61.8fr / 38.2fr**；移动端堆叠，保留 8px grid、44px touch target 与现有对比度/降动效要求。
 - [x] 抽屉焦点陷阱与恢复、搜索键盘 active option / Enter、390px `scrollWidth === clientWidth` 均通过本地应用内浏览器验收。
-- [x] 本地浏览器 console 无 error/warn；production UI 验收在 Gate 11 发布后补做。
+- [x] 本地与 production 浏览器 console 无 error/warn。
 
 ### Gate 11：最终门禁、发布与交付
 
 - [x] `npm run typecheck`、`npm test`、`npm run build`、`npm run verify:music`、`git diff --check`。
 - [x] 静态烘焙只包含 `european-classical-music-history`，构建产物无 `localhost:4000`。
-- [ ] Cloudflare Pages production 发布与 deployment/commit/hash 记录。
-- [ ] production HTTP、JSON、媒体资产与桌面/390px 浏览器复验。
-- [ ] Git 提交、推送与最终 HANDOFF 更新。
+- [x] Cloudflare Pages production 发布与 deployment/commit/hash 记录：deployment `845d780b-fd9a-49ea-9f71-b983c101070e`，source `d2fb145`。
+- [x] production HTTP 200、双语 JSON 计数、280 个唯一音乐媒体文件、桌面/390px 浏览器复验。
+- [x] Git 提交、推送与最终 HANDOFF 更新；远程 `main` 与本地 `d2fb145` 一致。

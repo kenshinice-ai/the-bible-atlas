@@ -42,4 +42,10 @@ Profile：`european-classical-music-history`
 
 ## 发布门禁
 
-执行完毕后在此补入 Cloudflare deployment id、关联 commit、静态构建哈希、production HTTP/JSON/媒体验收结果，并同步 `docs/HANDOFF.md` 与本清单 Gate 11。
+- Git：commit `d2fb145` 已推送到远程 `main`；工作树仅保留未跟踪的无关 `.codex/`。
+- Cloudflare Pages production：[european-classical-music-history-atlas.pages.dev](https://european-classical-music-history-atlas.pages.dev)。本次 deployment `845d780b-fd9a-49ea-9f71-b983c101070e`，预览地址为 [845d780b.european-classical-music-history-atlas.pages.dev](https://845d780b.european-classical-music-history-atlas.pages.dev)，Cloudflare source 为 `d2fb145`。
+- production 首页 HTTP 200；中文 JSON 679,003 bytes、英文 JSON 687,565 bytes，双语均为 72 人物 / 120 曲目 / 32 风格 / 36 乐器 / 24 机构 / 36 地点 / 180 事件 / 160 关系 / 12 路线 / 56 片段 / 12 学习单元，work slug 均为 `european-classical-music-history`。
+- production 音乐媒体完整可达性：280 个唯一 MEI / SVG / timing / manifest / WAV URL 全部 HTTP 200；代表性 WAV `Content-Type: audio/wav`。
+- production 浏览器：桌面 `1280px` 下工作区计算列为 `746.539px / 461.461px`，即 61.8% / 38.2%；390px 下 `scrollWidth === clientWidth === 390`；12 个学习单元、乐谱抽屉焦点陷阱/恢复、键盘搜索均通过；console 无 error/warn。
+- 静态构建目录约 78M；关键 SHA-256：`index.html` `0af7094d2ba3b19fa09857c9bdd0432c95f3ac42302be4ca931b070a8772a804`，JS `d797786ab29ab15c3394e62ec227c9b0d069aafe04ebfab42fd6f11f9a568bbf`，CSS `df5b7eec681ae1fc263f95fa3a1b071ebc16f988dfb2a1be44b01f3576cc1d94`。
+- 回滚点：上一版 production deployment `1e29ca49-1689-48f9-9282-344b4a9fe648` 仍保留，可在 Cloudflare Pages 控制台恢复。
