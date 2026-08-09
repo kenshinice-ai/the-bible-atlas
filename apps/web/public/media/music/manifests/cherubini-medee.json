@@ -1,0 +1,19 @@
+{
+  "fragment": "cherubini-medee",
+  "composition": "m-dedea",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-classical-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 10,
+  "checksums": {
+    "mei": "75dce3175c043f5306bd026d58a400db3c9f4d2b0a72be8bceb717bdb85e220e",
+    "svg": "22bd691ac6a00ea16a7ba33eb7a6e3a9578a2268b1ac5bedcb0e8b8db2f4624a",
+    "timing": "d5ed500bc9ab05f0b9d3ce5ca6b622169375afa3ba22de7f0d0491bc3955c248",
+    "audio": "9820da9c709216e43bc45adb705bec79a6b118c6b0fc73b09f821f9f53ac23c1"
+  }
+}

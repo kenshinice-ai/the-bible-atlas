@@ -1,0 +1,19 @@
+{
+  "fragment": "rore-anchor",
+  "composition": "anchor-che-col-partire",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-polyphony-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 12.632,
+  "checksums": {
+    "mei": "de0fb877bc1f396d96a7406bce2f1fe2e19728667a9a0c5596da635c1d219ca8",
+    "svg": "c37812da6bf2f681ab58a0bd41f5cde6b3fcc0c583cf3613dc5e88f403a0fee0",
+    "timing": "f8c31b105be4cb0b98298850922f298c5f23a88b4d8e77b1160159760d205bdc",
+    "audio": "163922893d209ef34fd2f5b910a13ce1739d5a173606969fc00c187ad7282c7e"
+  }
+}

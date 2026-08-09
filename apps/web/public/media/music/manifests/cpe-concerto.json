@@ -1,0 +1,19 @@
+{
+  "fragment": "cpe-concerto",
+  "composition": "concerto-in-a-cpe",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-classical-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 10,
+  "checksums": {
+    "mei": "f94c116509b81d48b942d43dc95696219fcb8ead4bb3589c4dcb0ff320a3b719",
+    "svg": "92b7ec41729c8cd6468b9d7bbb9ff88c55a06009101c980e2105740b5ddf381a",
+    "timing": "36fc2039e42fa2261b528cbaa968bfb86f0eb8f3022bc64456abf4e65323ec12",
+    "audio": "9820da9c709216e43bc45adb705bec79a6b118c6b0fc73b09f821f9f53ac23c1"
+  }
+}

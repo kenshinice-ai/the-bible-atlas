@@ -1,0 +1,103 @@
+{
+  "fragment": "jacopo-non-al-suo",
+  "tempoBpm": 76,
+  "durationSeconds": 12.632,
+  "notes": [
+    {
+      "id": "jacopo-non-al-suo-note-1",
+      "midi": 60,
+      "start": 0,
+      "end": 0.726
+    },
+    {
+      "id": "jacopo-non-al-suo-note-2",
+      "midi": 64,
+      "start": 0.789,
+      "end": 1.516
+    },
+    {
+      "id": "jacopo-non-al-suo-note-3",
+      "midi": 62,
+      "start": 1.579,
+      "end": 2.305
+    },
+    {
+      "id": "jacopo-non-al-suo-note-4",
+      "midi": 65,
+      "start": 2.368,
+      "end": 3.095
+    },
+    {
+      "id": "jacopo-non-al-suo-note-5",
+      "midi": 64,
+      "start": 3.158,
+      "end": 3.884
+    },
+    {
+      "id": "jacopo-non-al-suo-note-6",
+      "midi": 67,
+      "start": 3.947,
+      "end": 4.674
+    },
+    {
+      "id": "jacopo-non-al-suo-note-7",
+      "midi": 65,
+      "start": 4.737,
+      "end": 5.463
+    },
+    {
+      "id": "jacopo-non-al-suo-note-8",
+      "midi": 69,
+      "start": 5.526,
+      "end": 6.253
+    },
+    {
+      "id": "jacopo-non-al-suo-note-9",
+      "midi": 67,
+      "start": 6.316,
+      "end": 7.042
+    },
+    {
+      "id": "jacopo-non-al-suo-note-10",
+      "midi": 71,
+      "start": 7.105,
+      "end": 7.832
+    },
+    {
+      "id": "jacopo-non-al-suo-note-11",
+      "midi": 69,
+      "start": 7.895,
+      "end": 8.621
+    },
+    {
+      "id": "jacopo-non-al-suo-note-12",
+      "midi": 72,
+      "start": 8.684,
+      "end": 9.411
+    },
+    {
+      "id": "jacopo-non-al-suo-note-13",
+      "midi": 71,
+      "start": 9.474,
+      "end": 10.2
+    },
+    {
+      "id": "jacopo-non-al-suo-note-14",
+      "midi": 69,
+      "start": 10.263,
+      "end": 10.989
+    },
+    {
+      "id": "jacopo-non-al-suo-note-15",
+      "midi": 67,
+      "start": 11.053,
+      "end": 11.779
+    },
+    {
+      "id": "jacopo-non-al-suo-note-16",
+      "midi": 65,
+      "start": 11.842,
+      "end": 12.568
+    }
+  ]
+}

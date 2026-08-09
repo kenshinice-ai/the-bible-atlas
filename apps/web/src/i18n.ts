@@ -82,6 +82,7 @@ const ENUMS: Record<string, Pair> = {
   church: ["教堂", "Church"], opera_house: ["歌剧院", "Opera house"], concert_hall: ["音乐厅", "Concert hall"], archive: ["档案馆", "Archive"],
   sketch: ["草稿", "Sketch"], fragment: ["残篇", "Fragment"], lost: ["已散佚", "Lost"], arrangement: ["改编", "Arrangement"],
   common: ["现代五线谱", "Common notation"], mensural: ["量谱记谱", "Mensural notation"], neume: ["纽姆谱示意", "Neume notation"],
+  listening: ["聆听", "Listening"], score_reading: ["读谱", "Score reading"], comparison: ["比较", "Comparison"], route: ["路径", "Route"], introductory: ["入门", "Introductory"], intermediate: ["进阶", "Intermediate"], advanced: ["高级", "Advanced"],
   source_marking: ["来源速度标记", "Source tempo marking"], editorial_learning: ["教学速度", "Editorial learning tempo"],
   verified: ["已核验", "Verified"], pending: ["待核验", "Pending"], rejected: ["不采用", "Rejected"],
   // translation status
@@ -164,7 +165,8 @@ export const UI = {
   retry: ["重试", "Retry"],
   characters: ["人物", "People"], events: ["事件", "Events"], locations: ["地点", "Places"],
   routes: ["路线", "Routes"], relations: ["关系", "Relations"], artists: ["艺术家", "Artists"], artworks: ["作品", "Artworks"], movements: ["流派", "Movements"],
-  compositions: ["曲目", "Compositions"], instruments: ["乐器", "Instruments"],
+  compositions: ["曲目", "Compositions"], instruments: ["乐器", "Instruments"], scoreFragments: ["乐谱片段", "Score excerpts"], musicInstitutions: ["音乐机构", "Music institutions"],
+  musicStudy: ["学习路径", "Study paths"], learningPath: ["学习路径", "Learning path"], catalog: ["音乐目录", "Music catalogue"], targetMinutes: ["目标时长", "Target time"], studyOpenComposition: ["打开曲目", "Open composition"], studyOpenFragment: ["打开乐谱片段", "Open score excerpt"],
   creationPlace: ["创作地点", "Creation place"], currentLocation: ["现藏地点", "Current collection"], medium: ["媒介", "Medium"],
   artworkDescription: ["作品简介", "About this work"],
   artworkImage: ["作品展示图", "Artwork image"], imageAttribution: ["图片归属", "Image attribution"], viewSource: ["查看来源页", "View source page"],

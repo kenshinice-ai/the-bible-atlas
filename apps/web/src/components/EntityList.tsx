@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { colorForCharacter, colorForEvent } from "../hierarchy";
 import { formatEventTime, label, t } from "../i18n";
 import type { SelectedEntity, Tab } from "../state";
-import type { Atlas, AtlasArtist, AtlasArtwork, AtlasCharacter, AtlasComposition, AtlasEvent, AtlasInstrument, AtlasLocation, AtlasMovement, AtlasRoute, Locale } from "../types";
+import type { Atlas, AtlasArtist, AtlasArtwork, AtlasCharacter, AtlasComposition, AtlasEvent, AtlasInstrument, AtlasLocation, AtlasMovement, AtlasRoute, AtlasScoreFragment, Locale } from "../types";
 
 type Row =
   | { kind: "characters"; item: AtlasCharacter }
@@ -14,7 +14,8 @@ type Row =
   | { kind: "artworks"; item: AtlasArtwork }
   | { kind: "movements"; item: AtlasMovement }
   | { kind: "compositions"; item: AtlasComposition }
-  | { kind: "instruments"; item: AtlasInstrument };
+  | { kind: "instruments"; item: AtlasInstrument }
+  | { kind: "scoreFragments"; item: AtlasScoreFragment };
 
 interface Props {
   atlas: Atlas;
@@ -29,6 +30,7 @@ interface Props {
   movements: readonly AtlasMovement[];
   compositions: readonly AtlasComposition[];
   instruments: readonly AtlasInstrument[];
+  scoreFragments: readonly AtlasScoreFragment[];
   selected: SelectedEntity | null;
   onSelect: (entity: SelectedEntity) => void;
 }
@@ -44,7 +46,7 @@ function activate(event: React.KeyboardEvent<HTMLElement>, action: () => void) {
  * only the rows in view are mounted. Row heights are measured rather than
  * assumed, because event summaries wrap to different depths.
  */
-export function EntityList({ atlas, tab, locale, characters, events, locations, routes, artists, artworks, movements, compositions, instruments, selected, onSelect }: Props) {
+export function EntityList({ atlas, tab, locale, characters, events, locations, routes, artists, artworks, movements, compositions, instruments, scoreFragments, selected, onSelect }: Props) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const rows: Row[] =
@@ -54,6 +56,7 @@ export function EntityList({ atlas, tab, locale, characters, events, locations, 
           : tab === "movements" ? movements.map((item) => ({ kind: "movements", item }))
             : tab === "compositions" ? compositions.map((item) => ({ kind: "compositions", item }))
               : tab === "instruments" ? instruments.map((item) => ({ kind: "instruments", item }))
+              : tab === "scoreFragments" ? scoreFragments.map((item) => ({ kind: "scoreFragments", item }))
             : tab === "events" ? events.map((item) => ({ kind: "events", item }))
         : tab === "locations" ? locations.map((item) => ({ kind: "locations", item }))
           : routes.map((item) => ({ kind: "routes", item }));
@@ -157,6 +160,17 @@ function renderRow(row: Row, atlas: Atlas, locale: Locale, selected: SelectedEnt
       <span className="place-type type-building" aria-hidden="true" />
       <h3>{instrument.name}</h3><p>{instrument.summary}</p>
       <small>{label(instrument.family, locale)}{instrument.hornbostelSachsCode ? ` · H–S ${instrument.hornbostelSachsCode}` : ""} · {instrument.compositionSlugs.length} {locale === "zh-CN" ? "部相关曲目" : "related works"}</small>
+    </article>;
+  }
+
+  if (row.kind === "scoreFragments") {
+    const fragment = row.item;
+    const isSelected = selected?.type === "score_fragment" && selected.id === fragment.slug;
+    const choose = () => onSelect({ type: "score_fragment", workSlug, id: fragment.slug });
+    return <article role="button" tabIndex={0} className={isSelected ? "card selected" : "card"} onClick={choose} onKeyDown={(event) => activate(event, choose)}>
+      <span className="sequence" aria-hidden="true" />
+      <h3>{fragment.title}</h3><p>{fragment.analysisNote || fragment.summary}</p>
+      <small>{label(fragment.notationKind, locale)} · {fragment.durationSeconds.toFixed(1)}s · {fragment.rightsStatus === "verified" ? (locale === "zh-CN" ? "可播放" : "playable") : label(fragment.rightsStatus, locale)}</small>
     </article>;
   }
 

@@ -1,0 +1,19 @@
+{
+  "fragment": "clara-trio",
+  "composition": "piano-trio-clara",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-romantic-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 13.333,
+  "checksums": {
+    "mei": "ba2c48fadc7cfafcd322c01a0b8977da1119924eda63c1f40f017937aca1502b",
+    "svg": "cec500845c550fbbdf41941d7452765393b7f5232f1d82be828f70d44522a10d",
+    "timing": "ef9505770fbb6076477ed5ef014c81ff0c212c3339caa9781d42e3cbd6e02326",
+    "audio": "32a56ae506b4c20e3563a2a6a43090510c2f3a58774e14609359ee88cd601ba4"
+  }
+}

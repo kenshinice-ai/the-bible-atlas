@@ -84,7 +84,7 @@ describe("deployment profiles", () => {
   });
 
   it("gives the music profile its five curated entrances and Chinese default", () => {
-    expect(PROFILES["european-classical-music-history"]?.tabs).toEqual(["characters", "compositions", "instruments", "events", "relations"]);
+    expect(PROFILES["european-classical-music-history"]?.tabs).toEqual(["characters", "compositions", "scoreFragments", "events", "relations"]);
     expect(PROFILES["european-classical-music-history"]?.defaultLocale).toBe("zh-CN");
     expect(PROFILES["european-classical-music-history"]?.specialization).toBe("music");
   });

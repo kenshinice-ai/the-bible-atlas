@@ -1,0 +1,19 @@
+{
+  "fragment": "adam-robin-marion",
+  "composition": "le-jeu-de-robin-et-de-marion",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-chant-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 16,
+  "checksums": {
+    "mei": "c77fedaab19119902226fc4f54f6d525c53639b5fee45a66d6903e806a7eeeb4",
+    "svg": "24c0538c4d82ea229127c356d0dc3351f7e403f47b6916d0e9bbdf228da639ee",
+    "timing": "89459ca495d03e1030e4fd2d075b49915a3b6fcd6741dd35aeb8a0ec353b86c0",
+    "audio": "87608a85ae38d2aeab775614e559a59a5662e77664f659c675afd4ca5575c93a"
+  }
+}

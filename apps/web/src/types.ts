@@ -103,9 +103,9 @@ const CompositionSchema = z.object({
   id: z.string().uuid(), slug: z.string(), primaryComposerSlug: z.string().nullable(), chapterSlug: z.string().nullable(),
   compositionStartYear: z.number().nullable(), compositionEndYear: z.number().nullable(), compositionTimeType: TimeTypeSchema,
   confidence: z.enum(["high", "medium", "low"]), catalogueNumber: z.string(), genre: z.string(), form: z.string(),
-  keySignature: z.string(), workStatus: z.enum(["confirmed", "sketch", "fragment", "lost", "arrangement", "contested", "unknown"]),
+  keySignature: z.string(), approxDurationSeconds: z.number().nullable(), textLanguage: z.string(), workStatus: z.enum(["confirmed", "sketch", "fragment", "lost", "arrangement", "contested", "unknown"]),
   title: z.string(), alternateTitles: z.array(z.string()), summary: z.string(), description: z.string(),
-  contributorSlugs: z.array(z.string()), styleSlugs: z.array(z.string()), instrumentSlugs: z.array(z.string()),
+  contributorSlugs: z.array(z.string()), contributors: z.array(z.object({ slug: z.string(), role: z.string() })), styleSlugs: z.array(z.string()), instrumentSlugs: z.array(z.string()),
   institutionSlugs: z.array(z.string()), eventSlugs: z.array(z.string()), scoreFragmentSlugs: z.array(z.string()), sourceTitles: z.array(z.string()),
 }).and(TranslationMetaSchema);
 
@@ -135,11 +135,17 @@ const ScoreAnnotationSchema = z.object({
 
 const ScoreFragmentSchema = z.object({
   id: z.string().uuid(), slug: z.string(), compositionSlug: z.string(), startMeasure: z.number(), endMeasure: z.number(),
-  notationKind: z.enum(["common", "mensural", "neume", "mixed"]), svgAssetPath: z.string(), timingAssetPath: z.string(),
+  notationKind: z.enum(["common", "mensural", "neume", "mixed"]), meiAssetPath: z.string(), svgAssetPath: z.string(), timingAssetPath: z.string(),
   audioAssetPath: z.string().nullable(), durationSeconds: z.coerce.number(), tempoBpm: z.coerce.number().nullable(),
   tempoBasis: z.enum(["source_marking", "editorial_learning", "unknown"]), rightsStatus: z.enum(["verified", "pending", "rejected", "unknown"]),
   title: z.string(), summary: z.string(), analysisNote: z.string(), playbackDisclaimer: z.string(),
   annotations: z.array(ScoreAnnotationSchema), sourceTitles: z.array(z.string()),
+}).and(TranslationMetaSchema);
+
+const MusicLearningUnitSchema = z.object({
+  id: z.string().uuid(), slug: z.string(), unitKind: z.enum(["listening", "score_reading", "comparison", "route"]),
+  difficulty: z.enum(["introductory", "intermediate", "advanced"]), targetMinutes: z.number(), title: z.string(), summary: z.string(), objective: z.string(),
+  compositionSlugs: z.array(z.string()), scoreFragmentSlugs: z.array(z.string()),
 }).and(TranslationMetaSchema);
 
 const SourceSchema = z.object({ id: z.string().uuid(), title: z.string(), url: z.string().nullable(), citation: z.string(), evidenceGrade: z.string(), sourceType: z.enum(["primary_text", "scholarly", "historical", "reference", "map", "image", "score", "instrument_catalog"]) });
@@ -173,7 +179,7 @@ export const AtlasResponseSchema = z.object({
   artists: z.array(ArtistSchema).default([]), artworks: z.array(ArtworkSchema).default([]), movements: z.array(MovementSchema).default([]), institutions: z.array(InstitutionSchema).default([]),
   musicPeople: z.array(MusicPersonSchema).default([]), compositions: z.array(CompositionSchema).default([]),
   musicStyles: z.array(MusicStyleSchema).default([]), instruments: z.array(InstrumentSchema).default([]),
-  musicInstitutions: z.array(MusicInstitutionSchema).default([]), scoreFragments: z.array(ScoreFragmentSchema).default([]),
+  musicInstitutions: z.array(MusicInstitutionSchema).default([]), scoreFragments: z.array(ScoreFragmentSchema).default([]), musicLearningUnits: z.array(MusicLearningUnitSchema).default([]),
 });
 
 export const EntityDetailSchema = z.object({ requestedLocale: LocaleSchema, kind: z.string(), slug: z.string(), fields: z.record(z.string(), z.string()) });
@@ -203,6 +209,7 @@ export type AtlasMusicStyle = Atlas["musicStyles"][number];
 export type AtlasInstrument = Atlas["instruments"][number];
 export type AtlasMusicInstitution = Atlas["musicInstitutions"][number];
 export type AtlasScoreFragment = Atlas["scoreFragments"][number];
+export type AtlasMusicLearningUnit = Atlas["musicLearningUnits"][number];
 export type EntityDetail = z.infer<typeof EntityDetailSchema>;
 export type SearchResponse = z.infer<typeof SearchResponseSchema>;
 export type EntityType = z.infer<typeof EntityTypeSchema>;

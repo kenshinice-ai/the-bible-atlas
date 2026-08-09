@@ -1,0 +1,103 @@
+{
+  "fragment": "dufay-nuper",
+  "tempoBpm": 76,
+  "durationSeconds": 12.632,
+  "notes": [
+    {
+      "id": "dufay-nuper-note-1",
+      "midi": 60,
+      "start": 0,
+      "end": 0.726
+    },
+    {
+      "id": "dufay-nuper-note-2",
+      "midi": 64,
+      "start": 0.789,
+      "end": 1.516
+    },
+    {
+      "id": "dufay-nuper-note-3",
+      "midi": 62,
+      "start": 1.579,
+      "end": 2.305
+    },
+    {
+      "id": "dufay-nuper-note-4",
+      "midi": 65,
+      "start": 2.368,
+      "end": 3.095
+    },
+    {
+      "id": "dufay-nuper-note-5",
+      "midi": 64,
+      "start": 3.158,
+      "end": 3.884
+    },
+    {
+      "id": "dufay-nuper-note-6",
+      "midi": 67,
+      "start": 3.947,
+      "end": 4.674
+    },
+    {
+      "id": "dufay-nuper-note-7",
+      "midi": 65,
+      "start": 4.737,
+      "end": 5.463
+    },
+    {
+      "id": "dufay-nuper-note-8",
+      "midi": 69,
+      "start": 5.526,
+      "end": 6.253
+    },
+    {
+      "id": "dufay-nuper-note-9",
+      "midi": 67,
+      "start": 6.316,
+      "end": 7.042
+    },
+    {
+      "id": "dufay-nuper-note-10",
+      "midi": 71,
+      "start": 7.105,
+      "end": 7.832
+    },
+    {
+      "id": "dufay-nuper-note-11",
+      "midi": 69,
+      "start": 7.895,
+      "end": 8.621
+    },
+    {
+      "id": "dufay-nuper-note-12",
+      "midi": 72,
+      "start": 8.684,
+      "end": 9.411
+    },
+    {
+      "id": "dufay-nuper-note-13",
+      "midi": 71,
+      "start": 9.474,
+      "end": 10.2
+    },
+    {
+      "id": "dufay-nuper-note-14",
+      "midi": 69,
+      "start": 10.263,
+      "end": 10.989
+    },
+    {
+      "id": "dufay-nuper-note-15",
+      "midi": 67,
+      "start": 11.053,
+      "end": 11.779
+    },
+    {
+      "id": "dufay-nuper-note-16",
+      "midi": 65,
+      "start": 11.842,
+      "end": 12.568
+    }
+  ]
+}

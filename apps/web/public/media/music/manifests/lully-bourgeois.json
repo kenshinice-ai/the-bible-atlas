@@ -1,0 +1,19 @@
+{
+  "fragment": "lully-bourgeois",
+  "composition": "le-bourgeois-gentilhomme",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-dance-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 9.231,
+  "checksums": {
+    "mei": "4f3df06d6b7269ac6fbaaebfaadda648910f77333c3c5de350d4959a2f941bd5",
+    "svg": "898d73ec8661b18680f01dea7a76405b9dbed1eb2d2ac1510706c06fd5b3191e",
+    "timing": "25871020dc4d1bf69866d5323adf6f94b9ac601a1ff9704be13d24d184ebaa86",
+    "audio": "be6c3c44b617175ac6ac222e6c44c9b6ec7dbca6836c539a492d43997d85b136"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "fragment": "lully-armide",
+  "composition": "armide-lully",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-dance-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 9.231,
+  "checksums": {
+    "mei": "51bf1bf1bd99d3cb4437d48da56e08a4709b92fb46776515f8ebe433639b4d1b",
+    "svg": "a74c890d1a4311d228005777a318fa2fb3190af29cd1147953c47691324d4319",
+    "timing": "de69a45c067f279b8a0de67f983defb5468d2d68afd10e6ac9dcd5b7f6cf3488",
+    "audio": "be6c3c44b617175ac6ac222e6c44c9b6ec7dbca6836c539a492d43997d85b136"
+  }
+}

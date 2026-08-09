@@ -1,0 +1,19 @@
+{
+  "fragment": "bruckner-seven",
+  "composition": "symphony-no7-bruckner",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-romantic-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 13.333,
+  "checksums": {
+    "mei": "b0529ff75846bd081e14e2f82da61c3e4765eea078a7edf4957064a44835a4b9",
+    "svg": "448b5b6d4c56f0f3aa6e9676b9669b9abbf4a5325b356a3dd6450fb9ef382aa7",
+    "timing": "45f9b267c4e0b45eaa7d892a5fe9806701ffd71b379120367e0a2bd119374e45",
+    "audio": "32a56ae506b4c20e3563a2a6a43090510c2f3a58774e14609359ee88cd601ba4"
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "fragment": "schutz-sagittarius",
+  "tempoBpm": 88,
+  "durationSeconds": 10.909,
+  "notes": [
+    {
+      "id": "schutz-sagittarius-note-1",
+      "midi": 48,
+      "start": 0,
+      "end": 0.627
+    },
+    {
+      "id": "schutz-sagittarius-note-2",
+      "midi": 55,
+      "start": 0.682,
+      "end": 1.309
+    },
+    {
+      "id": "schutz-sagittarius-note-3",
+      "midi": 52,
+      "start": 1.364,
+      "end": 1.991
+    },
+    {
+      "id": "schutz-sagittarius-note-4",
+      "midi": 57,
+      "start": 2.045,
+      "end": 2.673
+    },
+    {
+      "id": "schutz-sagittarius-note-5",
+      "midi": 53,
+      "start": 2.727,
+      "end": 3.355
+    },
+    {
+      "id": "schutz-sagittarius-note-6",
+      "midi": 60,
+      "start": 3.409,
+      "end": 4.036
+    },
+    {
+      "id": "schutz-sagittarius-note-7",
+      "midi": 55,
+      "start": 4.091,
+      "end": 4.718
+    },
+    {
+      "id": "schutz-sagittarius-note-8",
+      "midi": 62,
+      "start": 4.773,
+      "end": 5.4
+    },
+    {
+      "id": "schutz-sagittarius-note-9",
+      "midi": 57,
+      "start": 5.455,
+      "end": 6.082
+    },
+    {
+      "id": "schutz-sagittarius-note-10",
+      "midi": 64,
+      "start": 6.136,
+      "end": 6.764
+    },
+    {
+      "id": "schutz-sagittarius-note-11",
+      "midi": 55,
+      "start": 6.818,
+      "end": 7.445
+    },
+    {
+      "id": "schutz-sagittarius-note-12",
+      "midi": 62,
+      "start": 7.5,
+      "end": 8.127
+    },
+    {
+      "id": "schutz-sagittarius-note-13",
+      "midi": 53,
+      "start": 8.182,
+      "end": 8.809
+    },
+    {
+      "id": "schutz-sagittarius-note-14",
+      "midi": 60,
+      "start": 8.864,
+      "end": 9.491
+    },
+    {
+      "id": "schutz-sagittarius-note-15",
+      "midi": 52,
+      "start": 9.545,
+      "end": 10.173
+    },
+    {
+      "id": "schutz-sagittarius-note-16",
+      "midi": 59,
+      "start": 10.227,
+      "end": 10.855
+    }
+  ]
+}

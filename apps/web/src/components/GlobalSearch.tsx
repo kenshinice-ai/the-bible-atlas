@@ -59,14 +59,15 @@ export function GlobalSearch({ locale, activeWork, atlases, onSelectEntity, onSe
   const [results, setResults] = useState<SearchResponse["items"]>([]);
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const boxRef = useRef<HTMLDivElement | null>(null);
   const listId = useId();
 
   useEffect(() => {
     const trimmed = query.trim();
-    if (trimmed.length < 2) { setResults([]); setPending(false); return; }
+    if (trimmed.length < 2) { setResults([]); setActiveIndex(-1); setPending(false); return; }
     if (STATIC_DATA) {
-      const timer = window.setTimeout(() => { setResults(searchAtlases(atlases, trimmed)); setOpen(true); setPending(false); }, 160);
+      const timer = window.setTimeout(() => { setResults(searchAtlases(atlases, trimmed)); setActiveIndex(-1); setOpen(true); setPending(false); }, 160);
       setPending(true);
       return () => window.clearTimeout(timer);
     }
@@ -75,7 +76,7 @@ export function GlobalSearch({ locale, activeWork, atlases, onSelectEntity, onSe
     const timer = window.setTimeout(() => {
       search(trimmed, locale, controller.signal)
         // Single-work build: whole-work results have nothing to switch to.
-        .then((response) => { setResults(SINGLE_WORK ? response.items.filter((item) => item.kind !== "work") : response.items); setOpen(true); })
+        .then((response) => { setResults(SINGLE_WORK ? response.items.filter((item) => item.kind !== "work") : response.items); setActiveIndex(-1); setOpen(true); })
         .catch(() => setResults([]))
         .finally(() => setPending(false));
     }, 220);
@@ -98,6 +99,23 @@ export function GlobalSearch({ locale, activeWork, atlases, onSelectEntity, onSe
     onSelectEntity({ type: item.kind, workSlug: item.workSlug, id: item.slug });
   }
 
+  function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setOpen(true);
+      setActiveIndex((current) => results.length === 0 ? -1 : Math.min(current + 1, results.length - 1));
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActiveIndex((current) => results.length === 0 ? -1 : Math.max(current - 1, 0));
+    } else if (event.key === "Enter" && open && activeIndex >= 0) {
+      event.preventDefault();
+      choose(results[activeIndex]!);
+    } else if (event.key === "Escape") {
+      setOpen(false);
+      setActiveIndex(-1);
+    }
+  }
+
   return <div className="global-search" ref={boxRef}>
     <input
       type="search"
@@ -105,17 +123,19 @@ export function GlobalSearch({ locale, activeWork, atlases, onSelectEntity, onSe
       role="combobox"
       aria-expanded={open}
       aria-controls={listId}
+      aria-activedescendant={activeIndex >= 0 ? `${listId}-option-${activeIndex}` : undefined}
       aria-label={t("searchEverything", locale)}
       placeholder={t("searchEverything", locale)}
       onChange={(event) => setQuery(event.target.value)}
+      onKeyDown={handleKeyDown}
       onFocus={() => { if (results.length > 0) setOpen(true); }}
     />
     {pending && <span className="search-spinner" aria-hidden="true" />}
     {open && <ul className="search-results" id={listId} role="listbox">
       {results.length === 0
         ? <li className="empty">{t("noResults", locale)}</li>
-        : results.map((item) => <li key={`${item.kind}:${item.workSlug}:${item.slug}`}>
-          <button type="button" role="option" aria-selected={false} onClick={() => choose(item)}>
+        : results.map((item, index) => <li key={`${item.kind}:${item.workSlug}:${item.slug}`}>
+          <button id={`${listId}-option-${index}`} type="button" role="option" aria-selected={activeIndex === index} onMouseEnter={() => setActiveIndex(index)} onClick={() => choose(item)}>
             <span className={`kind-chip ${item.kind}`}>{t(KIND_KEY[item.kind], locale)}</span>
             <strong>{item.label}</strong>
             {item.context && <small>{item.context}</small>}

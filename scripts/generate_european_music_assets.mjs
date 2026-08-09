@@ -4,8 +4,14 @@ import { resolve } from "node:path";
 import createVerovioModule from "verovio/wasm";
 import { VerovioToolkit } from "verovio/esm";
 import { COMPOSITIONS, SCORE_FRAGMENTS, assertFoundationCounts } from "./european_music_foundation_data.ts";
+import { PHASE2_COMPOSITIONS, PHASE2_LEARNING_UNITS, PHASE2_SCORE_FRAGMENTS, assertPhase2Counts } from "./european_music_phase2_data.ts";
 
-assertFoundationCounts();
+const phase2 = process.argv.includes("--phase2");
+if (phase2) assertPhase2Counts();
+else assertFoundationCounts();
+
+const compositions = phase2 ? PHASE2_COMPOSITIONS : COMPOSITIONS;
+const scoreFragments = phase2 ? PHASE2_SCORE_FRAGMENTS : SCORE_FRAGMENTS;
 
 const root = resolve(import.meta.dirname, "..");
 const publicRoot = resolve(root, "apps/web/public");
@@ -13,8 +19,8 @@ const scoreDir = resolve(publicRoot, "media/music/scores");
 const timingDir = resolve(publicRoot, "media/music/timing");
 const audioDir = resolve(publicRoot, "media/music/audio");
 const manifestDir = resolve(publicRoot, "media/music/manifests");
-const seedPath = resolve(root, "db/seeds/058_european_classical_music_score_fragments.sql");
-const refreshSeedPath = resolve(root, "db/seeds/059_european_classical_music_verovio_refresh.sql");
+const seedPath = resolve(root, phase2 ? "db/seeds/061_european_classical_music_phase2_score_fragments.sql" : "db/seeds/058_european_classical_music_score_fragments.sql");
+const refreshSeedPath = resolve(root, phase2 ? "db/seeds/062_european_classical_music_phase2_verovio_refresh.sql" : "db/seeds/059_european_classical_music_verovio_refresh.sql");
 const workId = "10000000-0000-4000-8000-000000000010";
 const sourceId = uuid("source", "source-music-atlas-editorial");
 const generatedAt = "2026-08-04T00:00:00.000Z";
@@ -181,8 +187,8 @@ const annotationTranslationRows = [];
 const manifestRows = [];
 let totalAudioBytes = 0;
 
-for (const [sortOrder, fragment] of SCORE_FRAGMENTS.entries()) {
-  const composition = COMPOSITIONS.find((item) => item.slug === fragment.composition);
+for (const [sortOrder, fragment] of scoreFragments.entries()) {
+  const composition = compositions.find((item) => item.slug === fragment.composition);
   if (!composition) throw new Error(`Unknown composition for score fragment: ${fragment.composition}`);
   const notes = patternNotes[fragment.pattern];
   const tempo = patternTempo[fragment.pattern];
@@ -275,6 +281,10 @@ INSERT INTO score_generation_manifests(fragment_id,mei_checksum_sha256,svg_check
 ${values(manifestRows)}
 ON CONFLICT DO NOTHING;
 
+${phase2 ? `INSERT INTO music_learning_unit_fragments(unit_id,fragment_id,work_id,sort_order) VALUES
+${values(PHASE2_LEARNING_UNITS.flatMap((unit) => unit.fragments.map((fragment, index) => [q(uuid("learning-unit", unit.slug)), q(uuid("score-fragment", fragment)), q(workId), index + 1])))}
+ON CONFLICT DO NOTHING;` : ""}
+
 COMMIT;
 `;
 
@@ -301,7 +311,7 @@ ON CONFLICT (fragment_id) DO UPDATE SET
 COMMIT;
 `;
 await writeFile(refreshSeedPath, refreshSql);
-console.log(`generated ${SCORE_FRAGMENTS.length} score/audio fragments`);
+console.log(`generated ${scoreFragments.length} score/audio fragments${phase2 ? " (phase 2)" : ""}`);
 console.log(`renderer: ${rendererVersion}`);
 console.log(`audio bytes: ${totalAudioBytes}`);
 console.log(`seed: ${seedPath}`);

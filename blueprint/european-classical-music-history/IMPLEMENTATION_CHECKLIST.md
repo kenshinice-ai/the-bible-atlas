@@ -1,7 +1,7 @@
 # 欧洲古典音乐史 Atlas 实施清单
 
-日期：2026-08-04
-状态：Gate 0–6 实现完成；Gate 7 本地、打包与 production HTTP 门禁通过，公开浏览器 UI 验收受环境 URL policy 阻断
+日期：2026-08-09
+状态：Foundation Gate 0–7 已完成；Phase 2 Gate 8–10 已完成，Gate 11 正在执行最终验证与 production 发布
 纪律：前一 Gate 未通过，不进入后一 Gate；每个 Gate 完成即更新 `docs/HANDOFF.md` 与当日决策记录。
 
 ## Gate 0：范围与 Blueprint
@@ -92,7 +92,7 @@
 - [x] 地图、时间轴、关系图、乐谱使用共享 selection。
 - [x] 深链接恢复时期、时间范围、实体和片段。
 - [x] 键盘、ARIA、表格替代和 reduced-motion。
-- [ ] 390px 线上浏览器实测与无页面横向溢出：受本环境 Browser URL policy 阻断；production HTTP/JSON/资产已验证。
+- [x] 390px 本地浏览器实测与无页面横向溢出；production UI 仍需在发布后复验。
 
 ## Gate 7：验证与发布
 
@@ -111,3 +111,36 @@
 - [x] Cloudflare Pages production 发布
 - [x] 记录 deployment、commit、数据计数和构建哈希
 - [x] 更新 HANDOFF、决策记录与交付包
+
+## Phase 2：扩容与学习路径（2026-08-09）
+
+本轮按审计规划把“内容密度 + 学习动作 + 乐谱入口”作为一次可回滚的增量扩展，Foundation `057–059` 保持不变，新增 `060–062` 与两条幂等 migration。
+
+### Gate 8：数据合同与数据库扩展
+
+- [x] 新增 `017_european_music_learning_units.sql`：学习单元、双语翻译、曲目/片段连接和 cross-work audit view。
+- [x] 新增 `018_european_music_phase2_language_correction.sql`：修正扩展曲目 `text_language`，支持重复执行。
+- [x] 目标 profile 计数达到 **72 人物 / 120 曲目 / 32 风格 / 36 乐器 / 24 机构 / 36 地点 / 180 事件 / 160 关系 / 12 路线 / 56 片段 / 12 学习单元**。
+- [x] cross-work link audit 为 0；本地 PostgreSQL 数据库大小约 **39,024,319 bytes（37.2 MiB）**。
+
+### Gate 9：内容、乐谱与自产音频扩展
+
+- [x] 新增 24 人物、48 曲目、12 风格、12 乐器、8 机构、12 地点、84 事件、80 关系、4 路线和 12 学习单元。
+- [x] 新增 28 个 MEI / Verovio SVG / timing / manifest / 22050 Hz mono WAV bundle；总计 56/56，音频约 27.7 MiB。
+- [x] 新增战后与当代作品仅保留元数据，不生成版权期历史录音或未授权素材。
+- [x] `npm run verify:music` 通过，56/56 checksum、时长和 SQL seed 归属一致。
+
+### Gate 10：学习界面与响应式验收
+
+- [x] 五个主要入口更新为人物 / 曲目 / 乐谱片段 / 事件 / 关系，并在乐谱入口加入学习路径与音乐目录。
+- [x] 工作区桌面比例固定为 **61.8fr / 38.2fr**；移动端堆叠，保留 8px grid、44px touch target 与现有对比度/降动效要求。
+- [x] 抽屉焦点陷阱与恢复、搜索键盘 active option / Enter、390px `scrollWidth === clientWidth` 均通过本地应用内浏览器验收。
+- [x] 本地浏览器 console 无 error/warn；production UI 验收在 Gate 11 发布后补做。
+
+### Gate 11：最终门禁、发布与交付
+
+- [x] `npm run typecheck`、`npm test`、`npm run build`、`npm run verify:music`、`git diff --check`。
+- [x] 静态烘焙只包含 `european-classical-music-history`，构建产物无 `localhost:4000`。
+- [ ] Cloudflare Pages production 发布与 deployment/commit/hash 记录。
+- [ ] production HTTP、JSON、媒体资产与桌面/390px 浏览器复验。
+- [ ] Git 提交、推送与最终 HANDOFF 更新。

@@ -1,0 +1,19 @@
+{
+  "fragment": "schutz-chormusik",
+  "composition": "geistliche-chormusik",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-polyphony-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 12.632,
+  "checksums": {
+    "mei": "085d4e91881974880c262d6f38db9712089f6b3d5f9c7cb9b8a79e04d2615515",
+    "svg": "e47749d374ba91038ec8aea18244f497cccab1aca44c463914f321d0d38ebb3c",
+    "timing": "769c3e060ea0e4252d5162516d7ad84a7320ba1e52d35cb69d772f6385431393",
+    "audio": "163922893d209ef34fd2f5b910a13ce1739d5a173606969fc00c187ad7282c7e"
+  }
+}

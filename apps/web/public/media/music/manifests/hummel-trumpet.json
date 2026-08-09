@@ -1,0 +1,19 @@
+{
+  "fragment": "hummel-trumpet",
+  "composition": "trumpet-concerto-hummel",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-classical-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 10,
+  "checksums": {
+    "mei": "6ddc351eb110186b8bc4e5a2a2b83c265017460bc267a49ceb72a264fbe952f3",
+    "svg": "4afd3a5f55fd12175207bd7c3e416e05ee78205226d15109430a43186b2df79a",
+    "timing": "6322f82398e87fc1538cfa33c2b672b6b4a27cc8ce2f3070011c5622525b2ab6",
+    "audio": "9820da9c709216e43bc45adb705bec79a6b118c6b0fc73b09f821f9f53ac23c1"
+  }
+}

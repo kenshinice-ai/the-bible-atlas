@@ -1,0 +1,19 @@
+{
+  "fragment": "casulana-il-frutto",
+  "composition": "il-frutto",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-polyphony-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 12.632,
+  "checksums": {
+    "mei": "4aaf44c7d63323c012c47c0c62d057d71294742adf8dcbc1d827292b3cb2e2fd",
+    "svg": "46b838ca97f473f387a0864510166e8f826cf6992b941c0d6a8f4467492f7026",
+    "timing": "8efb183678118bfc4c1c0a7315c291694c482360c2babf97f7a1ffd83e3532d7",
+    "audio": "163922893d209ef34fd2f5b910a13ce1739d5a173606969fc00c187ad7282c7e"
+  }
+}

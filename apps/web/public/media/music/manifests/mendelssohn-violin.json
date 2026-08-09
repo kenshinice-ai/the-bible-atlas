@@ -1,0 +1,19 @@
+{
+  "fragment": "mendelssohn-violin",
+  "composition": "violin-concerto-mendelssohn",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-romantic-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 13.333,
+  "checksums": {
+    "mei": "aa66c550a7505583a41926226e0e0c16597b217f71e501d7876026b321569001",
+    "svg": "f1dbf9b8952af1477d90fda931cc3aaf7a70e6238a2322c7ca2ead5c80af3ade",
+    "timing": "b84681b1b2713f70d7652ad7642b34b53ffae5b5530494b67ee3aa7330327203",
+    "audio": "32a56ae506b4c20e3563a2a6a43090510c2f3a58774e14609359ee88cd601ba4"
+  }
+}

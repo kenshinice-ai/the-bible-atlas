@@ -1,0 +1,19 @@
+{
+  "fragment": "schutz-sagittarius",
+  "composition": "sagittarius-davids",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-continuo-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 10.909,
+  "checksums": {
+    "mei": "8bf4a2ce3cc7de4eaba359729a4f3690ca998a4b84d166a085ab3b34175af804",
+    "svg": "b8b8b0c5ece2ee9deb2037cda299bdb9c582c9313720b066ab32160ba9367d6b",
+    "timing": "6633e00a8029b98176a4cec2b537dcb5a3ce1d2ea868691599cfa546bdaa2e66",
+    "audio": "04245dfb4b01852cb417081c32b5a90a7ee2368cd9ea5f52721720059cb02a6d"
+  }
+}

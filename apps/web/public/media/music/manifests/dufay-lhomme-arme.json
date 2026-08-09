@@ -1,0 +1,19 @@
+{
+  "fragment": "dufay-lhomme-arme",
+  "composition": "missa-l-homme-arme-dufay",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-polyphony-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 12.632,
+  "checksums": {
+    "mei": "723940391e767c8c54cba565dcfd10d991c059e5f4e781cc5363b04287e95c9d",
+    "svg": "e538984d571a8153b527a30819bb3bd2ecd07a87e04ac6ca30111279bfd7294a",
+    "timing": "73c01b5fdf93c718a052768f6fa4f04d4b5ac8aa49338059e8a5ccd6922fbd0a",
+    "audio": "163922893d209ef34fd2f5b910a13ce1739d5a173606969fc00c187ad7282c7e"
+  }
+}

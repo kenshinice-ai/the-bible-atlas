@@ -5,7 +5,7 @@ import pg from "pg";
 
 const root = resolve(import.meta.dirname, "..");
 const mediaRoot = resolve(root, "apps/web/public/media/music");
-const expectedCount = 28;
+const expectedCount = 56;
 
 type Manifest = {
   fragment: string;
@@ -43,6 +43,8 @@ const directories = {
 async function main() {
 const seed058 = await readFile(resolve(root, "db/seeds/058_european_classical_music_score_fragments.sql"), "utf8");
 const seed059 = await readFile(resolve(root, "db/seeds/059_european_classical_music_verovio_refresh.sql"), "utf8");
+const seed061 = await readFile(resolve(root, "db/seeds/061_european_classical_music_phase2_score_fragments.sql"), "utf8");
+const seed062 = await readFile(resolve(root, "db/seeds/062_european_classical_music_phase2_verovio_refresh.sql"), "utf8");
 
 for (const [kind, [directory, extension]] of Object.entries(directories)) {
   const files = (await readdir(resolve(mediaRoot, directory))).filter((file) => file.endsWith(`.${extension}`));
@@ -94,7 +96,9 @@ for (const filename of manifestFiles) {
   assert(Math.abs(wavDuration - manifest.durationSeconds) < 0.01, `${manifest.fragment}: WAV duration mismatch`);
 
   for (const checksum of Object.values(manifest.checksums)) {
-    assert(seed058.includes(checksum) && seed059.includes(checksum), `${manifest.fragment}: checksum missing from SQL seeds`);
+    const foundationSeed = seed058.includes(manifest.fragment) && seed058.includes(checksum) && seed059.includes(checksum);
+    const phase2Seed = seed061.includes(manifest.fragment) && seed061.includes(checksum) && seed062.includes(checksum);
+    assert(foundationSeed || phase2Seed, `${manifest.fragment}: checksum missing from its SQL seed pair`);
   }
   manifests.set(manifest.fragment, manifest);
 }
@@ -114,8 +118,10 @@ if (process.env.DATABASE_URL) {
       UNION ALL SELECT 'events',count(*)::int FROM events WHERE work_id='10000000-0000-4000-8000-000000000010'
       UNION ALL SELECT 'relations',count(*)::int FROM character_relations WHERE work_id='10000000-0000-4000-8000-000000000010'
       UNION ALL SELECT 'routes',count(*)::int FROM routes WHERE work_id='10000000-0000-4000-8000-000000000010'
+      UNION ALL SELECT 'learningUnits',count(*)::int FROM music_learning_units WHERE work_id='10000000-0000-4000-8000-000000000010'
+      UNION ALL SELECT 'crossWorkLinks',count(*)::int FROM music_cross_work_link_audit
     `);
-    const expected = { people: 48, compositions: 72, styles: 20, instruments: 24, institutions: 16, fragments: 28, events: 96, relations: 80, routes: 8 };
+    const expected = { people: 72, compositions: 120, styles: 32, instruments: 36, institutions: 24, fragments: 56, events: 180, relations: 160, routes: 12, learningUnits: 12, crossWorkLinks: 0 };
     for (const row of counts.rows) {
       assert(row.count === expected[row.metric as keyof typeof expected], `${row.metric}: database count ${row.count} is incorrect`);
     }

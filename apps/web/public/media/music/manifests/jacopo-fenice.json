@@ -1,0 +1,19 @@
+{
+  "fragment": "jacopo-fenice",
+  "composition": "fenice-fu",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-polyphony-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 12.632,
+  "checksums": {
+    "mei": "2753d8e0cfdacc8db498540db5c3a06edaf2a5452e48a5adf78404617d43bdd3",
+    "svg": "5066e276190ea732d65022f8c00c4cb78b375ad20e9cddf21d576f1e04fabf37",
+    "timing": "915c53a542c35c7f9928d435c5d591bdd9f0dbe05bfac1331bb53681f5f0041d",
+    "audio": "163922893d209ef34fd2f5b910a13ce1739d5a173606969fc00c187ad7282c7e"
+  }
+}

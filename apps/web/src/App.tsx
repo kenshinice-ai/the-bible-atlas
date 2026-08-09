@@ -4,6 +4,7 @@ import { AtlasMap } from "./components/AtlasMap";
 import { EntityDrawer } from "./components/EntityDrawer";
 import { EntityList } from "./components/EntityList";
 import { GlobalSearch } from "./components/GlobalSearch";
+import { MusicStudyPanel } from "./components/MusicStudyPanel";
 import { RelationGraph } from "./components/RelationGraph";
 import { TimelineRibbon } from "./components/TimelineRibbon";
 import { WorkControlCenter } from "./components/WorkControlCenter";
@@ -22,9 +23,9 @@ function tabForEntity(entity: SelectedEntity): Tab {
     : entity.type === "artist" ? (PROFILE.canonicalArtistPeople ? "characters" : "artists")
       : entity.type === "artwork" ? "artworks"
         : entity.type === "movement" ? "movements"
-          : entity.type === "composition" || entity.type === "score_fragment" || entity.type === "music_style" ? "compositions"
+          : entity.type === "composition" || entity.type === "music_style" ? "compositions"
+            : entity.type === "score_fragment" || entity.type === "music_institution" ? "scoreFragments"
             : entity.type === "instrument" ? "instruments"
-              : entity.type === "music_institution" ? "events"
     : entity.type === "event" ? "events"
       : entity.type === "location" ? "locations"
         : entity.type === "route" ? "routes"
@@ -334,10 +335,10 @@ export default function App() {
             </div>
 
             <aside className="browser">
-              <nav aria-label="panels">
-                {VISIBLE_TABS.map((key) => <button key={key} className={explore.tab === key ? "active" : ""} aria-pressed={explore.tab === key} onClick={() => setTab(key)}>
+              <nav aria-label="panels" role="tablist">
+                {VISIBLE_TABS.map((key) => <button key={key} role="tab" className={explore.tab === key ? "active" : ""} aria-selected={explore.tab === key} aria-controls="atlas-panel" onClick={() => setTab(key)}>
                   {t(key, locale)}
-                  <b>{key === "characters" ? derived.characters.length : key === "artists" ? derived.artists.length : key === "artworks" ? derived.artworks.length : key === "movements" ? derived.movements.length : key === "compositions" ? derived.compositions.length : key === "instruments" ? derived.instruments.length : key === "events" ? derived.events.length : key === "locations" ? derived.locations.length : key === "routes" ? derived.routes.length : derived.relations.length}</b>
+                  <b>{key === "characters" ? derived.characters.length : key === "artists" ? derived.artists.length : key === "artworks" ? derived.artworks.length : key === "movements" ? derived.movements.length : key === "compositions" ? derived.compositions.length : key === "instruments" ? derived.instruments.length : key === "scoreFragments" ? activeAtlas.scoreFragments.length : key === "events" ? derived.events.length : key === "locations" ? derived.locations.length : key === "routes" ? derived.routes.length : derived.relations.length}</b>
                 </button>)}
               </nav>
 
@@ -363,23 +364,27 @@ export default function App() {
                   onSelect={(entity) => selectEntity(entity, "graph")}
                   onChapter={setChapter}
                 />
-                : <EntityList
-                  key={explore.tab}
-                  atlas={activeAtlas}
-                  tab={explore.tab}
-                  locale={locale}
-                  characters={derived.characters}
-                  events={derived.events}
-                  locations={derived.locations}
-                  routes={derived.routes}
-                  artists={derived.artists}
-                  artworks={derived.artworks}
-                  movements={derived.movements}
-                  compositions={derived.compositions}
-                  instruments={derived.instruments}
-                  selected={explore.selectedEntity}
-                  onSelect={(entity) => selectEntity(entity, "list")}
-                />}
+                : <div id="atlas-panel" role="tabpanel" aria-label={t(explore.tab, locale)}>
+                  {explore.tab === "scoreFragments" && <MusicStudyPanel atlas={activeAtlas} locale={locale} onSelect={(entity) => selectEntity(entity, "list")} />}
+                  <EntityList
+                    key={explore.tab}
+                    atlas={activeAtlas}
+                    tab={explore.tab}
+                    locale={locale}
+                    characters={derived.characters}
+                    events={derived.events}
+                    locations={derived.locations}
+                    routes={derived.routes}
+                    artists={derived.artists}
+                    artworks={derived.artworks}
+                    movements={derived.movements}
+                    compositions={derived.compositions}
+                    instruments={derived.instruments}
+                    scoreFragments={activeAtlas.scoreFragments}
+                    selected={explore.selectedEntity}
+                    onSelect={(entity) => selectEntity(entity, "list")}
+                  />
+                </div>}
             </aside>
           </section>
 

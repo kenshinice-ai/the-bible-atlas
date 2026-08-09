@@ -21,11 +21,13 @@
     "generate:art-expansion": "tsx scripts/generate_european_art_expansion.ts",
     "generate:music-foundation": "node scripts/generate_european_music_foundation.mjs",
     "generate:music-assets": "node scripts/generate_european_music_assets.mjs",
+    "generate:music-phase2": "node scripts/generate_european_music_phase2.mjs",
+    "generate:music-phase2-assets": "node scripts/generate_european_music_assets.mjs --phase2",
     "db:migrate": "npm run db:migrate -w @literary-atlas/api",
     "db:seed": "npm run db:seed -w @literary-atlas/api",
     "db:bootstrap": "npm run db:bootstrap -w @literary-atlas/api",
     "bake:static": "npm run bake:static -w @literary-atlas/api",
-    "build:static": "npm run bake:static -w @literary-atlas/api && VITE_DATA_MODE=static npm run build -w @literary-atlas/web -- --base=./"
+    "build:static": "npm run bake:static -w @literary-atlas/api -- --api \"${BAKE_API_URL:-http://localhost:4000}\" --works \"${WORKS:-the-bible}\" && VITE_DATA_MODE=static VITE_WORK_PROFILE=\"${PROFILE:-bible}\" npm run build -w @literary-atlas/web -- --base=./"
   },
   "engines": {
     "node": ">=22"

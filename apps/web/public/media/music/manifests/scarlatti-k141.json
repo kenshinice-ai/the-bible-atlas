@@ -1,0 +1,19 @@
+{
+  "fragment": "scarlatti-k141",
+  "composition": "sonata-k141",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-continuo-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 10.909,
+  "checksums": {
+    "mei": "092cfb0f98092b538d268311a8d05db430c468696f5b0a22c3c3de4174e18c9e",
+    "svg": "a071419280ff7df418fb0cf3382e8309a30627bab7cd92a4e085c827fca48867",
+    "timing": "9b71760674d09de47ac8ae045f7c0971bd6f2c97edf3e5038d6304dbcf91e1ac",
+    "audio": "04245dfb4b01852cb417081c32b5a90a7ee2368cd9ea5f52721720059cb02a6d"
+  }
+}

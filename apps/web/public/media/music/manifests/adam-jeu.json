@@ -1,0 +1,19 @@
+{
+  "fragment": "adam-jeu",
+  "composition": "li-gieus-d-adam",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-organum-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 13.333,
+  "checksums": {
+    "mei": "733d312b61df341264a0f709abc5aed198c63cf6719b1cabb586e129e5e7a57c",
+    "svg": "32d707a0fe3ecc3bc141ebc03a4da1db5cd7a566d45c6bca3803ae6520afe34b",
+    "timing": "6bdbd02ed30de06ff064ac84edff7c9c81bb7f82ad98da6c14cb976234d70830",
+    "audio": "fbed6e7fdff3ec1819be12978511f88ec4b7c92a69895d6e1b3d125a321ac8e7"
+  }
+}

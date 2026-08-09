@@ -1,6 +1,6 @@
 import type { Locale } from "./types";
 
-export type ProfileTab = "characters" | "artists" | "artworks" | "movements" | "compositions" | "instruments" | "events" | "locations" | "routes" | "relations";
+export type ProfileTab = "characters" | "artists" | "artworks" | "movements" | "compositions" | "instruments" | "scoreFragments" | "events" | "locations" | "routes" | "relations";
 export type ProfileZoomLevel = "era" | "group" | "major" | "all";
 
 /**
@@ -106,7 +106,7 @@ export const PROFILES: Record<string, WorkProfile> = {
     title: ["欧洲古典音乐史 Atlas", "European Classical Music History Atlas"],
     tagline: ["聆听时代，连接人物、曲目与乐器", "Hear the eras through people, works and instruments"],
     theme: "european-classical-music-history",
-    specialization: "music", tabs: ["characters", "compositions", "instruments", "events", "relations"], defaultTab: "events",
+    specialization: "music", tabs: ["characters", "compositions", "scoreFragments", "events", "relations"], defaultTab: "events",
     graphLevels: ["era", "group", "major", "all"], defaultGraphLevel: "group",
   },
 };

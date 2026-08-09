@@ -1,0 +1,19 @@
+{
+  "fragment": "schutz-exequien",
+  "composition": "musikalische-exequien",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-continuo-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 10.909,
+  "checksums": {
+    "mei": "90de06a4839f3e5876cf1e0b92ac2d0ff8838040adc6594d3e35e7fcd2f312e7",
+    "svg": "7ba9addcf4b7b984b7b4cad95588bddc85af4957d1301218f99d021e5e3a5e8f",
+    "timing": "063bda54dd376254e6ab937fb8d071b74ec67a714212769142459cdf70e616b0",
+    "audio": "04245dfb4b01852cb417081c32b5a90a7ee2368cd9ea5f52721720059cb02a6d"
+  }
+}

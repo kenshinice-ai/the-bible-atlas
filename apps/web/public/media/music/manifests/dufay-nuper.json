@@ -1,0 +1,19 @@
+{
+  "fragment": "dufay-nuper",
+  "composition": "nuper-rosarum-flores",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-polyphony-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 12.632,
+  "checksums": {
+    "mei": "944fa71ec31f6ce0ac682a73a574eb321f361ad4b3b6b232dad838b820db01d3",
+    "svg": "00fb1a755fe4992343bdf61552e288780ab9599c1d5d989065bbcfcd0125906c",
+    "timing": "49eb6916429992409549916db1b5b9e85f038b2997aa7e89dda887a7508920df",
+    "audio": "163922893d209ef34fd2f5b910a13ce1739d5a173606969fc00c187ad7282c7e"
+  }
+}

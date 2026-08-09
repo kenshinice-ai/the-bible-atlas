@@ -1,0 +1,19 @@
+{
+  "fragment": "scarlatti-k380",
+  "composition": "sonata-k380",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-continuo-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 10.909,
+  "checksums": {
+    "mei": "078065f7e37f2bd257c9c0fe63ba02a3e42ea7b582b777ea3e43d52ca7c4b482",
+    "svg": "19da4274dd6cf7ef4e1185cb18dd9de1a1bf71cd11281fdda42dafb507c5a9b6",
+    "timing": "99daa3d390e95a89023342194237b55c01cdd3589bc029c50113a700096c3e4a",
+    "audio": "04245dfb4b01852cb417081c32b5a90a7ee2368cd9ea5f52721720059cb02a6d"
+  }
+}

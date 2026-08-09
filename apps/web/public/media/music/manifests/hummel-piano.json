@@ -1,0 +1,19 @@
+{
+  "fragment": "hummel-piano",
+  "composition": "piano-concerto-a-minor-hummel",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-classical-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 10,
+  "checksums": {
+    "mei": "cc0784d3d21f6986f37e1ca8f4c4b60f9c99b6c52bd6aebdfad9c21a88b8a424",
+    "svg": "977d67e8a6383e57940ea78bf1cc72ec286291278e84f8bb4c347986499c124c",
+    "timing": "24bc88d19b86f74426a3bba63f13e4884fbe77af8c29c3642ce2585d4b6084fe",
+    "audio": "9820da9c709216e43bc45adb705bec79a6b118c6b0fc73b09f821f9f53ac23c1"
+  }
+}

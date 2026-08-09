@@ -1,0 +1,19 @@
+{
+  "fragment": "cherubini-requiem",
+  "composition": "requiem-in-c-cherubini",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-classical-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 10,
+  "checksums": {
+    "mei": "d930df00a91d786d2e35808a152a062cf15103f4dec9e31a74d3b2e8e6a9a2d5",
+    "svg": "435fde7ff348d2f952ebd7625bdcdf94f4e6fd69cef77c58a9d9012a12ffcd78",
+    "timing": "0ef682df405108608b7889f243b5825035fd57e10cbc920d5f2ab13772b67ee9",
+    "audio": "9820da9c709216e43bc45adb705bec79a6b118c6b0fc73b09f821f9f53ac23c1"
+  }
+}

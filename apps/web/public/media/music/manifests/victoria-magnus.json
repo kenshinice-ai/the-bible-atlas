@@ -1,0 +1,19 @@
+{
+  "fragment": "victoria-magnus",
+  "composition": "o-magnus-mysterium-victoria",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-polyphony-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 12.632,
+  "checksums": {
+    "mei": "094aea1361801bee7573cf4c0a298c4a98fe1d8a12fc8c251531df8bb5c53b93",
+    "svg": "09dca25648c7b2dc929d7b62d5c5fae0ea6d3cbe0631b6eaa747da96d8555391",
+    "timing": "b81c9e30393fe3f04048f8d5fa8cf873a49bac0dc70ba3a49a997a80ee313691",
+    "audio": "163922893d209ef34fd2f5b910a13ce1739d5a173606969fc00c187ad7282c7e"
+  }
+}

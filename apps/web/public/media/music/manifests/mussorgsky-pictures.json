@@ -1,0 +1,19 @@
+{
+  "fragment": "mussorgsky-pictures",
+  "composition": "pictures-at-an-exhibition",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-romantic-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 13.333,
+  "checksums": {
+    "mei": "2374f1f5c30acb8ce8eed06a80c3223db930910dac342cd2bef9954ddfa6845f",
+    "svg": "c217c5941d0023608ba234ec6cd24697ccd34bb567921ef9c40263c5d79afef5",
+    "timing": "2fd56befd14ffa80a1fab049f3d90d7b2d36c04428cd436954c152db20c6f49c",
+    "audio": "32a56ae506b4c20e3563a2a6a43090510c2f3a58774e14609359ee88cd601ba4"
+  }
+}

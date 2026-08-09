@@ -1,0 +1,19 @@
+{
+  "fragment": "jacopo-non-al-suo",
+  "composition": "non-al-suo-amante",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-polyphony-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 12.632,
+  "checksums": {
+    "mei": "f478b54be272c87f2e3d7b0f1c656e923add7dd22a69d552e6dc1c62accb40f2",
+    "svg": "4cc725f8adb27fc29ea93ac60d512180eddea1ded6823cb1a9fd741a7da42cc5",
+    "timing": "78b524677531a2fb2f1e55284da192e37d20f39f5dea8a8c5089193562a4bd48",
+    "audio": "163922893d209ef34fd2f5b910a13ce1739d5a173606969fc00c187ad7282c7e"
+  }
+}

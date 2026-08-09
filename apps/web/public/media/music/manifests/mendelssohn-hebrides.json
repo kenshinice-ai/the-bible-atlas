@@ -1,0 +1,19 @@
+{
+  "fragment": "mendelssohn-hebrides",
+  "composition": "hebrides-overture",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-romantic-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 13.333,
+  "checksums": {
+    "mei": "dabd04be26d91951b4937668bc6a0cdb6259d741df7073d57b87e297515e9b09",
+    "svg": "616fa21b7569ce9c3ffd021c523202823aa99bbbea3751c8031cd8c5890b0d41",
+    "timing": "2636a6b50d05229fd66ea95b3402c49abfad718dbc23bc0294d0ec8f496f4611",
+    "audio": "32a56ae506b4c20e3563a2a6a43090510c2f3a58774e14609359ee88cd601ba4"
+  }
+}

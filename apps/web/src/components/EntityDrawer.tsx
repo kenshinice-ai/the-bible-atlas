@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getEntityDetail } from "../api";
 import { colorForCharacter } from "../hierarchy";
 import { formatEventTime, formatYear, label, t } from "../i18n";
@@ -74,8 +74,29 @@ function ArtworkMedia({ media, locale }: { media: AtlasMedia[]; locale: Locale }
 }
 
 function Shell({ children, onClose, locale }: { children: React.ReactNode; onClose: () => void; locale: Locale }) {
-  return <aside className="entity-drawer" role="dialog" aria-modal="false">
-    <button className="close" aria-label={t("close", locale)} onClick={onClose}>×</button>
+  const drawerRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const drawer = drawerRef.current;
+    const close = drawer?.querySelector<HTMLButtonElement>(".close");
+    close?.focus();
+    const trap = (event: KeyboardEvent) => {
+      if (event.key !== "Tab" || !drawer) return;
+      const focusable = [...drawer.querySelectorAll<HTMLElement>("button,a,input,select,textarea,[tabindex]:not([tabindex='-1'])")].filter((element) => !element.hasAttribute("disabled"));
+      if (focusable.length === 0) return;
+      const first = focusable[0]!;
+      const last = focusable.at(-1)!;
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    };
+    document.addEventListener("keydown", trap);
+    return () => {
+      document.removeEventListener("keydown", trap);
+      if (previous?.isConnected) previous.focus();
+    };
+  }, []);
+  return <aside ref={drawerRef} className="entity-drawer" role="dialog" aria-modal="true" aria-label={locale === "zh-CN" ? "条目详情" : "Entity detail"}>
+    <button type="button" className="close" aria-label={t("close", locale)} onClick={onClose}>×</button>
     {children}
   </aside>;
 }
@@ -278,6 +299,7 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
     const era = chapterOf(composition.chapterSlug);
     const composer = atlas.characters.find((item) => item.slug === composition.primaryComposerSlug);
     const fragments = atlas.scoreFragments.filter((item) => composition.scoreFragmentSlugs.includes(item.slug));
+    const studyUnits = atlas.musicLearningUnits.filter((unit) => unit.compositionSlugs.includes(composition.slug));
     return <Shell onClose={onClose} locale={locale}>
       <small>{atlas.work.title}{era ? ` · ${era.title}` : ""}</small>
       <h2>{composition.title}</h2>
@@ -290,8 +312,11 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
       <dl>
         {composer && <><dt>{locale === "zh-CN" ? "作曲家" : "Composer"}</dt><dd><button className="link" onClick={() => onSelect({ type: "character", workSlug: atlas.work.slug, id: composer.slug }, "list")}>{composer.name}</button></dd></>}
         <dt>{locale === "zh-CN" ? "调性" : "Key"}</dt><dd>{composition.keySignature || "—"}</dd>
+        <dt>{locale === "zh-CN" ? "预计时长" : "Approx. duration"}</dt><dd>{composition.approxDurationSeconds ? `${Math.round(composition.approxDurationSeconds / 60)}′` : "—"}</dd>
+        {composition.textLanguage && <><dt>{locale === "zh-CN" ? "文本语言" : "Text language"}</dt><dd>{composition.textLanguage}</dd></>}
         <dt>{locale === "zh-CN" ? "乐谱片段" : "Score excerpts"}</dt><dd>{fragments.length}</dd>
       </dl>
+      {composition.contributors.length > 0 && <section><h3>{locale === "zh-CN" ? "创作参与者" : "Contributors"}</h3><div className="drawer-links">{composition.contributors.map((contributor) => { const person = atlas.characters.find((item) => item.slug === contributor.slug); return person ? <button key={`${contributor.slug}:${contributor.role}`} type="button" onClick={() => onSelect({ type: "character", workSlug: atlas.work.slug, id: person.slug }, "list")}>{person.name} · {label(contributor.role, locale)}</button> : null; })}</div></section>}
       {composition.instrumentSlugs.length > 0 && <section>
         <h3>{locale === "zh-CN" ? "编制与乐器" : "Instrumentation"}</h3>
         <div className="drawer-links">{composition.instrumentSlugs.map((slug) => {
@@ -307,6 +332,7 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
         <small>{fragment.playbackDisclaimer}</small>
         {fragment.annotations.length > 0 && <ul>{fragment.annotations.map((annotation) => <li key={annotation.id}><strong>{annotation.label}:</strong> {annotation.explanation}</li>)}</ul>}
       </section>)}
+      {studyUnits.length > 0 && <section className="learning-links"><h3>{t("learningPath", locale)}</h3><div className="drawer-links">{studyUnits.map((unit) => <div className="learning-link" key={unit.slug}><strong>{unit.title}</strong><small>{label(unit.difficulty, locale)} · {unit.targetMinutes}′</small>{unit.scoreFragmentSlugs[0] && <button type="button" onClick={() => onSelect({ type: "score_fragment", workSlug: atlas.work.slug, id: unit.scoreFragmentSlugs[0]! }, "list")}>{t("studyOpenFragment", locale)}</button>}</div>)}</div></section>}
       <Sources names={composition.sourceTitles} locale={locale} />
     </Shell>;
   }
@@ -346,7 +372,8 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
   if (entity.type === "score_fragment") {
     const fragment = atlas.scoreFragments.find((item) => item.slug === entity.id);
     if (!fragment) return null;
-    return <Shell onClose={onClose} locale={locale}><small>{atlas.work.title} · {label(fragment.notationKind, locale)}</small><h2>{fragment.title}</h2><p>{fragment.analysisNote}</p><section className="score-fragment"><img src={fragment.svgAssetPath} alt={fragment.title} />{fragment.audioAssetPath && <audio controls preload="none" src={fragment.audioAssetPath} />}<small>{fragment.playbackDisclaimer}</small></section><Sources names={fragment.sourceTitles} locale={locale} /></Shell>;
+    const composition = atlas.compositions.find((item) => item.slug === fragment.compositionSlug);
+    return <Shell onClose={onClose} locale={locale}><small>{atlas.work.title} · {label(fragment.notationKind, locale)}</small><h2>{fragment.title}</h2><p>{fragment.analysisNote}</p>{composition && <button type="button" className="link" onClick={() => onSelect({ type: "composition", workSlug: atlas.work.slug, id: composition.slug }, "list")}>{locale === "zh-CN" ? `回到曲目：${composition.title}` : `Back to ${composition.title}`}</button>}<section className="score-fragment"><img src={fragment.svgAssetPath} alt={fragment.title} />{fragment.audioAssetPath && <audio controls preload="none" src={fragment.audioAssetPath} />}<small>{fragment.playbackDisclaimer}</small></section><Sources names={fragment.sourceTitles} locale={locale} /></Shell>;
   }
 
   if (entity.type === "location") {

@@ -1,0 +1,19 @@
+{
+  "fragment": "cpe-symphony",
+  "composition": "symphony-in-e-flat-cpe",
+  "generatorVersion": "atlas-music-study-v2",
+  "renderer": "Verovio 6.2.0-43f8060",
+  "synthesisProfile": "neutral-classical-v1",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "sampleRate": 22050,
+  "channels": 1,
+  "bitDepth": 16,
+  "outputFormat": "wav",
+  "durationSeconds": 10,
+  "checksums": {
+    "mei": "ceda86c45be91b419f65ee1b820f63a5a37f7d3143c2859fb741f49436c736be",
+    "svg": "83a03fc879ef1c722644c4383572e2eec8d532003bea115ad791df0590858b81",
+    "timing": "effdb1d6bf65639d52283316992f4aa90a0771dcfefbf9692584e0a9d0f3bd1a",
+    "audio": "9820da9c709216e43bc45adb705bec79a6b118c6b0fc73b09f821f9f53ac23c1"
+  }
+}
