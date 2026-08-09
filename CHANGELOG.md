@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-09 — European Classical Music History Atlas Foundation
+
+- Added the independent bilingual `european-classical-music-history` profile with 48 people, 72 compositions, 20 styles, 24 instruments, 16 institutions, 96 events, 80 relationships and 8 routes.
+- Added 28 rights-verified MEI/Verovio/timing/WAV study fragments generated from shared note data, with manifests and SHA-256 verification.
+- Published the static profile to Cloudflare Pages production as `european-classical-music-history-atlas`.
+
 ## 3.1.0 — 2026-07-22
 
 - Added the Bible as the fifth bilingual work and primary complex reference sample.

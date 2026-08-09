@@ -149,3 +149,17 @@ Gate 2 已完成：
 - 片段只选择 Foundation 权利边界允许的历史作品，战后版权期作品不生成片段。
 
 下一步进入 Gate 3：创建 `013/014` migration 和 `057` seed，并执行 fresh/repeat 验证。
+
+## 11. 2026-08-09 实现、验证与 production 发布闭环
+
+Gate 3–7 已完成并提交：
+
+- migration：`013_european_classical_music.sql`、`014_music_score_assets.sql`、`015_music_score_asset_path_fix.sql`、`016_music_score_renderer_metadata.sql`；seed：`057`、`058`、`059`；
+- API、Zod contract、profile capability、静态 bake、前端实体抽屉/列表/搜索和音乐主题已实现；
+- 48/72/20/24/16/24/96/80/8/28 Foundation 计数、双语翻译、来源闭环、跨 work 约束和乐谱/声音 checksum 均通过；
+- 全量 migration/seed 从零 bootstrap 后再次 bootstrap 均通过；现有 profile API smoke 返回 10 works，health contract 为 `4.0.0`；
+- 实现提交为 `a70dbc8`。
+
+生产发布冻结为 Cloudflare Pages 项目 `european-classical-music-history-atlas`、production branch `main`、deployment `1e29ca49-1689-48f9-9282-344b4a9fe648`。生产 JSON、28 组音乐资产、WAV content type 和逐项 SHA-256 已复验。
+
+应用内浏览器视觉验收暂记为环境阻断：首次 production 导航遇到一次 522，curl 重试 HTTP 200；浏览器 URL policy 随后阻断 reload，故不宣称桌面/390px/console 已通过。解除 policy 后只需补验公开站的视觉布局、深链接、音频播放与横向溢出，不需要重新生成数据或重新部署。

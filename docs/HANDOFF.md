@@ -2,6 +2,28 @@
 
 ## 项目现状
 
+### 2026-08-09 阶段性交接：欧洲古典音乐史 Atlas Foundation 实现与 production 发布完成
+
+欧洲古典音乐史独立 profile `european-classical-music-history` 已从 Blueprint 进入可发布实现，未修改圣经、三国、银河原力和欧洲美术史的既有 seed 或静态站点。当前实现包含：
+
+- 共享历史引擎接入 `music_history` category、7 个时期、真实地点/路线/机构/人物关系和双语 API/静态 contract；
+- **48 位 canonical 人物 / 72 部曲目 / 20 个风格 / 24 类乐器 / 16 个机构 / 24 个地点 / 96 个事件 / 80 条人物关系 / 8 条路线**；
+- **28/28** 个 Foundation 乐谱片段：MEI、Verovio 6.2.0 SVG、timing JSON、22050 Hz / 16-bit / mono PCM WAV 与 generation manifest；全部 `rights_status='verified'`，声音固定标注为学习用自产合成音；
+- 前端 profile capability、人物/曲目/乐器/事件/关系入口、曲目星图、乐谱查看器、音频播放器、双语搜索和静态模式；
+- 实现提交：`a70dbc8`（`feat: add European classical music atlas`）。
+
+本地与打包门禁：`npm run typecheck`、`npm test`（API 5 + Web 33）、`npm run build`、`npm run verify:postgis`、`npm run verify:music`、`npm run verify:artwork-media`、`npm run test:start-command`、全量 001–016 migration + 001–059 seed fresh/repeat bootstrap 均通过。独立静态构建烘焙 4 个双语 JSON，dist 约 69 MB；production build 无 localhost 残留。关键构建 SHA-256：`index.html` `253eba59febc4fd91f92805610602039e87828dd417d217bc59a9a1c7f7a3e4b`，JS `c32f7b34d680500a4555a4440653008bd231624e22233dbf5e332eeed0086d93`，CSS `c492ab2c698e57361514d5b997874fc8f84b1228cc16853c255a72427e364ad1`。
+
+Cloudflare Pages 已创建并发布 production `main`：
+
+- 站点：[european-classical-music-history-atlas.pages.dev](https://european-classical-music-history-atlas.pages.dev)
+- 本次 deployment：`1e29ca49-1689-48f9-9282-344b4a9fe648`；预览地址：[1e29ca49.european-classical-music-history-atlas.pages.dev](https://1e29ca49.european-classical-music-history-atlas.pages.dev)
+- Cloudflare 记录的 source：`a70dbc8`；生产首页与预览首页 HTTP 200/TLS 正常。
+- 线上中文静态 JSON：48 人物、72 曲目、20 风格、24 乐器、16 机构、96 事件、80 关系、28 片段；英文 JSON `translationStatus=published`；works 入口计数与 profile 元数据一致。
+- 线上 28 组 MEI/SVG/timing/WAV/manifest 全部 HTTP 200，逐项 checksum 匹配，WAV `Content-Type: audio/wav`，线上音频总量 14,448,676 bytes。
+
+剩余证据边界：本环境应用内浏览器首次打开 production 时返回一次 Cloudflare 522，HTTP 重试已稳定为 200；随后浏览器 URL policy 阻断同页 reload，因此未把桌面/390px 视觉、横向溢出和 console 结果写成已验收。线上 HTTP、JSON、媒体和 checksum 门禁已完成；浏览器 UI 验收是唯一待环境解除后的补验项。
+
 ### 2026-08-04 阶段性交接：欧洲古典音乐史 Atlas ECM-0 Blueprint
 
 已按用户决定启动第五条独立内容线：`european-classical-music-history`，站名冻结为“欧洲古典音乐史 Atlas / European Classical Music History Atlas”，默认中文、保留英文、使用真实地图和独立静态构建。ECM-0 只完成范围、数据、关系、乐器、乐谱与自产声音方案，不把规划状态写成已经实现。
@@ -239,5 +261,5 @@ npx tsx src/db-cli.ts seed
 
 ---
 
-更新时间:2026-08-04
+更新时间:2026-08-09
 本文档由代理在每个阶段完成后自动更新。
