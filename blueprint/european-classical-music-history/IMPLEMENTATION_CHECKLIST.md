@@ -1,7 +1,7 @@
 # 欧洲古典音乐史 Atlas 实施清单
 
-日期：2026-08-04  
-状态：Gate 0–6 实现完成；Gate 7 本地、打包与 production HTTP 门禁通过，公开浏览器 UI 验收受环境 URL policy 阻断  
+日期：2026-08-04
+状态：Gate 0–6 实现完成；Gate 7 本地、打包与 production HTTP 门禁通过，公开浏览器 UI 验收受环境 URL policy 阻断
 纪律：前一 Gate 未通过，不进入后一 Gate；每个 Gate 完成即更新 `docs/HANDOFF.md` 与当日决策记录。
 
 ## Gate 0：范围与 Blueprint

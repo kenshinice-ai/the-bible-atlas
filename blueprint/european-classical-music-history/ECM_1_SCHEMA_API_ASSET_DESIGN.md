@@ -1,6 +1,6 @@
 # 欧洲古典音乐史 Atlas · ECM-1 Schema / API / Asset Design
 
-日期：2026-08-04  
+日期：2026-08-04
 状态：ECM-1 评审完成；尚未创建 migration、seed 或实现代码
 
 ## 1. 评审结论

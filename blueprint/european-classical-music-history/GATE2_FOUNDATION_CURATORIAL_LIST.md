@@ -1,6 +1,6 @@
 # 欧洲古典音乐史 Atlas · Gate 2 Foundation 策展清单
 
-日期：2026-08-04  
+日期：2026-08-04
 状态：冻结；机器可读清单位于 `scripts/european_music_foundation_data.ts`
 
 ## 1. 冻结计数

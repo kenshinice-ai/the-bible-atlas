@@ -1,7 +1,7 @@
 # 欧洲古典音乐史 Atlas Blueprint
 
-日期：2026-08-04  
-状态：ECM-0 Blueprint 与 ECM-1 设计评审完成；等待 Gate 2 Foundation 策展清单  
+日期：2026-08-04
+状态：ECM-0 Blueprint 与 ECM-1 设计评审完成；等待 Gate 2 Foundation 策展清单
 目标 profile：`european-classical-music-history`
 
 ## 1. 产品定位
