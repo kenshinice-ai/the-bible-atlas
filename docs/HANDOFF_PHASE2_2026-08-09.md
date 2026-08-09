@@ -42,7 +42,7 @@ Profile：`european-classical-music-history`
 
 ## 发布门禁
 
-- Git：commit `d2fb145` 已推送到远程 `main`；工作树仅保留未跟踪的无关 `.codex/`。
+- Git：代码 release commit `d2fb145` 与最终交接 commit `a0a1ca3` 已推送到远程 `main`；工作树仅保留未跟踪的无关 `.codex/`。
 - Cloudflare Pages production：[european-classical-music-history-atlas.pages.dev](https://european-classical-music-history-atlas.pages.dev)。本次 deployment `845d780b-fd9a-49ea-9f71-b983c101070e`，预览地址为 [845d780b.european-classical-music-history-atlas.pages.dev](https://845d780b.european-classical-music-history-atlas.pages.dev)，Cloudflare source 为 `d2fb145`。
 - production 首页 HTTP 200；中文 JSON 679,003 bytes、英文 JSON 687,565 bytes，双语均为 72 人物 / 120 曲目 / 32 风格 / 36 乐器 / 24 机构 / 36 地点 / 180 事件 / 160 关系 / 12 路线 / 56 片段 / 12 学习单元，work slug 均为 `european-classical-music-history`。
 - production 音乐媒体完整可达性：280 个唯一 MEI / SVG / timing / manifest / WAV URL 全部 HTTP 200；代表性 WAV `Content-Type: audio/wav`。

@@ -143,4 +143,4 @@
 - [x] 静态烘焙只包含 `european-classical-music-history`，构建产物无 `localhost:4000`。
 - [x] Cloudflare Pages production 发布与 deployment/commit/hash 记录：deployment `845d780b-fd9a-49ea-9f71-b983c101070e`，source `d2fb145`。
 - [x] production HTTP 200、双语 JSON 计数、280 个唯一音乐媒体文件、桌面/390px 浏览器复验。
-- [x] Git 提交、推送与最终 HANDOFF 更新；远程 `main` 与本地 `d2fb145` 一致。
+- [x] Git 提交、推送与最终 HANDOFF 更新；代码 release `d2fb145` 与最终交接 commit `a0a1ca3` 均已推送到远程 `main`。
