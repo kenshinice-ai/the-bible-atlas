@@ -2,7 +2,7 @@
 
 ## 项目现状
 
-### 2026-08-18 阶段性交接：Bible 艺术与音乐升级 A/B/C/D（本地候选）
+### 2026-08-18 最终交接：Bible 艺术与音乐升级 A/B/C/D（已评审、已发布 production）
 
 按用户批准的四条轨全量执行，把欧洲美术史与欧洲音乐史两条内容线积累的工程方法（公版图像权利管线、确定性资产生成 + checksum、fail-closed 校验）反向应用到圣经域。规划见 [BIBLE_ART_MUSIC_UPGRADE_PLAN_2026-08-18.md](BIBLE_ART_MUSIC_UPGRADE_PLAN_2026-08-18.md)，决策见 [HANDOFF_DECISIONS_2026-08-18.md](HANDOFF_DECISIONS_2026-08-18.md)。
 
@@ -12,7 +12,14 @@
 - **D 全域艺术表达**：新增确定性程序化 SVG 总览母图（101 地点 + 10 路线，同库状态字节一致，29.6 KB）作为圣经 profile 的 hero 底图；13 枚时代徽章接入时代轨。
 - 关键实现：`db/migrations/022_bible_emblems_scripture_music.sql`、`db/seeds/068–071`、`apps/api/src/bible.ts`、`apps/web/src/components/Emblem.tsx`、`apps/web/src/components/IlluminatedQuote.tsx`、`scripts/generate_bible_art_music.ts`、`scripts/generate_bible_overview.ts`、`scripts/import_bible_dore_media.ts`、`scripts/verify_bible_art_music.ts`。
 - 校验：`verify_bible_visual_media.ts` 从冻结的 3 条清单改为**数据库驱动 + 策略硬编码**，新增 `npm run verify:bible-art-music`。
-- 一次完整验证已通过：隔离库 `literary_atlas_bible_art_music_20260818` fresh bootstrap（migration 001–022、seed 001–071）与 repeat bootstrap（92 项 already applied）；两个圣经 verifier；`npm run typecheck`；`npm test`（API 5 + Web 33）；`npm run build`；`npm run verify:postgis`；静态烘焙双语 JSON（924 KB / 964 KB，新字段齐全）；中英双语人物/事件抽屉与 390px 抽检，页面无横向溢出，console error/warn = 0。
+- 一次完整验证已通过（评审修改后重跑）：隔离库 `literary_atlas_bible_art_music_20260818` fresh bootstrap（migration 001–022、seed 001–071）与 repeat bootstrap（92 项 already applied）；两个圣经 verifier；`npm run typecheck`；`npm test`（API 5 + Web 33）；`npm run build`；`npm run verify:postgis`；中英双语人物/事件/地点抽屉与 390px 抽检，页面无横向溢出，console error = 0。
+
+Git 与 Cloudflare Pages：
+
+- commit `c57919e`（`feat(bible): symbolic identity, verified scripture, and musical reception`）已推送远程 `main`。同批推送还带上了此前积压未推的 12 个 commit（山海经 V1/V2、红楼梦蓝图等）。
+- production：[bible-atlas-6h7.pages.dev](https://bible-atlas-6h7.pages.dev/)。本次 deployment `df0d2736-754b-44b0-af12-e01f66cb6dfa`，预览地址 [df0d2736.bible-atlas-6h7.pages.dev](https://df0d2736.bible-atlas-6h7.pages.dev)，Cloudflare 记录 source `c57919e`；488 个文件，dist 约 101 MB。
+- 线上抽检：首页 HTTP 200；中文 atlas JSON 947,401 bytes，含 41 徽章 / 13 时代徽章 / 59 经文引用 / 38 引文（38/38 标记节选）/ 13 音乐链接 / 28 媒体；总览 SVG、多雷版画、音乐 WAV 均 200 且 content-type 正确；约翰福音 1:29 中文为完整的「看哪，神的羔羊，除去世人罪孽的」；夏娃徽章为「众生之母」；页面无 "King James" 字样；console error = 0。
+- 回滚点：上一版 production deployment `704f69dd-a414-4031-9c9c-61c8ca796ad6`（source `583ae49`，三周前）仍保留。
 - **神职/设计双重评审**：`liturgical-design-director` 初判**暂不放行**，列 7 项阻断（页脚仍宣称 KJV 为公版、同屏两套经文系统、节录未标记、约翰福音 1:29 中英不对等、`confession` 误译为「表白」、夏娃配蛇、中文界面打印原始 OSIS 码）。**全部已修并复验**，另同批采纳 S1/S2/B1/B2/B3/B7/B9/S4/S5/S6 建议项。逐条处置见 [HANDOFF_DECISIONS_2026-08-18.md](HANDOFF_DECISIONS_2026-08-18.md) 第 9 节。
 - 已知待决：新约多雷批次评审建议**收录**（含耶稣具象描绘，附四条件），本轮未执行；《Spem in alium》所据《友第德传》属次经，profile 无对应实体，记为缺口；主 JS chunk 增至 716 KB，仍超 500 KB 建议阈值。
 - 环境修复：`scripts/verify_postgis.sh` 加入 `export LC_ALL=${LC_ALL:-C}`，否则 PostgreSQL 18 在 macOS 上无法启动临时实例（与本轮功能无关）。

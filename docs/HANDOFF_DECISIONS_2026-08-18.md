@@ -1,6 +1,6 @@
 # Handoff 决策补充 · 2026-08-18（Bible 艺术与音乐升级 A/B/C/D）
 
-本文件记录本轮四条轨（A 人物视觉身份、B 重要言论、C 音乐维度、D 全域艺术表达）的执行决策与证据边界。规划见 [BIBLE_ART_MUSIC_UPGRADE_PLAN_2026-08-18.md](BIBLE_ART_MUSIC_UPGRADE_PLAN_2026-08-18.md)。**本轮全部为本地候选，未部署，公开站点未改变。**
+本文件记录本轮四条轨（A 人物视觉身份、B 重要言论、C 音乐维度、D 全域艺术表达）的执行决策与证据边界。规划见 [BIBLE_ART_MUSIC_UPGRADE_PLAN_2026-08-18.md](BIBLE_ART_MUSIC_UPGRADE_PLAN_2026-08-18.md)。**本轮已通过神职/设计双重评审并发布 production（deployment `df0d2736`，commit `c57919e`）。**
 
 ## 1. 决策 BA-D001：人物身份走符号，不走肖像
 
@@ -58,10 +58,10 @@
 
 ## 8. 证据边界与交接
 
-- 本地候选、隔离数据库、静态构建、公开 production 是四个不同证据层级；本轮推进到**本地候选 + 隔离库 fresh/repeat bootstrap + 静态烘焙**，未部署。
-- 公开站点 https://bible-atlas-6h7.pages.dev/ 未重新部署，线上 bundle 不包含本轮任何内容。
+- 本地候选、隔离数据库、静态构建、公开 production 是四个不同证据层级；本轮**四级全部走完**，并在评审阻断项修复后重跑。
+- 公开站点 https://bible-atlas-6h7.pages.dev/ 已重新部署（deployment `df0d2736`，source `c57919e`），线上内容已逐项抽检。
 - 引文的 `source_verified` 依据是 bible-api.com 提供的公版 CUV / WEB 文本，每条记录了可复查的 URL 与取回时间。若要提升到"权威版本比对"，下一轮应改用离线冻结的公版文本文件并记录其 checksum。
-- 本轮未提交、未推送；当前分支仍为 main。
+- 本轮已提交 `c57919e` 并推送 origin/main；同批推送带上了此前积压的 12 个 commit。
 - 工作区中另有一个 `backup/literary_atlas_pre_migration_2026-08-18.sql`，非本轮产出，未纳入本轮变更集。
 
 ## 9. 神职/设计双重评审(liturgical-design-director)与放行

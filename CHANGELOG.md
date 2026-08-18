@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased — Bible art and music upgrade (2026-08-18)
+## 2026-08-18 — Bible art and music upgrade
 
 - Added a heraldic emblem system for people and eras: 41 curated emblems, each declaring whether its sign is attested in the text, in liturgy, or only in later art, plus a deterministic procedural fallback so every one of the 224 people is identifiable. Emblems replace the silhouette avatar, because the atlas has no evidence for anyone's appearance — and deliberately give Jesus a Chi-Rho rather than a face.
 - Added verse-level provenance: 59 event scripture references and 38 recorded sayings in both locales, restricted to public-domain editions (CUV 1919, World English Bible; the KJV is excluded over UK Crown copyright). Every excerpt was proved to be a literal substring of a retrieved verse, and the database refuses to mark a quote verified without the source URL, timestamp and containment holding.
