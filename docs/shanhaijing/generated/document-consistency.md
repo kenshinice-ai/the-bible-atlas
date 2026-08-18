@@ -3,11 +3,11 @@
 - 生成命令：`npm run verify:shanhaijing-docs`
 - 生成器版本：`1.0.0`
 - 生成器 SHA-256：`4e8d55a5df39147d59a4b5a22a5cc82b40627492173fa64fc33e76f2d9de871f`
-- 生成时间：`2026-08-18T01:11:18.919Z`
+- 生成时间：`2026-08-18T05:07:21.947Z`
 - 证据层级：`local_candidate`
 - 检查结果：`pass`
 - 输入文件：30
-- 检查数：272
+- 检查数：273
 - errors / warnings / info：0 / 0 / 1
 - Gate 结论：`blocked`；本报告只证明机械一致性，不替代专家评审、输入冻结或 Gate 0 授权。
 

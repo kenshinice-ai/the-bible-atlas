@@ -4,14 +4,14 @@
   "command": "npm run verify:shanhaijing-docs",
   "generatorVersion": "1.0.0",
   "generatorSha256": "4e8d55a5df39147d59a4b5a22a5cc82b40627492173fa64fc33e76f2d9de871f",
-  "generatedAt": "2026-08-18T01:11:18.919Z",
+  "generatedAt": "2026-08-18T05:07:21.947Z",
   "evidenceLevel": "local_candidate",
   "result": "pass",
   "gateTransitionAuthorized": false,
   "gateStatus": "blocked",
   "counts": {
     "inputs": 30,
-    "checks": 272,
+    "checks": 273,
     "errors": 0,
     "warnings": 0,
     "info": 1
