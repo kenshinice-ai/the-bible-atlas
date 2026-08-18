@@ -4,14 +4,14 @@
   "command": "npm run verify:shanhaijing-docs",
   "generatorVersion": "1.0.0",
   "generatorSha256": "4e8d55a5df39147d59a4b5a22a5cc82b40627492173fa64fc33e76f2d9de871f",
-  "generatedAt": "2026-08-18T00:17:58.364Z",
+  "generatedAt": "2026-08-18T00:32:54.274Z",
   "evidenceLevel": "local_candidate",
   "result": "pass",
   "gateTransitionAuthorized": false,
   "gateStatus": "blocked",
   "counts": {
     "inputs": 30,
-    "checks": 268,
+    "checks": 269,
     "errors": 0,
     "warnings": 0,
     "info": 1
@@ -162,8 +162,8 @@
     },
     {
       "path": "docs/shanhaijing/FANTASY_COMPOSITE_MAP_GENERATION_STATUS.md",
-      "bytes": 2472,
-      "sha256": "8fbf2da93a5c280dc81b502fee9d1eb4f5a07350a192905fcd9d4267c7e0b4fc"
+      "bytes": 3504,
+      "sha256": "f13b92f0e31d40c709fdc18a4900223c31bb71f1e4cb4256ba3d45502425f6e0"
     },
     {
       "path": "docs/shanhaijing/generated/README.md",

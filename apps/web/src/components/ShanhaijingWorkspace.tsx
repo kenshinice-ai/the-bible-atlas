@@ -50,10 +50,13 @@ function ArtisticOverview({ atlas, locale, selected, onSelect }: Pick<Props, "at
       ? domain.creatures.find((item) => item.slug === selected.id)?.placeSlugs ?? []
       : selected?.type === "textual_place" ? [selected.id] : [],
   );
+  const artMaster = overview?.assetUrl ?? null;
   return <section className="shj-overview">
     <div className="shj-overview-heading">
       <div>
-        <p className="eyebrow">{locale === "zh-CN" ? "艺术总览 · 结构化替代视图" : "Artistic overview · structured substitute"}</p>
+        <p className="eyebrow">{artMaster
+          ? (locale === "zh-CN" ? "艺术总览 · 程序化母图 + 证据叠加" : "Artistic overview · procedural master with evidence overlay")
+          : (locale === "zh-CN" ? "艺术总览 · 结构化替代视图" : "Artistic overview · structured substitute")}</p>
         <h2>{overview?.title ?? (locale === "zh-CN" ? "山海经幻想总览" : "Shanhaijing Fantasy Overview")}</h2>
         <p>{overview?.description}</p>
       </div>
@@ -68,10 +71,14 @@ function ArtisticOverview({ atlas, locale, selected, onSelect }: Pick<Props, "at
           <radialGradient id="shj-land"><stop stopColor="#92744c" /><stop offset=".62" stopColor="#665f43" /><stop offset="1" stopColor="#3e4d3d" /></radialGradient>
           <filter id="shj-glow"><feGaussianBlur stdDeviation="6" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
         </defs>
-        <rect width="1000" height="600" fill="url(#shj-ocean)" />
-        <path className="shj-landmass" d="M80 390 Q110 170 275 95 Q430 16 585 100 Q720 50 900 170 Q970 280 904 440 Q760 540 548 520 Q310 570 126 490Z" fill="url(#shj-land)" />
-        <path className="shj-river" d="M125 382 Q260 330 350 382 T560 360 T760 410 T930 330" />
-        <path className="shj-river secondary" d="M340 120 Q410 230 380 390 T510 520" />
+        {artMaster
+          ? <image href={artMaster} width="1000" height="600" preserveAspectRatio="xMidYMid slice" />
+          : <>
+            <rect width="1000" height="600" fill="url(#shj-ocean)" />
+            <path className="shj-landmass" d="M80 390 Q110 170 275 95 Q430 16 585 100 Q720 50 900 170 Q970 280 904 440 Q760 540 548 520 Q310 570 126 490Z" fill="url(#shj-land)" />
+            <path className="shj-river" d="M125 382 Q260 330 350 382 T560 360 T760 410 T930 330" />
+            <path className="shj-river secondary" d="M340 120 Q410 230 380 390 T510 520" />
+          </>}
         {domain.topologyEdges.map((edge) => {
           const from = placeBySlug.get(edge.fromSlug);
           const to = placeBySlug.get(edge.toSlug);
@@ -105,7 +112,7 @@ function ArtisticOverview({ atlas, locale, selected, onSelect }: Pick<Props, "at
               }
             }}
           >
-            <path className="shj-mountain" d={`M-28 20 L-4 -${42 + index % 3 * 8} L12 -12 L30 20Z`} />
+            {!artMaster && <path className="shj-mountain" d={`M-28 20 L-4 -${42 + index % 3 * 8} L12 -12 L30 20Z`} />}
             <circle className="shj-node-ring" r={active ? 30 : 23} filter={active ? "url(#shj-glow)" : undefined} />
             <text className="shj-node-label" y="43">{place.name}</text>
             {creatures.length > 0 && <text className="shj-node-count" y="-32">{creatures.length}</text>}

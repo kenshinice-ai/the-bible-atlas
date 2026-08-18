@@ -27,7 +27,7 @@ export async function loadShanhaijingAtlas(
        WHERE e.work_id=$1 AND e.is_baseline AND e.review_status='published'
          AND s.review_status='published'
        ORDER BY s.sequence`,
-      args,
+      [workId, requestedLocale],
     ),
     db.query(
       `SELECT p.id,p.slug,p.reference_key AS "referenceKey",p.sequence,s.slug AS "sectionSlug",
@@ -140,7 +140,7 @@ export async function loadShanhaijingAtlas(
         CASE WHEN $2='zh-CN' THEN description_zh ELSE description_en END AS description,
         CASE WHEN $2='zh-CN' THEN disclosure_zh ELSE disclosure_en END AS disclosure
        FROM shj_artistic_overviews WHERE work_id=$1 ORDER BY slug LIMIT 1`,
-      args,
+      [workId, requestedLocale],
     ),
     db.query(
       `SELECT

@@ -3,11 +3,11 @@
 - 生成命令：`npm run verify:shanhaijing-docs`
 - 生成器版本：`1.0.0`
 - 生成器 SHA-256：`4e8d55a5df39147d59a4b5a22a5cc82b40627492173fa64fc33e76f2d9de871f`
-- 生成时间：`2026-08-18T00:17:58.364Z`
+- 生成时间：`2026-08-18T00:32:54.274Z`
 - 证据层级：`local_candidate`
 - 检查结果：`pass`
 - 输入文件：30
-- 检查数：268
+- 检查数：269
 - errors / warnings / info：0 / 0 / 1
 - Gate 结论：`blocked`；本报告只证明机械一致性，不替代专家评审、输入冻结或 Gate 0 授权。
 
@@ -60,7 +60,7 @@
 | docs/shanhaijing/REVIEWER_ASSIGNMENTS_2026-08-15.md | 10562 | `522491870bb32f4d2f9ab47aade5685384875c84c11876b4a4ca895989cda5da` |
 | docs/shanhaijing/MAP_IMPLEMENTATION_STRATEGY_2026-08-15.md | 9483 | `1a810a4d8022d028664fad9a0fd88bd89d2b2761415cc750a0783a28912ff43b` |
 | docs/shanhaijing/FANTASY_COMPOSITE_MAP_ART_DIRECTION_2026-08-15.md | 7628 | `c3191b2aaba8a66519cfa1e9d34e0d31acf17d0eb05138905b4a5db23ebb7d46` |
-| docs/shanhaijing/FANTASY_COMPOSITE_MAP_GENERATION_STATUS.md | 2472 | `8fbf2da93a5c280dc81b502fee9d1eb4f5a07350a192905fcd9d4267c7e0b4fc` |
+| docs/shanhaijing/FANTASY_COMPOSITE_MAP_GENERATION_STATUS.md | 3504 | `f13b92f0e31d40c709fdc18a4900223c31bb71f1e4cb4256ba3d45502425f6e0` |
 | docs/shanhaijing/generated/README.md | 1660 | `23cc700b75305566acc0cb61d91e580688c4f776b6c0eb2800da76c0717fd9c4` |
 | docs/shanhaijing/prompts/fantasy-composite-map-v1.txt | 3314 | `c73779d6d7c0c3ffc6fe186f46a22fd0ec6bc4bd6862239154447e31128a8cac` |
 

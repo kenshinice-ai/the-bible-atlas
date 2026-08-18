@@ -1,12 +1,21 @@
 # 《山海经 Atlas》幻想拼接总图生成状态
 
-- 状态：`review_ready`
-- 当前阶段：Phase 0 / Gate 0
+- 状态：`superseded`（2026-08-18，按 SJ-D011 改走原创程序化 SVG；本文件保留 ImageGen 路线记录，该路线推迟到 Scale 阶段作为可选升级）
+- 当前阶段：Phase 1 / V1
 - 证据层级：`local_candidate`
 - 核心蓝图：[memoized-riding-giraffe.md](memoized-riding-giraffe.md)
 - 美术方向：[FANTASY_COMPOSITE_MAP_ART_DIRECTION_2026-08-15.md](FANTASY_COMPOSITE_MAP_ART_DIRECTION_2026-08-15.md)
 - prompt：[prompts/fantasy-composite-map-v1.txt](prompts/fantasy-composite-map-v1.txt)
-- 当前结果：`blocked_missing_api_key`
+- 当前结果：ImageGen 路线 `blocked_missing_api_key` → 被 SJ-D011 替代
+
+## 0. 2026-08-18 替代实现：原创程序化 SVG 母图
+
+- 生成器：`scripts/generate_shanhaijing_overview.ts`（确定性；同一数据库状态输出字节一致的 SVG）
+- 资产：`apps/web/public/media/shanhaijing/artistic-overview-v1.svg`；manifest：[generated/artistic-overview-v1.manifest.json](generated/artistic-overview-v1.manifest.json)
+- 数据库：seed `066` 将 `shj_artistic_overviews` 置为 `published`，`prompt_path`/`prompt_sha256` 指向生成器并由 `verify:shanhaijing` 复核
+- 母图无标签；工作区以 `<image>` 作底层，程序叠加热点、名称、里距与图例（符合美术方向的"程序叠加"要求）
+- 权利：项目自绘矢量，无第三方图像/字体/模型输出，rights verified by construction
+- 下文第 1–4 节为被替代的 ImageGen 请求历史记录，保持原样。
 
 ## 1. 生成请求
 
