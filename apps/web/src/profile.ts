@@ -1,6 +1,6 @@
 import type { Locale } from "./types";
 
-export type ProfileTab = "characters" | "artists" | "artworks" | "movements" | "compositions" | "instruments" | "scoreFragments" | "events" | "locations" | "routes" | "relations";
+export type ProfileTab = "overview" | "creatures" | "passages" | "textualPlaces" | "characters" | "artists" | "artworks" | "movements" | "compositions" | "instruments" | "scoreFragments" | "events" | "locations" | "routes" | "relations";
 export type ProfileZoomLevel = "era" | "group" | "major" | "all";
 
 /**
@@ -24,7 +24,7 @@ export interface WorkProfile {
   tagline: readonly [string, string];
   /** data-profile attribute value driving the CSS token theme. */
   theme: string;
-  specialization: "base" | "art" | "music";
+  specialization: "base" | "art" | "music" | "shanhaijing";
   tabs: readonly ProfileTab[];
   defaultTab: ProfileTab;
   graphLevels: readonly ProfileZoomLevel[];
@@ -108,6 +108,21 @@ export const PROFILES: Record<string, WorkProfile> = {
     theme: "european-classical-music-history",
     specialization: "music", tabs: ["characters", "compositions", "scoreFragments", "events", "relations"], defaultTab: "events",
     graphLevels: ["era", "group", "major", "all"], defaultGraphLevel: "group",
+  },
+  shanhaijing: {
+    id: "shanhaijing",
+    works: ["shanhaijing"],
+    active: "shanhaijing",
+    mode: "single",
+    defaultLocale: "zh-CN",
+    title: ["山海经 Atlas", "Shanhaijing Atlas"],
+    tagline: ["循山海原文，见万物异象", "Follow the text through mountains, seas, and strange beings"],
+    theme: "shanhaijing",
+    specialization: "shanhaijing",
+    tabs: ["overview", "creatures", "passages", "textualPlaces"],
+    defaultTab: "overview",
+    graphLevels: ["all"],
+    defaultGraphLevel: "all",
   },
 };
 

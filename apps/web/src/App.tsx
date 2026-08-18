@@ -6,12 +6,13 @@ import { EntityList } from "./components/EntityList";
 import { GlobalSearch } from "./components/GlobalSearch";
 import { MusicStudyPanel } from "./components/MusicStudyPanel";
 import { RelationGraph } from "./components/RelationGraph";
+import { ShanhaijingWorkspace } from "./components/ShanhaijingWorkspace";
 import { TimelineRibbon } from "./components/TimelineRibbon";
 import { WorkControlCenter } from "./components/WorkControlCenter";
 import { DATA_NOTE, ERA_EPIGRAPHS, FOOTER_EPIGRAPH, LOADING_EPIGRAPHS, SOURCE_NOTE, WELCOME_EPIGRAPH, type Epigraph } from "./epigraphs";
 import { filtersFrom, isFiltered, visibleCharacters, visibleEvents, visibleLocations, visibleRelations } from "./hierarchy";
 import { PROFILE } from "./profile";
-import { formatYear, label, t } from "./i18n";
+import { formatYear, label, originRegionLabel, t } from "./i18n";
 import {
   WORK_LOCK, parseAtlasState, resolveRange, serializeAtlasState, validateWorkSelection,
   type ExploreState, type MapContentLayer, type SelectedEntity, type SelectionMode, type SelectionSource, type Tab, type TimelineMode, type ZoomLevel,
@@ -19,7 +20,10 @@ import {
 import { type Atlas, type Locale, type WorksResponse } from "./types";
 
 function tabForEntity(entity: SelectedEntity): Tab {
-  return entity.type === "character" ? "characters"
+  return entity.type === "creature" ? "creatures"
+    : entity.type === "passage" ? "passages"
+      : entity.type === "textual_place" ? "textualPlaces"
+        : entity.type === "character" ? "characters"
     : entity.type === "artist" ? (PROFILE.canonicalArtistPeople ? "characters" : "artists")
       : entity.type === "artwork" ? "artworks"
         : entity.type === "movement" ? "movements"
@@ -29,7 +33,7 @@ function tabForEntity(entity: SelectedEntity): Tab {
     : entity.type === "event" ? "events"
       : entity.type === "location" ? "locations"
         : entity.type === "route" ? "routes"
-          : entity.type === "relationship" ? "relations" : "events";
+          : entity.type === "relationship" ? "relations" : PROFILE.defaultTab;
 }
 
 const VISIBLE_TABS: readonly Tab[] = PROFILE.tabs;
@@ -55,12 +59,15 @@ function EpigraphBlock({ epigraph, locale, className = "epigraph" }: { epigraph:
 
 export default function App() {
   const [explore, setExplore] = useState<ExploreState>(() => parseAtlasState(location.search));
+  const locale = explore.locale;
 
   // The profile owns the document identity: tab title and CSS theme scope.
   useEffect(() => {
-    document.title = `${PROFILE.title[0]} · ${PROFILE.title[1]}`;
+    const index = locale === "zh-CN" ? 0 : 1;
+    document.title = `${PROFILE.title[index]} · ${PROFILE.title[locale === "zh-CN" ? 1 : 0]}`;
+    document.documentElement.lang = locale === "zh-CN" ? "zh-CN" : "en";
     document.documentElement.dataset.profile = PROFILE.theme;
-  }, []);
+  }, [locale]);
   const [works, setWorks] = useState<WorksResponse["items"]>([]);
   const [atlases, setAtlases] = useState<Atlas[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -68,7 +75,6 @@ export default function App() {
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const atlasCache = useRef(new Map<string, Atlas>());
-  const locale = explore.locale;
 
   function commit(next: ExploreState, push = false) {
     if (push) history.pushState(null, "", serializeAtlasState(next));
@@ -263,12 +269,20 @@ export default function App() {
               <h2>{activeAtlas.work.title}</h2>
               <p>{activeAtlas.work.summary}</p>
               <small>
-                {activeAtlas.work.originRegion}
-                {" · "}{formatYear(defaultRange.start, locale)} – {formatYear(defaultRange.end, locale)}
-                {" · "}{activeAtlas.characters.length} {t("characters", locale)}
-                {" · "}{activeAtlas.events.length} {t("events", locale)}
-                {" · "}{activeAtlas.locations.length} {t("locations", locale)}
-                {" · "}{activeAtlas.chapters.length} {t("eraBands", locale)}
+                {originRegionLabel(activeAtlas.work.originRegion, locale)}
+                {activeAtlas.shanhaijing
+                  ? <>
+                    {" · "}{activeAtlas.shanhaijing.coverage.creatureConcepts} {t("creatures", locale)}
+                    {" · "}{activeAtlas.shanhaijing.coverage.textualOccurrences} {locale === "zh-CN" ? "文本提及" : "textual occurrences"}
+                    {" · "}{activeAtlas.shanhaijing.coverage.passagesReviewed}/{activeAtlas.shanhaijing.coverage.passagesTotal} {t("passages", locale)}
+                  </>
+                  : <>
+                    {" · "}{formatYear(defaultRange.start, locale)} – {formatYear(defaultRange.end, locale)}
+                    {" · "}{activeAtlas.characters.length} {t("characters", locale)}
+                    {" · "}{activeAtlas.events.length} {t("events", locale)}
+                    {" · "}{activeAtlas.locations.length} {t("locations", locale)}
+                    {" · "}{activeAtlas.chapters.length} {t("eraBands", locale)}
+                  </>}
               </small>
             </div>
             <button className="copy" onClick={() => void navigator.clipboard.writeText(location.href).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500); })}>
@@ -276,6 +290,18 @@ export default function App() {
             </button>
           </section>
 
+          {PROFILE.specialization === "shanhaijing" && activeAtlas.shanhaijing
+            ? <ShanhaijingWorkspace
+              atlas={activeAtlas}
+              locale={locale}
+              tab={explore.tab}
+              query={explore.query}
+              selected={explore.selectedEntity}
+              onTab={setTab}
+              onQuery={(query) => commit({ ...explore, query })}
+              onSelect={selectEntity}
+            />
+            : <>
           {/* Scripture epigraph: the selected era's verse, or the welcome verse
               (Psalm 119:18) while no era is chosen. */}
           <EpigraphBlock
@@ -405,6 +431,7 @@ export default function App() {
             onChapter={setChapter}
             onSelect={(entity) => selectEntity(entity, "timeline")}
           />
+          </>}
 
           {activeAtlas.sources.length > 0 && <footer>
             <h2>{t("sources", locale)}</h2>

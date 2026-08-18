@@ -17,6 +17,8 @@
     "stop:local": "bash scripts/stop_local.sh",
     "test:start-command": "bash scripts/test_start_command.sh",
     "verify:artwork-media": "tsx scripts/verify_artwork_media.ts",
+    "verify:bible-visual-media": "tsx scripts/verify_bible_visual_media.ts",
+    "verify:shanhaijing-docs": "tsx scripts/verify_shanhaijing_docs.ts",
     "verify:music": "tsx scripts/verify_european_music.ts",
     "generate:art-expansion": "tsx scripts/generate_european_art_expansion.ts",
     "generate:music-foundation": "node scripts/generate_european_music_foundation.mjs",

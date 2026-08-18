@@ -1,0 +1,117 @@
+# 《山海经 Atlas》发布与证据门禁
+
+- 状态：`review_ready`
+- 证据层级：`local_candidate`
+- 核心蓝图：[memoized-riding-giraffe.md](memoized-riding-giraffe.md)
+- 当前 Gate：`Phase 0 / Gate 0 blocked`
+
+本清单区分五层证据。低层证据不能宣称高层完成；文档、代码或 staging 交接不自动授权 production 发布。所有结果引用机器生成报告、输入 checksum、revision、环境和 reviewer。
+
+## 通用 release identity
+
+- release revision：`not_assigned`
+- source commit：`not_frozen`
+- input checksum set：`not_frozen`
+- static manifest checksum：`not_implemented`
+- release owner：`R-RELEASE`
+- reviewer：项目责任 reviewer matrix 已指定；外部人工签署 `pending`
+- rollback reference：`not_implemented`
+- authorization reference：`not_authorized`
+- release disposition：`blocked`
+
+## Evidence levels
+
+### 1. local_candidate
+
+用途：本地文档、代码或候选资产的可重复检查，不代表隔离数据库、静态产物或部署。
+
+- [x] 工作区路径与 dirty-worktree 边界已记录；独立 commit/checkpoint 仍待建立。
+- [ ] 输入版本和 checksum 已记录。
+- [x] 文档链接、术语、枚举和状态 consistency report 通过。
+- [ ] 未把候选 fixture 或本地文件写成 release artifact。
+- [x] 报告路径：`docs/shanhaijing/generated/document-consistency.json`
+- [ ] Gate：`blocked`，除非上升到下一层并满足前置条件。
+
+### 2. isolated_database
+
+用途：隔离数据库中的 migration、seed、约束和 verifier 证据。
+
+- [ ] fresh bootstrap 通过。
+- [ ] repeat bootstrap/idempotency 通过。
+- [ ] FK、check、enum、索引、删除和权限策略通过。
+- [ ] corpus、occurrence/concept、taxonomy、geography、chronology completeness 通过。
+- [ ] 报告包含数据库版本、输入 checksum、fixture、命令和退出码。
+- [ ] 报告路径：`not_implemented`
+- [ ] Gate：`blocked`。
+
+### 3. built_static_artifact
+
+用途：可交付的版本化静态构建及 dynamic/static parity 证据。
+
+- [ ] registry completeness 通过。
+- [ ] API contract、locale published-only、search、detail、map partition 通过。
+- [ ] static bake manifest、分片、checksum 和路径完整。
+- [ ] dynamic 与 static 的 schema、counts、搜索抽样和 rights gate parity 通过。
+- [ ] media/audio rights、provenance、alt、interpretation 和撤回检查通过。
+- [ ] performance、browser、a11y 和 reduced-data 报告达到冻结预算或有批准豁免。
+- [ ] 构建报告路径：`not_implemented`
+- [ ] parity 报告路径：`not_implemented`
+- [ ] Gate：`blocked`。
+
+### 4. staging
+
+用途：目标部署环境中的候选发布、smoke、缓存和撤回验证。
+
+- [ ] staging deployment revision 与 static manifest 一致。
+- [ ] 首屏、搜索、筛选、drawer、深链、刷新、语言和地图模式 smoke 通过。
+- [ ] 音频显式播放、全局单轨、rights-denied、无音频和文字替代通过。
+- [ ] 390x844、768x1024、1280x800 和宽屏无溢出/重叠。
+- [ ] console/server/network 无未解释错误。
+- [ ] cache/precache/CDN 可达路径与 rights withdrawal 行为通过。
+- [ ] soak、rollback rehearsal 和 artifact retention 记录完成。
+- [ ] 报告路径：`not_implemented`
+- [ ] Gate：`blocked`。
+
+### 5. production
+
+用途：经明确授权的线上发布与 production smoke。没有单独授权不得执行。
+
+- [ ] production authorization：`not_authorized`
+- [ ] 变更窗口和责任人：`not_assigned`
+- [ ] 版本 manifest、输入 checksum 和源码 commit 已冻结。
+- [ ] rollback 命令/方案已审核并演练。
+- [ ] production deployment result 已记录。
+- [ ] production smoke、静态资源、API/error、搜索、深链、locale、媒体 rights gate 通过。
+- [ ] 监控、日志、告警和撤回联系人已登记。
+- [ ] smoke 报告路径：`not_implemented`
+- [ ] Gate：`blocked`。
+
+## Stop conditions
+
+任一项成立时保持 `blocked`：
+
+- 输入 edition、passage segmentation、checksum 或 release revision 未冻结；
+- occurrence 无 passage，归并/拆分无 editorial decision；
+- 三层地理或四轴 chronology 在数据/API/UI 中混用；
+- rights、provenance、interpretation、alt 或 checksum 缺失；
+- dynamic/static parity、registry completeness、coverage 或撤回检查失败；
+- 专家 review 仍有 blocking 问题或 waiver 过期；
+- 性能、a11y、浏览器或 reduced mode 超预算且无书面批准；
+- staging/production 证据被低层报告替代；
+- 没有明确的发布授权、rollback 和 version manifest。
+
+## Release approval record
+
+- requestedBy：`not_assigned`
+- approvedBy：`not_assigned`
+- approvedAt：`not_assigned`
+- scope：`not_authorized`
+- expiry：`not_applicable`
+- decision：`blocked`
+- evidence index：`not_implemented`
+
+## 修订记录
+
+| Revision | 日期 | 修改 | 作者/owner | 证据 |
+|---|---|---|---|---|
+| `SJ-RELEASE-001` | 2026-08-14 | 建立五层证据发布清单 | 主负责人 | `HANDOFF.md` |

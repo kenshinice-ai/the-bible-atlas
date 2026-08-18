@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getEntityDetail } from "../api";
 import { colorForCharacter } from "../hierarchy";
-import { formatEventTime, formatYear, label, t } from "../i18n";
+import { depictionStatusLabel, formatEventTime, formatYear, label, mediaRoleLabel, t } from "../i18n";
 import type { SelectedEntity, SelectionSource, Tab } from "../state";
 import type { Atlas, AtlasCharacter, AtlasMedia, Locale } from "../types";
 
@@ -46,31 +46,42 @@ function Sources({ names, locale }: { names: string[]; locale: Locale }) {
   return <section><h3>{t("sources", locale)}</h3>{names.map((name) => <p key={name} className="source-name">{name}</p>)}</section>;
 }
 
-function ArtworkMediaCard({ media, locale }: { media: AtlasMedia; locale: Locale }) {
+function mediaNote(status: AtlasMedia["depictionStatus"], locale: Locale): string {
+  if (status === "illustrative") return t("illustrativeMediaNote", locale);
+  if (status === "documentary") return t("documentaryMediaNote", locale);
+  if (status === "cartographic") return t("cartographicMediaNote", locale);
+  return t("unclassifiedMediaNote", locale);
+}
+
+function VisualMediaCard({ media, locale }: { media: AtlasMedia; locale: Locale }) {
   const [failed, setFailed] = useState(false);
   const sourceUrl = media.sourcePageUrl ?? media.originalUrl ?? (media.assetUrl.startsWith("http") ? media.assetUrl : null);
+  const context = `${mediaRoleLabel(media.mediaRole, locale)} · ${depictionStatusLabel(media.depictionStatus, locale)}`;
   if (media.mediaKind === "external_link") {
-    return <div className="artwork-media artwork-media-external">
+    return <div className="visual-media visual-media-external">
+      <small className="media-context">{context}</small>
       <p>{t("externalImageNote", locale)}</p>
       {sourceUrl && <a className="link" href={sourceUrl} target="_blank" rel="noreferrer">{t("viewSource", locale)} ↗</a>}
       <small>{media.assetSource} · {media.assetLicence}</small>
     </div>;
   }
   if (failed) {
-    return <div className="artwork-media artwork-media-unavailable">
+    return <div className="visual-media visual-media-unavailable">
+      <small className="media-context">{context}</small>
       <p>{t("imageUnavailable", locale)}</p>
       {sourceUrl && <a className="link" href={sourceUrl} target="_blank" rel="noreferrer">{t("viewSource", locale)} ↗</a>}
     </div>;
   }
-  return <figure className="artwork-media">
+  return <figure className="visual-media">
+    <div className="media-context"><strong>{context}</strong><span>{mediaNote(media.depictionStatus, locale)}</span></div>
     <img src={media.assetUrl} alt={media.altText} loading="lazy" decoding="async" onError={() => setFailed(true)} />
     <figcaption><span><strong>{t("imageAttribution", locale)}:</strong> {media.attributionText}</span>{sourceUrl && <a href={sourceUrl} target="_blank" rel="noreferrer">{t("viewSource", locale)} ↗</a>}{media.licenseUrl && <a href={media.licenseUrl} target="_blank" rel="noreferrer">{media.assetLicence}</a>}</figcaption>
   </figure>;
 }
 
-function ArtworkMedia({ media, locale }: { media: AtlasMedia[]; locale: Locale }) {
+function VisualMedia({ media, locale, title }: { media: AtlasMedia[]; locale: Locale; title: string }) {
   if (media.length === 0) return null;
-  return <section><h3>{t("artworkImage", locale)}</h3><div className="artwork-media-stack">{media.map((item) => <ArtworkMediaCard key={item.id} media={item} locale={locale} />)}</div></section>;
+  return <section className="visual-media-section"><h3>{title}</h3><div className="visual-media-stack">{media.map((item) => <VisualMediaCard key={item.id} media={item} locale={locale} />)}</div></section>;
 }
 
 function Shell({ children, onClose, locale }: { children: React.ReactNode; onClose: () => void; locale: Locale }) {
@@ -106,6 +117,79 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
   const detail = useEntityDetail(atlas.work.slug, entity.type === "relationship" ? "relationship" : entity.type, entity.id, locale);
   const chapterOf = (slug: string | null) => atlas.chapters.find((item) => item.slug === slug);
 
+  if (entity.type === "creature" && atlas.shanhaijing) {
+    const creature = atlas.shanhaijing.creatures.find((item) => item.slug === entity.id);
+    if (!creature) return null;
+    const occurrences = atlas.shanhaijing.occurrences.filter((item) => item.creatureSlug === creature.slug);
+    const places = atlas.shanhaijing.places.filter((item) => creature.placeSlugs.includes(item.slug));
+    return <Shell onClose={onClose} locale={locale}>
+      <small>{atlas.work.title} · {label(creature.conceptStatus, locale)}</small>
+      <h2>{creature.name}</h2>
+      {creature.aliases.length > 0 && <p className="aliases">{t("aliases", locale)}: {creature.aliases.join(" · ")}</p>}
+      <div className="identity-tags"><span>{label(creature.conceptStatus, locale)}</span><span>{label("text_direct", locale)}</span><span>{"●".repeat(creature.importance)}</span></div>
+      <p>{creature.summary}</p>
+      {(detail.detail || creature.detail) && <p>{String(detail.detail || creature.detail)}</p>}
+      {occurrences.map((occurrence) => {
+        const passage = atlas.shanhaijing!.passages.find((item) => item.slug === occurrence.passageSlug);
+        return <section key={occurrence.id} className="shj-drawer-occurrence">
+          <h3>{locale === "zh-CN" ? "原文提及" : "Textual occurrence"} · {passage?.title}</h3>
+          <blockquote lang="zh-Hant">「{occurrence.quoteZh}」</blockquote>
+          <div className="identity-tags"><span>{label(occurrence.sourceAttestation, locale)}</span><span>{label(occurrence.interpretationClass, locale)}</span><span>{label(occurrence.confidence, locale)}</span></div>
+          {passage && <button className="link" onClick={() => onSelect({ type: "passage", workSlug: atlas.work.slug, id: passage.slug }, "list")}>{locale === "zh-CN" ? "查看完整段落" : "Open passage"}</button>}
+        </section>;
+      })}
+      {creature.taxonomy.length > 0 && <section><h3>{locale === "zh-CN" ? "多轴分类证据" : "Multi-axis taxonomy"}</h3><dl>
+        {creature.taxonomy.map((item) => <div key={`${item.axis}:${item.term}`}><dt>{label(item.axis, locale)}</dt><dd>{label(item.term, locale)} · {label(item.confidence, locale)}<small>{item.evidenceNote}</small></dd></div>)}
+      </dl></section>}
+      {places.length > 0 && <section><h3>{locale === "zh-CN" ? "文本地点" : "Textual places"}</h3><div className="drawer-links">
+        {places.map((place) => <button key={place.slug} onClick={() => onSelect({ type: "textual_place", workSlug: atlas.work.slug, id: place.slug }, "list")}>{place.name}</button>)}
+      </div></section>}
+      <p className="shj-disclosure">{locale === "zh-CN" ? "形态、声音与功效均按古籍文本分层展示，不构成现代物种鉴定或医疗建议。" : "Form, sound, and effects are layered as ancient textual claims, not modern species identification or medical advice."}</p>
+    </Shell>;
+  }
+
+  if (entity.type === "passage" && atlas.shanhaijing) {
+    const passage = atlas.shanhaijing.passages.find((item) => item.slug === entity.id);
+    if (!passage) return null;
+    const creatures = atlas.shanhaijing.creatures.filter((item) => passage.creatureSlugs.includes(item.slug));
+    const places = atlas.shanhaijing.places.filter((item) => passage.placeSlugs.includes(item.slug));
+    return <Shell onClose={onClose} locale={locale}>
+      <small>{atlas.work.title} · #{passage.sequence}</small>
+      <h2>{passage.title}</h2>
+      <p>{passage.summary}</p>
+      <section className="shj-source-passage"><h3>{locale === "zh-CN" ? "原文" : "Source text"}</h3><blockquote lang="zh-Hant">「{passage.textZh}」</blockquote></section>
+      {(detail.editorialNote || passage.editorialNote) && <p>{String(detail.editorialNote || passage.editorialNote)}</p>}
+      <dl><dt>reference</dt><dd>{passage.referenceKey}</dd><dt>SHA-256</dt><dd className="checksum">{passage.checksumSha256}</dd></dl>
+      {creatures.length > 0 && <section><h3>{t("creatures", locale)}</h3><div className="drawer-links">{creatures.map((creature) => <button key={creature.slug} onClick={() => onSelect({ type: "creature", workSlug: atlas.work.slug, id: creature.slug }, "list")}>{creature.name}</button>)}</div></section>}
+      {places.length > 0 && <section><h3>{t("textualPlaces", locale)}</h3><div className="drawer-links">{places.map((place) => <button key={place.slug} onClick={() => onSelect({ type: "textual_place", workSlug: atlas.work.slug, id: place.slug }, "list")}>{place.name}</button>)}</div></section>}
+      <a className="link" href={passage.sourceUrl} target="_blank" rel="noreferrer">{locale === "zh-CN" ? "打开核对页面 ↗" : "Open source check page ↗"}</a>
+    </Shell>;
+  }
+
+  if (entity.type === "textual_place" && atlas.shanhaijing) {
+    const place = atlas.shanhaijing.places.find((item) => item.slug === entity.id);
+    if (!place) return null;
+    const passages = atlas.shanhaijing.passages.filter((item) => place.passageSlugs.includes(item.slug));
+    const creatures = atlas.shanhaijing.creatures.filter((item) => place.creatureSlugs.includes(item.slug));
+    const incoming = atlas.shanhaijing.topologyEdges.find((item) => item.toSlug === place.slug);
+    const outgoing = atlas.shanhaijing.topologyEdges.find((item) => item.fromSlug === place.slug);
+    return <Shell onClose={onClose} locale={locale}>
+      <small>{atlas.work.title} · {label(place.placeKind, locale)}</small>
+      <h2>{place.name}</h2>
+      {place.aliases.length > 0 && <p className="aliases">{t("aliases", locale)}: {place.aliases.join(" · ")}</p>}
+      <p>{place.summary}</p>
+      <div className="identity-tags"><span>{label(place.placeKind, locale)}</span><span>{place.layoutSpace}</span><span>{locale === "zh-CN" ? "非经纬度" : "not WGS84"}</span></div>
+      <dl>
+        <dt>{locale === "zh-CN" ? "进入关系" : "Incoming relation"}</dt><dd>{incoming ? `${incoming.directionText} ${incoming.distanceValue} ${incoming.distanceUnit}` : (locale === "zh-CN" ? "首列起点" : "Route origin")}</dd>
+        <dt>{locale === "zh-CN" ? "下一节点" : "Next node"}</dt><dd>{outgoing ? atlas.shanhaijing.places.find((item) => item.slug === outgoing.toSlug)?.name ?? "—" : "—"}</dd>
+        <dt>{locale === "zh-CN" ? "布局坐标" : "Layout coordinates"}</dt><dd>{place.layoutX.toFixed(1)}, {place.layoutY.toFixed(1)}</dd>
+      </dl>
+      {passages.length > 0 && <section><h3>{t("passages", locale)}</h3><div className="drawer-links">{passages.map((passage) => <button key={passage.slug} onClick={() => onSelect({ type: "passage", workSlug: atlas.work.slug, id: passage.slug }, "list")}>{passage.title}</button>)}</div></section>}
+      {creatures.length > 0 && <section><h3>{t("creatures", locale)}</h3><div className="drawer-links">{creatures.map((creature) => <button key={creature.slug} onClick={() => onSelect({ type: "creature", workSlug: atlas.work.slug, id: creature.slug }, "list")}>{creature.name}</button>)}</div></section>}
+      <p className="shj-disclosure">{locale === "zh-CN" ? "这里显示的是文本路线布局，不代表现代中国地图中的确定位置。" : "This is a textual-route layout, not a certain location on a modern map of China."}</p>
+    </Shell>;
+  }
+
   if (entity.type === "character") {
     const person = atlas.characters.find((item) => item.slug === entity.id);
     if (!person) return null;
@@ -115,6 +199,7 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
     const era = chapterOf(person.chapterSlug);
     const birthPlace = atlas.locations.find((place) => place.slug === person.birthPlaceSlug);
     const deathPlace = atlas.locations.find((place) => place.slug === person.deathPlaceSlug);
+    const characterMedia = atlas.media.filter((item) => item.entityKind === "character" && item.entityId === person.id).sort((left, right) => left.id.localeCompare(right.id));
     return <Shell onClose={onClose} locale={locale}>
       <header>
         <PersonAvatar person={person} color={colorForCharacter(atlas, person)} />
@@ -132,6 +217,7 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
         <span>{label(person.realityType, locale)}</span>
         {artist && <span>{artist.modernStatus}</span>}
       </div>
+      <VisualMedia media={characterMedia} locale={locale} title={t("visualReference", locale)} />
       {artist && artist.formalTitles.length > 0 && <p className="aliases"><strong>{t("formalTitles", locale)}:</strong> {artist.formalTitles.join(" · ")}</p>}
       <p>{person.summary}</p>
       {(detail.detail || person.detail) && <p>{detail.detail || person.detail}</p>}
@@ -196,6 +282,7 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
     const previous = position > 0 ? ordered[position - 1] : undefined;
     const following = position >= 0 && position < ordered.length - 1 ? ordered[position + 1] : undefined;
     const routes = atlas.routes.filter((route) => event.routeSlugs.includes(route.slug));
+    const eventMedia = atlas.media.filter((item) => item.entityKind === "event" && item.entityId === event.id).sort((left, right) => left.id.localeCompare(right.id));
     return <Shell onClose={onClose} locale={locale}>
       <small>{atlas.work.title}{era ? ` · ${era.title}` : ""} · {label(event.eventType, locale)}</small>
       <h2>{event.title}</h2>
@@ -205,6 +292,7 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
         <span className={`confidence ${event.confidence}`}>{label(event.confidence, locale)}</span>
         <span>#{event.sequence}</span>
       </div>
+      <VisualMedia media={eventMedia} locale={locale} title={t("visualReference", locale)} />
       <p>{event.summary}</p>
       {(detail.detail || event.detail) && <p>{detail.detail || event.detail}</p>}
       {(detail.significance || event.significance) && <section><h3>{t("significance", locale)}</h3><p>{detail.significance || event.significance}</p></section>}
@@ -264,7 +352,7 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
     return <Shell onClose={onClose} locale={locale}>
       <small>{atlas.work.title}{era ? ` · ${era.title}` : ""}</small><h2>{artwork.title}</h2>
       <div className="identity-tags"><span>{label(artwork.status, locale)}</span><span>{artwork.medium}</span><span>{artwork.creationStartYear ?? "?"}{artwork.creationEndYear && artwork.creationEndYear !== artwork.creationStartYear ? `–${artwork.creationEndYear}` : ""}</span></div>
-      <ArtworkMedia media={artworkMedia} locale={locale} />
+      <VisualMedia media={artworkMedia} locale={locale} title={t("artworkImage", locale)} />
       <p>{artwork.summary}</p>
       {artwork.description && <section className="artwork-description"><h3>{t("artworkDescription", locale)}</h3><p>{artwork.description}</p></section>}
       <dl><dt>{t("creationPlace", locale)}</dt><dd>{atlas.locations.find((place) => place.slug === artwork.creationLocationSlug)?.name ?? "—"}</dd><dt>{t("currentLocation", locale)}</dt><dd>{atlas.locations.find((place) => place.slug === artwork.currentLocationSlug)?.name ?? "—"}</dd><dt>{t("medium", locale)}</dt><dd>{artwork.medium}</dd></dl>
@@ -379,6 +467,7 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
   if (entity.type === "location") {
     const place = atlas.locations.find((item) => item.slug === entity.id);
     if (!place) return null;
+    const placeMedia = atlas.media.filter((item) => item.entityKind === "location" && item.entityId === place.id).sort((left, right) => left.id.localeCompare(right.id));
     return <Shell onClose={onClose} locale={locale}>
       <small>{atlas.work.title}{place.historicalRegionName ? ` · ${place.historicalRegionName}` : ""}</small>
       <h2>{place.name}</h2>
@@ -388,6 +477,7 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
         <span className={place.isInferred ? "confidence low" : "confidence high"}>{label(place.coordinateAccuracy, locale)}</span>
         {place.modernCountryCode && <span>{place.modernCountryCode}</span>}
       </div>
+      <VisualMedia media={placeMedia} locale={locale} title={t("visualReference", locale)} />
       <p>{place.summary}</p>
       {(detail.detail || place.detail) && <p>{detail.detail || place.detail}</p>}
       {(detail.literarySignificance || place.literarySignificance) && <section><h3>{t("literarySignificance", locale)}</h3><p>{detail.literarySignificance || place.literarySignificance}</p></section>}

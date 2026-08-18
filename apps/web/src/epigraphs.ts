@@ -372,6 +372,10 @@ const SOURCE_NOTES: Record<string, readonly [string, string] | null> = {
     "来源包括数字乐谱档案、图书馆音乐馆藏、机构目录与本项目生成记录；完整总谱与商业录音不在 Foundation 范围内。",
     "Sources include digital score archives, library music collections, institutional catalogues, and project generation records. Full scores and commercial recordings are outside the Foundation scope.",
   ],
+  shanhaijing: [
+    "古籍原文、编辑归纳、学术候选与艺术演绎分层呈现；现代坐标和幻想构图都不替代原文证据。",
+    "Ancient text, editorial synthesis, scholarly candidates, and artistic interpretation are presented as separate layers; neither modern coordinates nor fantasy composition replaces textual evidence.",
+  ],
 };
 
 const ART_WELCOME: Epigraph = { zh: "艺术使时间留下形状。", zhRef: "欧洲美术史 Atlas · 策展摘要", en: "Art gives time a shape.", enRef: "European Art History Atlas · curatorial note" };
@@ -380,6 +384,12 @@ const ART_FOOTER: Epigraph = { zh: "本图集保存结构化摘要、时代信�
 const MUSIC_WELCOME: Epigraph = { zh: "时间留下事件，音乐让时代被听见。", zhRef: "欧洲古典音乐史 Atlas · 策展摘要", en: "History leaves events; music lets an era be heard.", enRef: "European Classical Music History Atlas · curatorial note" };
 const MUSIC_LOADING: readonly Epigraph[] = [MUSIC_WELCOME];
 const MUSIC_FOOTER: Epigraph = { zh: "短乐谱与自产声音用于学习和比较，不替代正式乐谱、演出或录音。", zhRef: "声音与乐谱说明", en: "Short scores and project-generated audio support study and comparison; they do not replace editions, performances, or recordings.", enRef: "Score and audio note" };
+const SHJ_WELCOME: Epigraph = { zh: "又東三百里，曰青丘之山。", zhRef: "《山海经·南山经》", en: "Three hundred li farther east lies Mount Qingqiu.", enRef: "Shanhaijing · Nanshan Jing · project rendering" };
+const SHJ_LOADING: readonly Epigraph[] = [
+  { zh: "山川次第正在展开……", zhRef: "山海经 Atlas", en: "Unfolding the mountain sequence…", enRef: "Shanhaijing Atlas" },
+  { zh: "异兽与原文正在相互定位……", zhRef: "山海经 Atlas", en: "Linking strange beings to their passages…", enRef: "Shanhaijing Atlas" },
+];
+const SHJ_FOOTER: Epigraph = { zh: "凡图像位置与比例，皆为艺术编排；原文关系与学术候选另层可查。", zhRef: "地图说明", en: "Image positions and scale are artistic composition; textual relations and scholarly candidates remain separately inspectable.", enRef: "Map disclosure" };
 
 // ---------------------------------------------------------------------------
 // Profile resolution: the rest of the app imports these four names unchanged.
@@ -392,6 +402,7 @@ export const SETS_BY_PROFILE = {
   galaxy: { era: GALAXY_ERA_EPIGRAPHS, welcome: GALAXY_WELCOME, loading: GALAXY_LOADING, footer: GALAXY_FOOTER },
   "european-art-history": { era: {}, welcome: ART_WELCOME, loading: ART_LOADING, footer: ART_FOOTER },
   "european-classical-music-history": { era: {}, welcome: MUSIC_WELCOME, loading: MUSIC_LOADING, footer: MUSIC_FOOTER },
+  shanhaijing: { era: {}, welcome: SHJ_WELCOME, loading: SHJ_LOADING, footer: SHJ_FOOTER },
 } as const;
 
 const ACTIVE = SETS_BY_PROFILE[PROFILE.id as keyof typeof SETS_BY_PROFILE] ?? SETS_BY_PROFILE.bible;

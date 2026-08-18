@@ -8,6 +8,7 @@ import type { Atlas, Locale, SearchResponse } from "../types";
 const KIND_KEY: Record<SearchResponse["items"][number]["kind"], UIKey> = {
   work: "kindWork", character: "kindCharacter", event: "kindEvent", location: "kindLocation", artist: "kindArtist", artwork: "kindArtwork", movement: "kindMovement", institution: "kindInstitution",
   composition: "kindComposition", music_style: "kindMusicStyle", instrument: "kindInstrument", music_institution: "kindMusicInstitution", score_fragment: "kindScoreFragment",
+  creature: "kindCreature", passage: "kindPassage", textual_place: "kindTextualPlace",
 };
 
 interface Props {
@@ -43,6 +44,11 @@ function searchAtlases(atlases: Atlas[], query: string): SearchResponse["items"]
     for (const instrument of atlas.instruments) if (hit(instrument.name, instrument.summary, instrument.family, instrument.hornbostelSachsCode, ...instrument.aliases)) items.push({ kind: "instrument", slug: instrument.slug, label: instrument.name, context: instrument.summary, workSlug });
     for (const institution of atlas.musicInstitutions) if (hit(institution.name, institution.summary, institution.institutionType)) items.push({ kind: "music_institution", slug: institution.slug, label: institution.name, context: institution.summary, workSlug });
     for (const fragment of atlas.scoreFragments) if (hit(fragment.title, fragment.summary, fragment.analysisNote)) items.push({ kind: "score_fragment", slug: fragment.slug, label: fragment.title, context: fragment.summary, workSlug });
+    if (atlas.shanhaijing) {
+      for (const creature of atlas.shanhaijing.creatures) if (hit(creature.name, creature.summary, creature.detail, ...creature.aliases)) items.push({ kind: "creature", slug: creature.slug, label: creature.name, context: creature.summary, workSlug });
+      for (const passage of atlas.shanhaijing.passages) if (hit(passage.title, passage.summary, passage.textZh, passage.referenceKey)) items.push({ kind: "passage", slug: passage.slug, label: passage.title, context: passage.summary, workSlug });
+      for (const place of atlas.shanhaijing.places) if (hit(place.name, place.summary, ...place.aliases)) items.push({ kind: "textual_place", slug: place.slug, label: place.name, context: place.summary, workSlug });
+    }
   }
   return items.slice(0, 200);
 }
@@ -65,7 +71,7 @@ export function GlobalSearch({ locale, activeWork, atlases, onSelectEntity, onSe
 
   useEffect(() => {
     const trimmed = query.trim();
-    if (trimmed.length < 2) { setResults([]); setActiveIndex(-1); setPending(false); return; }
+    if (trimmed.length < 1) { setResults([]); setActiveIndex(-1); setPending(false); return; }
     if (STATIC_DATA) {
       const timer = window.setTimeout(() => { setResults(searchAtlases(atlases, trimmed)); setActiveIndex(-1); setOpen(true); setPending(false); }, 160);
       setPending(true);
@@ -123,6 +129,8 @@ export function GlobalSearch({ locale, activeWork, atlases, onSelectEntity, onSe
       role="combobox"
       aria-expanded={open}
       aria-controls={listId}
+      aria-autocomplete="list"
+      aria-busy={pending}
       aria-activedescendant={activeIndex >= 0 ? `${listId}-option-${activeIndex}` : undefined}
       aria-label={t("searchEverything", locale)}
       placeholder={t("searchEverything", locale)}
@@ -130,12 +138,12 @@ export function GlobalSearch({ locale, activeWork, atlases, onSelectEntity, onSe
       onKeyDown={handleKeyDown}
       onFocus={() => { if (results.length > 0) setOpen(true); }}
     />
-    {pending && <span className="search-spinner" aria-hidden="true" />}
+    {pending && <span className="search-spinner" role="status" aria-label={locale === "zh-CN" ? "正在搜索" : "Searching"} />}
     {open && <ul className="search-results" id={listId} role="listbox">
       {results.length === 0
-        ? <li className="empty">{t("noResults", locale)}</li>
+        ? <li className="empty" role="status">{t("noResults", locale)}</li>
         : results.map((item, index) => <li key={`${item.kind}:${item.workSlug}:${item.slug}`}>
-          <button id={`${listId}-option-${index}`} type="button" role="option" aria-selected={activeIndex === index} onMouseEnter={() => setActiveIndex(index)} onClick={() => choose(item)}>
+          <button id={`${listId}-option-${index}`} type="button" role="option" tabIndex={-1} aria-selected={activeIndex === index} onMouseEnter={() => setActiveIndex(index)} onClick={() => choose(item)}>
             <span className={`kind-chip ${item.kind}`}>{t(KIND_KEY[item.kind], locale)}</span>
             <strong>{item.label}</strong>
             {item.context && <small>{item.context}</small>}

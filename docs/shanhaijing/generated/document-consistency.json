@@ -1,0 +1,179 @@
+{
+  "schemaVersion": "1.0.0",
+  "reportId": "shanhaijing-document-consistency",
+  "command": "npm run verify:shanhaijing-docs",
+  "generatorVersion": "1.0.0",
+  "generatorSha256": "188ca38462bb272c1ee54f63c102be93437b989d3ecc48e2a2c5ab477c93a923",
+  "generatedAt": "2026-08-15T13:36:18.940Z",
+  "evidenceLevel": "local_candidate",
+  "result": "pass",
+  "gateTransitionAuthorized": false,
+  "gateStatus": "blocked",
+  "counts": {
+    "inputs": 30,
+    "checks": 265,
+    "errors": 0,
+    "warnings": 0,
+    "info": 1
+  },
+  "findings": [
+    {
+      "checkId": "gate-blocker-external-signoff",
+      "severity": "info",
+      "file": "docs/shanhaijing/REVIEWER_ASSIGNMENTS_2026-08-15.md",
+      "message": "项目责任 reviewer 已指定，但外部人工签署仍待完成；Gate 0 必须继续 blocked"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "docs/shanhaijing/memoized-riding-giraffe.md",
+      "bytes": 41872,
+      "sha256": "76fa12e9ee9626fea899a1e60d5addfd5894cb9205c15c5623a726a8590eeff9"
+    },
+    {
+      "path": "docs/shanhaijing/README.md",
+      "bytes": 6838,
+      "sha256": "ffe517a7fa16535d58d801d824d9ed4ee274050bbfea25c8dd0f511c4fb8ba66"
+    },
+    {
+      "path": "docs/shanhaijing/PRODUCT_BLUEPRINT.md",
+      "bytes": 9667,
+      "sha256": "77f1e099f0c0f6569b8d14c3c37fbec46ebaec11896c3b990876fc38a2b13b79"
+    },
+    {
+      "path": "docs/shanhaijing/CORPUS_AND_EDITORIAL_POLICY.md",
+      "bytes": 9308,
+      "sha256": "fde5ebf08fd63e8d71bc7ab60b7b6e1af0495549bf144bb4ecdb822d8d6d6f22"
+    },
+    {
+      "path": "docs/shanhaijing/CONTENT_COVERAGE_MATRIX.md",
+      "bytes": 7672,
+      "sha256": "3819393d571c748e6d32872ff23d07e676c2a439165115743f6b976664be5253"
+    },
+    {
+      "path": "docs/shanhaijing/ENTITY_AND_DATA_DICTIONARY.md",
+      "bytes": 15229,
+      "sha256": "9435dfe990b2577c4121212fc1813e9fc0908faab51a1e4485d1d5ec439b9eba"
+    },
+    {
+      "path": "docs/shanhaijing/TAXONOMY.md",
+      "bytes": 10218,
+      "sha256": "7f9a4a468adc3499b8aacf84a4b31c0124615ac6c5553bc5e6b2b56699114df9"
+    },
+    {
+      "path": "docs/shanhaijing/GEOGRAPHY_AND_MAPS.md",
+      "bytes": 10526,
+      "sha256": "47bc6d6c057a42b36f6da277a57fc6a14d9820d2a1d7fe0a465ce4d0355bae73"
+    },
+    {
+      "path": "docs/shanhaijing/REFERENCE_MAP_AUDIT.md",
+      "bytes": 8139,
+      "sha256": "d96e8d7d77d019ef330989ca4a79600cc434b2f9d81f5710008b4a083c7586a7"
+    },
+    {
+      "path": "docs/shanhaijing/CHRONOLOGY_MODEL.md",
+      "bytes": 7573,
+      "sha256": "b0fe562d4ddd9492a7e015f7daef487afb3aee107d13450ebcc59357d89ba8de"
+    },
+    {
+      "path": "docs/shanhaijing/VISUAL_DESIGN_SYSTEM.md",
+      "bytes": 10029,
+      "sha256": "91dadc1821ec88f4a493e63dc3ecb2f95f1aae9a4b0c31b9eb3585a29f14564e"
+    },
+    {
+      "path": "docs/shanhaijing/MEDIA_ICON_ILLUSTRATION_POLICY.md",
+      "bytes": 13018,
+      "sha256": "553b010b5d889e708778cbd9b680c29483940c2ab9723d0351f5b11f24053532"
+    },
+    {
+      "path": "docs/shanhaijing/SOUND_RECONSTRUCTION_POLICY.md",
+      "bytes": 12957,
+      "sha256": "76f9d8de5548dbf9f34260cd9b6138eeeed9a4561f447b4256526795a2288f92"
+    },
+    {
+      "path": "docs/shanhaijing/ARCHITECTURE.md",
+      "bytes": 28344,
+      "sha256": "2d9bc13fcf92965a793de2fe20fa31a42545000481f99bd72de1e67e7eee178f"
+    },
+    {
+      "path": "docs/shanhaijing/API_CONTRACT.md",
+      "bytes": 35045,
+      "sha256": "8d834c1b6063ed0fcf67a725d02000a6bc50bb2d5ba2f3b83258558bda1bd334"
+    },
+    {
+      "path": "docs/shanhaijing/ASSET_MANIFEST_SPEC.md",
+      "bytes": 30678,
+      "sha256": "e40b28bfdc7a1b759019f09c89057e42fa75bad3b4e0c8e2e286cc6bb349bd5b"
+    },
+    {
+      "path": "docs/shanhaijing/PERFORMANCE_BUDGETS.md",
+      "bytes": 25392,
+      "sha256": "210cd0f2d773f1a5d0ecab01c27206b0ad11a79a75000c096a1ff49828fa01b4"
+    },
+    {
+      "path": "docs/shanhaijing/TEST_AND_VERIFICATION_PLAN.md",
+      "bytes": 34936,
+      "sha256": "f7e2d5faf312cdd41e57e0c0d2fee22d3fd60846e24d50de7869be69fa1cca64"
+    },
+    {
+      "path": "docs/shanhaijing/HANDOFF.md",
+      "bytes": 16506,
+      "sha256": "342ea75d1228d83ec12e9e18af9498340fda298ada52f113cadfdfff60cea07d"
+    },
+    {
+      "path": "docs/shanhaijing/HANDOFF_TEMPLATE.md",
+      "bytes": 8060,
+      "sha256": "5f5dcdb36f7b659b4710be10b9eb56e7a39c576bbbcf4dc7cbfe6b570dbc3a2e"
+    },
+    {
+      "path": "docs/shanhaijing/DECISION_LOG.md",
+      "bytes": 9436,
+      "sha256": "75dcf4f8c2697054536f7aae6d09849199caada8a4ba97899fadba7e5be61dff"
+    },
+    {
+      "path": "docs/shanhaijing/RISK_REGISTER.md",
+      "bytes": 4701,
+      "sha256": "9ae0ce9ac9f05dc806d1a067cd79bc70b3c35757eae078797ff1bd202a513500"
+    },
+    {
+      "path": "docs/shanhaijing/EXPERT_REVIEW_QUESTIONS.md",
+      "bytes": 5779,
+      "sha256": "08d14b6cd490694db13c1534103c3cc9148eb67047c9395a553197f8adf0045c"
+    },
+    {
+      "path": "docs/shanhaijing/RELEASE_CHECKLIST.md",
+      "bytes": 5063,
+      "sha256": "1ede58c490a85c45f70e0e590f3df2b2bdb84ec09a4e3c2f97bdf10e7ecda3f2"
+    },
+    {
+      "path": "docs/shanhaijing/REVIEWER_ASSIGNMENTS_2026-08-15.md",
+      "bytes": 10562,
+      "sha256": "522491870bb32f4d2f9ab47aade5685384875c84c11876b4a4ca895989cda5da"
+    },
+    {
+      "path": "docs/shanhaijing/MAP_IMPLEMENTATION_STRATEGY_2026-08-15.md",
+      "bytes": 9483,
+      "sha256": "1a810a4d8022d028664fad9a0fd88bd89d2b2761415cc750a0783a28912ff43b"
+    },
+    {
+      "path": "docs/shanhaijing/FANTASY_COMPOSITE_MAP_ART_DIRECTION_2026-08-15.md",
+      "bytes": 7628,
+      "sha256": "c3191b2aaba8a66519cfa1e9d34e0d31acf17d0eb05138905b4a5db23ebb7d46"
+    },
+    {
+      "path": "docs/shanhaijing/FANTASY_COMPOSITE_MAP_GENERATION_STATUS.md",
+      "bytes": 2472,
+      "sha256": "8fbf2da93a5c280dc81b502fee9d1eb4f5a07350a192905fcd9d4267c7e0b4fc"
+    },
+    {
+      "path": "docs/shanhaijing/generated/README.md",
+      "bytes": 1660,
+      "sha256": "23cc700b75305566acc0cb61d91e580688c4f776b6c0eb2800da76c0717fd9c4"
+    },
+    {
+      "path": "docs/shanhaijing/prompts/fantasy-composite-map-v1.txt",
+      "bytes": 3314,
+      "sha256": "c73779d6d7c0c3ffc6fe186f46a22fd0ec6bc4bd6862239154447e31128a8cac"
+    }
+  ]
+}
