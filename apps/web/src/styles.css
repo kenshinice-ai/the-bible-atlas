@@ -379,6 +379,19 @@ main { max-width: 1560px; margin: auto; padding: var(--gap-l); }
   background: rgba(26, 26, 44, 0.85); border: 1px solid; border-radius: var(--radius-l);
   padding: 20px 24px; margin-bottom: var(--gap-m);
 }
+/* Illuminated backdrop: original procedural artwork generated from this atlas's
+   own places and routes (scripts/generate_bible_overview.ts). Decorative only —
+   it sits behind the text at low contrast and makes no positional claim. */
+.hero-illuminated {
+  position: relative; overflow: hidden; isolation: isolate;
+  background-image: linear-gradient(100deg, rgba(26, 26, 44, 0.97) 32%, rgba(26, 26, 44, 0.72) 100%),
+    url("/media/bible/atlas-overview-v1.svg");
+  background-size: cover, cover;
+  background-position: center, right center;
+  background-repeat: no-repeat, no-repeat;
+}
+.era-rail button .emblem { margin: -4px 0; }
+
 .hero h2 { margin: 8px 0; font-size: clamp(1.3rem, 2.4vw, 1.9rem); }
 .hero p { max-width: 860px; color: var(--text-dim); }
 .hero small { color: var(--muted); }
@@ -945,6 +958,77 @@ main { max-width: 1560px; margin: auto; padding: var(--gap-l); }
 .score-fragment audio { width: 100%; min-height: 44px; }
 .score-fragment > small { color: var(--muted); line-height: 1.5; }
 .score-fragment ul { margin: 0; padding-left: 20px; color: var(--text-dim); font-size: 0.85rem; }
+
+/* ---- Emblems, scripture and illuminated quotes ------------------------- */
+
+/* An emblem is a symbolic identity mark, never a portrait; see Emblem.tsx. */
+.emblem { display: inline-grid; place-items: center; flex: 0 0 auto; line-height: 0; }
+.emblem svg { display: block; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45)); }
+.card > .emblem { margin-top: 2px; }
+
+.emblem-section { border-top: 1px solid var(--line-soft); padding-top: 10px; }
+.emblem-section > small { display: block; margin-top: 6px; color: var(--muted); line-height: 1.6; }
+
+.scripture-refs ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.scripture-refs li {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  border: 1px solid var(--line-soft); border-radius: 99px; padding: 4px 12px; background: var(--panel-raise);
+}
+.scripture-refs code { font-size: 0.82rem; color: var(--accent); letter-spacing: 0.02em; }
+.scripture-refs li span { font-size: 0.74rem; color: var(--muted); }
+
+.quotes-section { display: grid; gap: 12px; }
+.illuminated-quote {
+  position: relative; margin: 0; padding: 14px 16px 12px 30px;
+  border: 1px solid var(--line-soft); border-radius: var(--radius-m);
+  background: linear-gradient(160deg, rgba(245, 193, 93, 0.06), rgba(15, 23, 42, 0) 62%), var(--panel-raise);
+}
+.quote-vine { position: absolute; left: 10px; top: 12px; bottom: 12px; width: 12px; height: auto; }
+.illuminated-quote blockquote { margin: 0; font-family: var(--font-display); font-size: 1.02rem; line-height: 1.85; color: var(--text); }
+.illuminated-quote .drop-cap {
+  float: left; margin: 2px 8px 0 0; font-family: var(--font-display);
+  font-size: 2.5rem; line-height: 0.9; font-weight: 700;
+}
+/* The Chinese equivalent of a raised initial is a rubricated opening, not a
+   larger glyph: Han characters sit on a fixed-width grid that an enlarged
+   first character simply breaks. */
+.illuminated-quote .rubric-open { font-weight: 700; letter-spacing: 0.04em; }
+.illuminated-quote figcaption { clear: both; display: grid; gap: 4px; padding-top: 10px; font-size: 0.78rem; color: var(--muted); }
+.illuminated-quote .quote-reference { color: var(--accent); font-weight: 600; letter-spacing: 0.03em; font-size: 0.86rem; }
+.illuminated-quote .quote-excerpt {
+  margin-left: 8px; font-style: normal; font-weight: 400; font-size: 0.74rem;
+  color: var(--muted); border: 1px solid var(--line-soft); border-radius: 99px; padding: 1px 8px;
+}
+.illuminated-quote .quote-kind { color: var(--text-dim); }
+.illuminated-quote .quote-edition a { color: var(--violet-soft); }
+.illuminated-quote figcaption button { justify-self: start; }
+
+/* The line between the record and what later ages made of it. */
+.reception-boundary {
+  display: grid; gap: 12px; margin-top: 6px; padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.reception-boundary .reception-heading {
+  margin: 0; font-size: 0.76rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent);
+}
+.reception-boundary .reception-heading-note { margin: -6px 0 0; color: var(--muted); font-size: 0.8rem; line-height: 1.6; }
+
+.musical-reception { display: grid; gap: 10px; }
+.musical-reception .reception-note { margin: 0; color: var(--muted); font-size: 0.8rem; line-height: 1.6; }
+.reception-card {
+  display: grid; gap: 8px; padding: 12px;
+  border: 1px solid var(--line-soft); border-radius: var(--radius-m); background: var(--panel-raise);
+}
+.reception-card header { display: grid; gap: 4px; }
+.reception-card p { margin: 0; color: var(--text-dim); line-height: 1.7; font-size: 0.88rem; }
+.reception-card audio { width: 100%; min-height: 44px; }
+.reception-card small { color: var(--muted); line-height: 1.5; }
+.reception-card .link,
+.illuminated-quote figcaption button,
+.illuminated-quote .quote-edition a {
+  justify-self: start; color: var(--violet-soft);
+  display: inline-flex; align-items: center; min-height: 44px;
+}
 
 .person-avatar {
   position: relative; display: inline-grid; place-items: center;

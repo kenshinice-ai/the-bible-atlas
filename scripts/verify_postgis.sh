@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# PostgreSQL 18 refuses to start when the postmaster goes multithreaded during
+# startup, which is what macOS locale lookup does when LC_ALL is unset. The
+# throwaway cluster below has no locale-dependent data, so pin it to C.
+export LC_ALL=${LC_ALL:-C}
+
 ATLAS_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 ATLAS_TEMP=$(mktemp -d /private/tmp/literary-atlas-postgis.XXXXXX)
 ATLAS_DB_PORT=$((55000 + RANDOM % 5000))

@@ -4,6 +4,7 @@ import { colorForCharacter, colorForEvent } from "../hierarchy";
 import { formatEventTime, label, t } from "../i18n";
 import type { SelectedEntity, Tab } from "../state";
 import type { Atlas, AtlasArtist, AtlasArtwork, AtlasCharacter, AtlasComposition, AtlasEvent, AtlasInstrument, AtlasLocation, AtlasMovement, AtlasRoute, AtlasScoreFragment, Locale } from "../types";
+import { Emblem } from "./Emblem";
 
 type Row =
   | { kind: "characters"; item: AtlasCharacter }
@@ -100,8 +101,11 @@ function renderRow(row: Row, atlas: Atlas, locale: Locale, selected: SelectedEnt
     const era = atlas.chapters.find((item) => item.slug === person.chapterSlug);
     const isSelected = selected?.type === "character" && selected.id === person.slug;
     const choose = () => onSelect({ type: "character", workSlug, id: person.slug });
+    const emblem = atlas.characterEmblems.find((item) => item.characterSlug === person.slug);
     return <article role="button" tabIndex={0} className={isSelected ? "card selected" : "card"} onClick={choose} onKeyDown={(event) => activate(event, choose)}>
-      <span className={`mini-person ${person.gender}`} style={{ borderColor: colorForCharacter(atlas, person) }} aria-hidden="true" />
+      {atlas.characterEmblems.length > 0
+        ? <Emblem slug={person.slug} emblem={emblem} accent={colorForCharacter(atlas, person)} size={30} />
+        : <span className={`mini-person ${person.gender}`} style={{ borderColor: colorForCharacter(atlas, person) }} aria-hidden="true" />}
       <h3>{person.name}<i className="importance" aria-hidden="true">{"●".repeat(person.importance)}</i></h3>
       <p>{person.summary}</p>
       <small>{label(person.iconVariant, locale)} · {label(person.roleType, locale)}{era ? ` · ${era.title}` : ""} · {person.eventSlugs.length} {t("events", locale)}</small>

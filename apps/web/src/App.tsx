@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getAtlas, getWorks } from "./api";
 import { AtlasMap } from "./components/AtlasMap";
+import { Emblem } from "./components/Emblem";
 import { EntityDrawer } from "./components/EntityDrawer";
 import { EntityList } from "./components/EntityList";
 import { GlobalSearch } from "./components/GlobalSearch";
@@ -263,7 +264,7 @@ export default function App() {
             <p>{t("multiHint", locale)}</p>
           </section>}
 
-          <section className="hero" style={{ borderColor: activeAtlas.work.themeColor }}>
+          <section className={PROFILE.id === "bible" ? "hero hero-illuminated" : "hero"} style={{ borderColor: activeAtlas.work.themeColor }}>
             <div>
               <span className={`badge ${activeAtlas.work.category}`}>{label(activeAtlas.work.category, locale)}</span>
               <h2>{activeAtlas.work.title}</h2>
@@ -327,7 +328,15 @@ export default function App() {
               }}
               onClick={() => setChapter(explore.chapter === chapter.slug ? null : chapter.slug)}
             >
-              <i />{chapter.title}<small>{chapter.eventCount}</small>
+              {/* An era emblem replaces the colour dot where one is curated;
+                  it carries the same accent, so the rail still reads as a scale. */}
+              {(() => {
+                const emblem = activeAtlas.chapterEmblems.find((item) => item.chapterSlug === chapter.slug);
+                return emblem
+                  ? <Emblem slug={chapter.slug} emblem={{ symbolKey: emblem.symbolKey }} accent={chapter.accentColor} size={22} />
+                  : <i />;
+              })()}
+              {chapter.title}<small>{chapter.eventCount}</small>
             </button>)}
           </nav>
 

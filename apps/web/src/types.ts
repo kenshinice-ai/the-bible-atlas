@@ -178,6 +178,47 @@ const GroupSchema = z.object({
   name: z.string(), summary: z.string(), characterSlugs: z.array(z.string()),
 });
 
+/**
+ * Bible art/music layer. An emblem is a symbolic identity — a claim about which
+ * sign tradition attaches to a person — and never a likeness; `attestation`
+ * says whether the sign comes from the text, the liturgy, or later art.
+ */
+export const EmblemSymbolSchema = z.string().regex(/^[a-z0-9-]+$/u);
+const CharacterEmblemSchema = z.object({
+  characterSlug: z.string(), symbolKey: EmblemSymbolSchema,
+  ringKey: z.enum(["plain", "braided", "rayed", "thorned", "waved", "chained"]),
+  groundKey: z.enum(["era", "gold", "ink", "vellum", "sky"]),
+  attestation: z.enum(["scriptural", "liturgical", "iconographic"]),
+  symbolName: z.string(), symbolMeaning: z.string(), attributionNote: z.string(),
+});
+
+const ChapterEmblemSchema = z.object({
+  chapterSlug: z.string(), symbolKey: EmblemSymbolSchema, symbolName: z.string(), symbolMeaning: z.string(),
+});
+
+const ScriptureRefSchema = z.object({
+  id: z.string().uuid(), eventSlug: z.string(), osisRef: z.string(), bookOsis: z.string(),
+  chapterNumber: z.number(), verseStart: z.number().nullable(), verseEnd: z.number().nullable(),
+  refRole: z.enum(["primary", "parallel", "background"]),
+});
+
+const CharacterQuoteSchema = z.object({
+  id: z.string().uuid(), characterSlug: z.string(), eventSlug: z.string().nullable(), osisRef: z.string(),
+  speechKind: z.enum(["declaration", "prayer", "praise", "blessing", "lament", "command", "confession", "admission", "objection", "prophecy", "question"]),
+  importance: z.number(), quoteText: z.string(), referenceLabel: z.string(), contextNote: z.string(),
+  translationEdition: z.enum(["CUV-1919", "WEB"]), scriptVariant: z.enum(["na", "han-traditional"]),
+  verifiedSourceUrl: z.string().url().nullable(), isExcerpt: z.boolean(),
+}).and(TranslationMetaSchema);
+
+const CrossWorkMusicSchema = z.object({
+  id: z.string().uuid(), fromEntityKind: z.enum(["character", "event", "location"]), fromSlug: z.string(),
+  linkType: z.enum(["musical_setting", "musical_reception"]), confidence: z.enum(["high", "medium", "low"]),
+  label: z.string(), basisNote: z.string(), targetWorkSlug: z.string(),
+  compositionSlug: z.string(), compositionTitle: z.string(), compositionYear: z.number().nullable(), composerName: z.string(),
+  fragmentSlug: z.string().nullable(), audioAssetPath: z.string().nullable(), svgAssetPath: z.string().nullable(),
+  durationSeconds: z.coerce.number().nullable(), playbackDisclaimer: z.string(),
+});
+
 const ShanhaijingSectionSchema = z.object({
   id: z.string().uuid(), slug: z.string(), sequence: z.number(), referenceLabel: z.string(),
   title: z.string(), summary: z.string(), reviewStatus: z.enum(["draft", "reviewed", "published"]),
@@ -258,6 +299,9 @@ export const AtlasResponseSchema = z.object({
   musicPeople: z.array(MusicPersonSchema).default([]), compositions: z.array(CompositionSchema).default([]),
   musicStyles: z.array(MusicStyleSchema).default([]), instruments: z.array(InstrumentSchema).default([]),
   musicInstitutions: z.array(MusicInstitutionSchema).default([]), scoreFragments: z.array(ScoreFragmentSchema).default([]), musicLearningUnits: z.array(MusicLearningUnitSchema).default([]),
+  characterEmblems: z.array(CharacterEmblemSchema).default([]), chapterEmblems: z.array(ChapterEmblemSchema).default([]),
+  scriptureRefs: z.array(ScriptureRefSchema).default([]), quotes: z.array(CharacterQuoteSchema).default([]),
+  crossWorkMusic: z.array(CrossWorkMusicSchema).default([]),
   shanhaijing: ShanhaijingDomainSchema.nullable().default(null),
 });
 
@@ -289,6 +333,11 @@ export type AtlasInstrument = Atlas["instruments"][number];
 export type AtlasMusicInstitution = Atlas["musicInstitutions"][number];
 export type AtlasScoreFragment = Atlas["scoreFragments"][number];
 export type AtlasMusicLearningUnit = Atlas["musicLearningUnits"][number];
+export type AtlasCharacterEmblem = Atlas["characterEmblems"][number];
+export type AtlasChapterEmblem = Atlas["chapterEmblems"][number];
+export type AtlasScriptureRef = Atlas["scriptureRefs"][number];
+export type AtlasQuote = Atlas["quotes"][number];
+export type AtlasCrossWorkMusic = Atlas["crossWorkMusic"][number];
 export type ShanhaijingDomain = NonNullable<Atlas["shanhaijing"]>;
 export type ShanhaijingCreature = ShanhaijingDomain["creatures"][number];
 export type ShanhaijingPassage = ShanhaijingDomain["passages"][number];

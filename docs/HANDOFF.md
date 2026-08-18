@@ -2,6 +2,21 @@
 
 ## 项目现状
 
+### 2026-08-18 阶段性交接：Bible 艺术与音乐升级 A/B/C/D（本地候选）
+
+按用户批准的四条轨全量执行，把欧洲美术史与欧洲音乐史两条内容线积累的工程方法（公版图像权利管线、确定性资产生成 + checksum、fail-closed 校验）反向应用到圣经域。规划见 [BIBLE_ART_MUSIC_UPGRADE_PLAN_2026-08-18.md](BIBLE_ART_MUSIC_UPGRADE_PLAN_2026-08-18.md)，决策见 [HANDOFF_DECISIONS_2026-08-18.md](HANDOFF_DECISIONS_2026-08-18.md)。
+
+- **A 人物视觉身份**：新增纹章徽章体系——41 条策展徽章（每条标注 `scriptural`/`liturgical`/`iconographic` 出处等级）+ 全量程序回退，用于抽屉、人物列表与时代轨；同时导入 25 张经权利核验的多雷（1866）公版版画作为接受史图像。**不做肖像主张**：不为上帝设徽章，耶稣用 Chi-Rho 符号而非面容。
+- **B 重要言论**：新增 59 条事件级经文引用（OSIS）与 38 条人物言论，双语共 76 条译文**全部逐字比对公版经文通过**（和合本 1919 繁体 / World English Bible）；含"展示引文必须是取回原文连续子串"的数据库级 CHECK。**排除 KJV**（英国 Crown copyright）。
+- **C 音乐维度**：新增通用 `cross_work_links` 契约与 13 条圣经↔欧洲古典音乐接受链接（大卫/马利亚/耶稣降生/伯特利之梦/施洗约翰/最后晚餐/耶路撒冷等），抽屉内直接播放音乐图集既有的自产合成学习音，**不新增音频**。
+- **D 全域艺术表达**：新增确定性程序化 SVG 总览母图（101 地点 + 10 路线，同库状态字节一致，29.6 KB）作为圣经 profile 的 hero 底图；13 枚时代徽章接入时代轨。
+- 关键实现：`db/migrations/022_bible_emblems_scripture_music.sql`、`db/seeds/068–071`、`apps/api/src/bible.ts`、`apps/web/src/components/Emblem.tsx`、`apps/web/src/components/IlluminatedQuote.tsx`、`scripts/generate_bible_art_music.ts`、`scripts/generate_bible_overview.ts`、`scripts/import_bible_dore_media.ts`、`scripts/verify_bible_art_music.ts`。
+- 校验：`verify_bible_visual_media.ts` 从冻结的 3 条清单改为**数据库驱动 + 策略硬编码**，新增 `npm run verify:bible-art-music`。
+- 一次完整验证已通过：隔离库 `literary_atlas_bible_art_music_20260818` fresh bootstrap（migration 001–022、seed 001–071）与 repeat bootstrap（92 项 already applied）；两个圣经 verifier；`npm run typecheck`；`npm test`（API 5 + Web 33）；`npm run build`；`npm run verify:postgis`；静态烘焙双语 JSON（924 KB / 964 KB，新字段齐全）；中英双语人物/事件抽屉与 390px 抽检，页面无横向溢出，console error/warn = 0。
+- **神职/设计双重评审**：`liturgical-design-director` 初判**暂不放行**，列 7 项阻断（页脚仍宣称 KJV 为公版、同屏两套经文系统、节录未标记、约翰福音 1:29 中英不对等、`confession` 误译为「表白」、夏娃配蛇、中文界面打印原始 OSIS 码）。**全部已修并复验**，另同批采纳 S1/S2/B1/B2/B3/B7/B9/S4/S5/S6 建议项。逐条处置见 [HANDOFF_DECISIONS_2026-08-18.md](HANDOFF_DECISIONS_2026-08-18.md) 第 9 节。
+- 已知待决：新约多雷批次评审建议**收录**（含耶稣具象描绘，附四条件），本轮未执行；《Spem in alium》所据《友第德传》属次经，profile 无对应实体，记为缺口；主 JS chunk 增至 716 KB，仍超 500 KB 建议阈值。
+- 环境修复：`scripts/verify_postgis.sh` 加入 `export LC_ALL=${LC_ALL:-C}`，否则 PostgreSQL 18 在 macOS 上无法启动临时实例（与本轮功能无关）。
+
 ### 2026-08-18 阶段性交接：山海经 Atlas V1 垂直试点落库 + Git 检查点恢复
 
 第六条内容线《山海经 Atlas》已从 Gate 0 文档阶段进入 V1 垂直试点实现（用户授权，决策 SJ-D010）。详细状态以 [docs/shanhaijing/HANDOFF.md](shanhaijing/HANDOFF.md) 第 0 节为准：
@@ -270,7 +285,7 @@ v4 Bible-first 架构已落地并提交(commit `9b47ea0`):以「时代 → 人�
 ## 下一步
 
 1. 真实数据量下的三视图压测与参数微调(当前 UI 优先级;顺带重验第三~五批装载后的浏览器渲染)
-2. 媒体资产扩充：Bible visual pilot 已完成 3 条本地记录；下一批仍须按角色、语义状态、许可和 checksum 分批审核
+2. 媒体资产扩充：Bible 媒体已达 28 条本地记录（3 条试点 + 25 张多雷版画）；新约批次待 liturgical design review 决定是否收录耶稣具象描绘
 3. 其他四部作品(圣经之外)的数据扩充
 
 远期规划:
@@ -301,5 +316,5 @@ npx tsx src/db-cli.ts seed
 
 ---
 
-更新时间:2026-08-09
+更新时间:2026-08-18
 本文档由代理在每个阶段完成后自动更新。

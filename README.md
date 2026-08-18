@@ -100,6 +100,23 @@ npm run test:start-command
 docker compose config --quiet
 ```
 
+圣经艺术与音乐层门禁（需指向隔离或本地已 bootstrap 的 PostgreSQL）：
+
+```bash
+DATABASE_URL=postgresql:///literary_atlas npm run verify:bible-art-music
+DATABASE_URL=postgresql:///literary_atlas npm run verify:bible-visual-media
+```
+
+前者校验人物/时代纹章的双语与出处等级、经文引用与其 OSIS 串一致、每条引文都是所取回公版经文的连续子串、每条跨作品音乐链接背后都有可播放且权利已核验的乐谱片段，以及程序化总览母图与其 manifest checksum 相符。后者按数据库驱动核对全部 bundled 圣经图像的权利链与 SHA-256，并拒绝媒体目录中任何无法解释的文件。
+
+对应的可重复生成命令：
+
+```bash
+npm run generate:bible-art-music   # 纹章 / 经文引用 / 引文 / 音乐链接 seed（逐字比对公版经文）
+npm run generate:bible-overview    # 确定性泥金总览母图 + manifest
+npm run import:bible-dore-media    # 多雷公版版画批次（可续跑）
+```
+
 欧洲美术史媒体门禁（需指向隔离或本地已 bootstrap 的 PostgreSQL）：
 
 ```bash

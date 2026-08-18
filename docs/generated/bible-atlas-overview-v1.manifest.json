@@ -1,0 +1,20 @@
+{
+  "asset": "/media/bible/atlas-overview-v1.svg",
+  "generator": "scripts/generate_bible_overview.ts",
+  "generatorVersion": "bible-illuminated-overview-svg-v1",
+  "interpretationClass": "artistic_interpretation",
+  "disclosure": "Original procedural artwork generated from this atlas's own place and route records. Decorative backdrop; positional claims belong to the interactive map layer only.",
+  "viewBox": "0 0 1200 420",
+  "inputs": {
+    "locatedPlaces": 101,
+    "routes": 10,
+    "extent": {
+      "minLng": -6.2,
+      "maxLng": 50.5,
+      "minLat": 28.539,
+      "maxLat": 41.9028
+    }
+  },
+  "bytes": 29570,
+  "sha256": "b5edc8ec47a38c552e3c3e01286444d304d03b57e115bf598ee2c68b7a6a36ec"
+}

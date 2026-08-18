@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased — Bible art and music upgrade (2026-08-18)
+
+- Added a heraldic emblem system for people and eras: 41 curated emblems, each declaring whether its sign is attested in the text, in liturgy, or only in later art, plus a deterministic procedural fallback so every one of the 224 people is identifiable. Emblems replace the silhouette avatar, because the atlas has no evidence for anyone's appearance — and deliberately give Jesus a Chi-Rho rather than a face.
+- Added verse-level provenance: 59 event scripture references and 38 recorded sayings in both locales, restricted to public-domain editions (CUV 1919, World English Bible; the KJV is excluded over UK Crown copyright). Every excerpt was proved to be a literal substring of a retrieved verse, and the database refuses to mark a quote verified without the source URL, timestamp and containment holding.
+- Added `cross_work_links`, a general reception contract between separate atlas works, and used it for 13 Bible↔European-classical-music links that play the music atlas's existing study synthesis in place, disclaimer intact. No new audio.
+- Added a deterministic illuminated overview generated from the atlas's own places and routes (`generate:bible-overview`), used as the Bible profile's hero backdrop with a manifest checksum; era emblems now carry the era rail.
+- Added the first Gustave Doré depiction batch: 25 rights-audited public-domain engravings (`import:bible-dore-media`), all stored as illustrative. The New Testament batch is deferred pending liturgical design review.
+- Rewrote the Bible media verifier to be database-driven with hardcoded *policy* rather than a frozen asset list, and added `verify:bible-art-music` covering all four new contracts fail-closed.
+- Fixed `verify:postgis` on PostgreSQL 18 / macOS, which could not start its throwaway cluster without an explicit locale.
+- Acted on a blocking clergy/design review before shipping. The footer still told readers the English scripture was the KJV and that the KJV was public domain — the exact claim this round had decided not to make — so every epigraph moved to the World English Bible and the two Union Version settings now name themselves separately instead of sharing one byline. Quote cards say when they are excerpts. John 1:29 no longer loses its whole predicate in Chinese: the CUV's inline 〔…〕 apparatus is stripped before the containment check rather than truncating the quote. `confession` is labelled 认信, not 表白. Eve's emblem is the name the text gives her, mother of all living, not the serpent that tempted her. Chinese readers get 「创世记 1:1–5」 instead of `Gen.1.1-Gen.1.5`. The drawer now draws an explicit line between the record and later reception, which is the distinction the whole emblem design rests on.
+
 ## Unreleased — Shanhaijing Atlas V1 vertical pilot (2026-08-16 → 2026-08-18)
 
 - Added the `shanhaijing` first-party profile with a passage-rooted domain model (17 `shj_*` tables, migrations 020/021) separating creature concepts, textual occurrences, corpus coverage, topology, taxonomy, and artistic interpretation.

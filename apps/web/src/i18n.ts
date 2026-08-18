@@ -89,6 +89,16 @@ const ENUMS: Record<string, Pair> = {
   mountain: ["山", "Mountain"], mountain_range: ["山系", "Mountain range"], river: ["水", "River"], water_source: ["水源", "Water source"], marsh: ["泽", "Marsh"], sea: ["海", "Sea"],
   text_direct: ["原文直证", "Direct text"], transcription: ["原文转录", "Transcription"], editorial_summary: ["编辑归纳", "Editorial synthesis"], scholarly_hypothesis: ["学术假说", "Scholarly hypothesis"], artistic_interpretation: ["艺术演绎", "Artistic interpretation"],
   blocked_missing_api_key: ["待生成（缺少 API 密钥）", "Awaiting generation (API key missing)"], generated: ["已生成待审", "Generated, awaiting review"], withdrawn: ["已撤回", "Withdrawn"],
+  // emblem attestation
+  scriptural: ["经文直证", "Attested in the text"], liturgical: ["礼仪传统", "Liturgical tradition"], iconographic: ["图像学传统", "Art-historical convention"],
+  // speech kinds. `confession` is a confession of faith — 「认信」, the standard
+  // Chinese church rendering. It must not be 「表白」, which in current usage
+  // first reads as declaring romantic love.
+  declaration: ["宣告", "Declaration"], prayer: ["祷告", "Prayer"], praise: ["颂赞", "Praise"], blessing: ["祝福", "Blessing"],
+  lament: ["哀叹", "Lament"], command: ["命令", "Command"], confession: ["认信", "Confession"],
+  admission: ["承认", "Admission"], objection: ["推辞", "Objection"], prophecy: ["预言", "Prophecy"], question: ["发问", "Question"],
+  // cross-work reception
+  musical_setting: ["经文谱曲", "Setting of the text"], musical_reception: ["音乐接受史", "Musical reception"],
   // translation status
   draft: ["草稿", "Draft"], reviewed: ["已审阅", "Reviewed"], published: ["已发布", "Published"],
 };
@@ -187,6 +197,31 @@ export function referenceLabel(value: string, locale: Locale): string {
   return BIBLE_BOOK_LABELS.reduce((result, [english, chinese]) => result.split(english).join(chinese), value);
 }
 
+/**
+ * OSIS book id to a name a reader recognises. OSIS is the join key between
+ * events, quotes and any external Bible tool; it is never what gets printed.
+ */
+const OSIS_BOOK_NAMES: Record<string, Pair> = {
+  Gen: ["创世记", "Genesis"], Exod: ["出埃及记", "Exodus"], Lev: ["利未记", "Leviticus"], Num: ["民数记", "Numbers"],
+  Deut: ["申命记", "Deuteronomy"], Josh: ["约书亚记", "Joshua"], Judg: ["士师记", "Judges"], Ruth: ["路得记", "Ruth"],
+  "1Sam": ["撒母耳记上", "1 Samuel"], "2Sam": ["撒母耳记下", "2 Samuel"], "1Kgs": ["列王纪上", "1 Kings"], "2Kgs": ["列王纪下", "2 Kings"],
+  "1Chr": ["历代志上", "1 Chronicles"], "2Chr": ["历代志下", "2 Chronicles"], Ezra: ["以斯拉记", "Ezra"], Neh: ["尼希米记", "Nehemiah"],
+  Esth: ["以斯帖记", "Esther"], Job: ["约伯记", "Job"], Ps: ["诗篇", "Psalms"], Prov: ["箴言", "Proverbs"],
+  Isa: ["以赛亚书", "Isaiah"], Jer: ["耶利米书", "Jeremiah"], Lam: ["耶利米哀歌", "Lamentations"], Ezek: ["以西结书", "Ezekiel"],
+  Dan: ["但以理书", "Daniel"], Hos: ["何西阿书", "Hosea"], Joel: ["约珥书", "Joel"], Amos: ["阿摩司书", "Amos"],
+  Jonah: ["约拿书", "Jonah"], Mic: ["弥迦书", "Micah"], Zech: ["撒迦利亚书", "Zechariah"], Mal: ["玛拉基书", "Malachi"],
+  Matt: ["马太福音", "Matthew"], Mark: ["马可福音", "Mark"], Luke: ["路加福音", "Luke"], John: ["约翰福音", "John"],
+  Acts: ["使徒行传", "Acts"], Rom: ["罗马书", "Romans"], "1Cor": ["哥林多前书", "1 Corinthians"], "2Cor": ["哥林多后书", "2 Corinthians"],
+  Gal: ["加拉太书", "Galatians"], Eph: ["以弗所书", "Ephesians"], Phil: ["腓立比书", "Philippians"], Col: ["歌罗西书", "Colossians"],
+  "1Tim": ["提摩太前书", "1 Timothy"], "2Tim": ["提摩太后书", "2 Timothy"], Heb: ["希伯来书", "Hebrews"], Jas: ["雅各书", "James"],
+  "1Pet": ["彼得前书", "1 Peter"], "1John": ["约翰壹书", "1 John"], Rev: ["启示录", "Revelation"],
+};
+
+export function bookLabel(osisBook: string, locale: Locale): string {
+  const pair = OSIS_BOOK_NAMES[osisBook];
+  return pair ? pair[locale === "zh-CN" ? 0 : 1] : osisBook;
+}
+
 const MEDIA_ROLE_LABELS: Record<MediaRole, Pair> = {
   character_depiction: ["人物形象", "Character depiction"],
   place_view: ["地点影像", "Place view"],
@@ -226,6 +261,19 @@ export const UI = {
   unclassifiedMediaNote: ["媒体性质尚未分类。", "Media context is not classified."],
   externalImageNote: ["图片由来源站点托管，本图集不复制该文件。", "The provider hosts this image; this atlas does not redistribute the file."],
   imageUnavailable: ["暂无可再发布的图片；请打开来源页查看。", "No redistributable image is available; open the source page to view it."],
+  // emblems, scripture and cross-work music
+  emblem: ["纹章身份", "Emblem"],
+  emblemNote: ["纹章为象征身份，不是肖像：本图集不宣称任何人物的容貌。", "An emblem is a symbolic identity, not a portrait: this atlas makes no claim about anyone's appearance."],
+  scriptureRefs: ["经文出处", "Scripture references"],
+  refRolePrimary: ["主要记述", "Primary account"], refRoleParallel: ["平行记述", "Parallel account"], refRoleBackground: ["背景", "Background"],
+  quotes: ["重要言论", "Recorded sayings"],
+  verseVerified: ["已逐字比对公版经文", "Checked word for word against a public-domain text"],
+  quoteExcerpt: ["节选", "excerpt"],
+  receptionHeading: ["后世接受", "Later reception"],
+  receptionHeadingNote: ["以下是后世如何想象与谱写这一段,不是经文记载本身。", "What follows is how later ages pictured and set this passage — not the record itself."],
+  musicalReception: ["音乐中的这一段", "In music"],
+  musicalReceptionNote: ["音频为音乐图集的学习用自产合成音，不是历史演奏。", "The audio is study synthesis from the music atlas, not a historical performance."],
+  openInMusicAtlas: ["在音乐图集中打开", "Open in the music atlas"],
   formalTitles: ["正式爵位或荣誉称号", "Formal rank or honorific"],
   sources: ["出处与数据说明", "Sources and data notes"],
   copy: ["复制此景链接", "Copy link to this view"], copied: ["已复制", "Copied"],
@@ -321,8 +369,15 @@ export const UI = {
   ofTotal: ["共", "of"],
   emptyList: ["当前筛选没有内容", "Nothing matches the current filter"],
   dataNote: ["凡近似年代与推定地点均已明确标注;摘要为原创结构化描述,悉以经文记载为本。", "Uncertain dates and inferred places are explicitly marked; summaries are original structured descriptions following the scriptural record."],
-  epigraphSourceSuffix: ["(和合本)", "(KJV)"],
-  scriptureNote: ["经文引用:中文和合本(1919),英文 King James Version;均为公有领域译本。", "Scripture quotations: Chinese Union Version (1919) and King James Version, both in the public domain."],
+  // The site now carries two settings of the Union Version: the modern-punctuation
+  // simplified text in the epigraphs, and the 1919 traditional text in the
+  // verified quote cards. Citing both as plain 「和合本」 would put the same verse
+  // on screen twice, in two forms, under one byline.
+  epigraphSourceSuffix: ["(和合本·新标点)", "(WEB)"],
+  scriptureNote: [
+    "经文引用:时代题词用和合本(新标点)与 World English Bible;人物言论卡用和合本(1919,繁体)与 World English Bible,并逐字比对公版经文。所有译本均为公有领域。",
+    "Scripture quotations: era epigraphs use the Chinese Union Version (modern punctuation) and the World English Bible; the quote cards use the 1919 traditional Union Version and the World English Bible, each checked word for word against a public-domain text. All editions are in the public domain.",
+  ],
   fallbackUsed: ["此条目使用了作品默认语言", "This entry falls back to the work’s default language"],
 } as const;
 

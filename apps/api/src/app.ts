@@ -2,6 +2,7 @@ import cors from "cors";
 import express, { type NextFunction, type Request, type Response } from "express";
 import type pg from "pg";
 import { ZodError, z } from "zod";
+import { loadBibleArtMusic } from "./bible.js";
 import { resolveLocale, supportedLocales } from "./locale.js";
 import { loadMusicAtlas } from "./music.js";
 import { loadShanhaijingAtlas, loadShanhaijingDetail } from "./shanhaijing.js";
@@ -216,12 +217,13 @@ export function createApp(db: Database, corsOrigin: string = process.env.CORS_OR
       ]);
       const music = await loadMusicAtlas(db, workId, requestedLocale, fallbackLocale);
       const shanhaijing = slug === "shanhaijing" ? await loadShanhaijingAtlas(db, workId, requestedLocale, fallbackLocale) : null;
+      const artMusic = await loadBibleArtMusic(db, workId, requestedLocale, fallbackLocale);
       response.json({
         requestedLocale, detail, work,
         characters: characters.rows, locations: locations.rows, events: events.rows, routes: routes.rows,
         relations: relations.rows, sources: sources.rows, chronologies: chronologies.rows, media: media.rows,
         chapters: chapters.rows, groups: groups.rows, artists: artists.rows, artworks: artworks.rows, movements: movements.rows, institutions: institutions.rows,
-        ...music, shanhaijing,
+        ...music, ...artMusic, shanhaijing,
       });
     } catch (error) { next(error); }
   });

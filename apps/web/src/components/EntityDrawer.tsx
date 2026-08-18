@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { getEntityDetail } from "../api";
-import { colorForCharacter } from "../hierarchy";
-import { depictionStatusLabel, formatEventTime, formatYear, label, mediaRoleLabel, t } from "../i18n";
+import { colorForCharacter, colorForEvent } from "../hierarchy";
+import { bookLabel, depictionStatusLabel, formatEventTime, formatYear, label, mediaRoleLabel, t } from "../i18n";
 import type { SelectedEntity, SelectionSource, Tab } from "../state";
-import type { Atlas, AtlasCharacter, AtlasMedia, Locale } from "../types";
+import type { Atlas, AtlasCharacter, AtlasCrossWorkMusic, AtlasMedia, AtlasQuote, AtlasScriptureRef, Locale } from "../types";
+import { Emblem } from "./Emblem";
+import { IlluminatedQuote } from "./IlluminatedQuote";
 
 interface Props {
   atlas: Atlas;
@@ -32,13 +34,85 @@ function useEntityDetail(workSlug: string, kind: string, id: string, locale: Loc
   return fields;
 }
 
-function PersonAvatar({ person, color }: { person: AtlasCharacter; color: string }) {
+/**
+ * A person's identity mark. When the work carries emblems the emblem wins: a
+ * silhouette implies a body, and this atlas has no evidence for anyone's body.
+ */
+function PersonAvatar({ atlas, person, color }: { atlas: Atlas; person: AtlasCharacter; color: string }) {
+  const emblem = atlas.characterEmblems.find((item) => item.characterSlug === person.slug);
+  if (emblem || atlas.characterEmblems.length > 0) return <Emblem slug={person.slug} emblem={emblem} accent={color} />;
   return <span className={`person-avatar ${person.gender} ${person.ageStage}`} style={{ background: color }} aria-hidden="true">
     <svg viewBox="0 0 48 48">
       <circle cx="24" cy={person.ageStage === "child" ? 17 : 15} r={person.ageStage === "child" ? 8 : 10} />
       <path d={person.gender === "female" ? "M8 43c2-13 8-19 16-19s14 6 16 19z" : "M9 43c1-12 6-18 15-18s14 6 15 18z"} />
     </svg>
   </span>;
+}
+
+const REF_ROLE_KEYS = { primary: "refRolePrimary", parallel: "refRoleParallel", background: "refRoleBackground" } as const;
+
+/**
+ * A citation a reader can act on: "创世记 1:1–5", not "Gen.1.1-Gen.1.5".
+ * The OSIS string is the machine key and stays available as the title, but it
+ * is not a thing to print into a Chinese page — the whole point of `label()`
+ * in i18n.ts is that raw database strings never reach a reader.
+ */
+function scriptureLabel(ref: AtlasScriptureRef, locale: Locale): string {
+  const book = bookLabel(ref.bookOsis, locale);
+  if (ref.verseStart === null) return `${book} ${ref.chapterNumber}`;
+  const verses = ref.verseEnd !== null && ref.verseEnd !== ref.verseStart ? `${ref.verseStart}–${ref.verseEnd}` : `${ref.verseStart}`;
+  return `${book} ${ref.chapterNumber}:${verses}`;
+}
+
+function ScriptureRefs({ refs, locale }: { refs: readonly AtlasScriptureRef[]; locale: Locale }) {
+  if (refs.length === 0) return null;
+  return <section className="scripture-refs">
+    <h3>{t("scriptureRefs", locale)}</h3>
+    <ul>{refs.map((ref) => <li key={ref.id} title={ref.osisRef}>
+      <span className="scripture-citation">{scriptureLabel(ref, locale)}</span>
+      <span>{t(REF_ROLE_KEYS[ref.refRole], locale)}</span>
+    </li>)}</ul>
+  </section>;
+}
+
+function Quotes({ quotes, accent, locale, onEvent, titleOf }: {
+  quotes: readonly AtlasQuote[]; accent: string; locale: Locale;
+  onEvent: (slug: string) => void; titleOf: (slug: string) => string | undefined;
+}) {
+  if (quotes.length === 0) return null;
+  return <section className="quotes-section">
+    <h3>{t("quotes", locale)} · {quotes.length}</h3>
+    {quotes.map((quote) => {
+      const eventTitle = quote.eventSlug ? titleOf(quote.eventSlug) : undefined;
+      return <IlluminatedQuote key={quote.id} quote={quote} accent={accent} locale={locale}
+        onEvent={quote.eventSlug ? () => onEvent(quote.eventSlug!) : undefined} eventTitle={eventTitle} />;
+    })}
+  </section>;
+}
+
+/**
+ * Reception links into the music atlas. The audio is the music atlas's own
+ * study synthesis, so the disclaimer travels with it across the work boundary
+ * instead of being dropped at the border.
+ */
+function MusicalReception({ links, locale }: { links: readonly AtlasCrossWorkMusic[]; locale: Locale }) {
+  if (links.length === 0) return null;
+  return <section className="musical-reception">
+    <h3>{t("musicalReception", locale)} · {links.length}</h3>
+    <p className="reception-note">{t("musicalReceptionNote", locale)}</p>
+    {links.map((link) => <article key={link.id} className="reception-card">
+      <header>
+        <strong>{link.label}</strong>
+        <span className="identity-tags"><span>{label(link.linkType, locale)}</span>{link.compositionYear !== null && <span>{link.compositionYear}</span>}{link.composerName && <span>{link.composerName}</span>}</span>
+      </header>
+      <p>{link.basisNote}</p>
+      {link.audioAssetPath && <audio controls preload="none" src={link.audioAssetPath} aria-label={`${link.compositionTitle} · ${link.label}`} />}
+      {link.playbackDisclaimer && <small>{link.playbackDisclaimer}</small>}
+      <a className="link" href={`?locale=${locale}&mode=single&works=${link.targetWorkSlug}&active=${link.targetWorkSlug}&tab=compositions&entity=composition:${link.targetWorkSlug}:${link.compositionSlug}`}>
+        {t("openInMusicAtlas", locale)} ↗
+      </a>
+    </article>)}
+  </section>;
 }
 
 function Sources({ names, locale }: { names: string[]; locale: Locale }) {
@@ -82,6 +156,22 @@ function VisualMediaCard({ media, locale }: { media: AtlasMedia; locale: Locale 
 function VisualMedia({ media, locale, title }: { media: AtlasMedia[]; locale: Locale; title: string }) {
   if (media.length === 0) return null;
   return <section className="visual-media-section"><h3>{title}</h3><div className="visual-media-stack">{media.map((item) => <VisualMediaCard key={item.id} media={item} locale={locale} />)}</div></section>;
+}
+
+/**
+ * The boundary between what the text records and what later ages made of it.
+ *
+ * This atlas keeps a person's identity symbolic and its depictions art-historical;
+ * that distinction only means anything if the interface draws the line where the
+ * documents say it is. Engravings and settings live below this rule; the record
+ * lives above it.
+ */
+function ReceptionBoundary({ locale, children }: { locale: Locale; children: React.ReactNode }) {
+  return <div className="reception-boundary">
+    <h3 className="reception-heading">{t("receptionHeading", locale)}</h3>
+    <p className="reception-heading-note">{t("receptionHeadingNote", locale)}</p>
+    {children}
+  </div>;
 }
 
 function Shell({ children, onClose, locale }: { children: React.ReactNode; onClose: () => void; locale: Locale }) {
@@ -200,9 +290,13 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
     const birthPlace = atlas.locations.find((place) => place.slug === person.birthPlaceSlug);
     const deathPlace = atlas.locations.find((place) => place.slug === person.deathPlaceSlug);
     const characterMedia = atlas.media.filter((item) => item.entityKind === "character" && item.entityId === person.id).sort((left, right) => left.id.localeCompare(right.id));
+    const accent = colorForCharacter(atlas, person);
+    const emblem = atlas.characterEmblems.find((item) => item.characterSlug === person.slug);
+    const personQuotes = atlas.quotes.filter((item) => item.characterSlug === person.slug);
+    const personMusic = atlas.crossWorkMusic.filter((item) => item.fromEntityKind === "character" && item.fromSlug === person.slug);
     return <Shell onClose={onClose} locale={locale}>
       <header>
-        <PersonAvatar person={person} color={colorForCharacter(atlas, person)} />
+        <PersonAvatar atlas={atlas} person={person} color={accent} />
         <div>
           <small>{atlas.work.title}{era ? ` · ${era.title}` : ""}</small>
           <h2>{person.name}</h2>
@@ -217,10 +311,22 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
         <span>{label(person.realityType, locale)}</span>
         {artist && <span>{artist.modernStatus}</span>}
       </div>
-      <VisualMedia media={characterMedia} locale={locale} title={t("visualReference", locale)} />
+      {emblem && <section className="emblem-section">
+        <h3>{t("emblem", locale)} · {emblem.symbolName}</h3>
+        <p>{emblem.symbolMeaning}</p>
+        <div className="identity-tags"><span>{label(emblem.attestation, locale)}</span></div>
+        <small>{emblem.attributionNote} {t("emblemNote", locale)}</small>
+      </section>}
       {artist && artist.formalTitles.length > 0 && <p className="aliases"><strong>{t("formalTitles", locale)}:</strong> {artist.formalTitles.join(" · ")}</p>}
       <p>{person.summary}</p>
       {(detail.detail || person.detail) && <p>{detail.detail || person.detail}</p>}
+      <Quotes quotes={personQuotes} accent={accent} locale={locale}
+        onEvent={(slug) => onSelect({ type: "event", workSlug: atlas.work.slug, id: slug }, "list")}
+        titleOf={(slug) => atlas.events.find((item) => item.slug === slug)?.title} />
+      {(personMusic.length > 0 || characterMedia.length > 0) && <ReceptionBoundary locale={locale}>
+        <MusicalReception links={personMusic} locale={locale} />
+        <VisualMedia media={characterMedia} locale={locale} title={t("visualReference", locale)} />
+      </ReceptionBoundary>}
       {(detail.motivation || person.motivation) && <section><h3>{t("motivation", locale)}</h3><p>{detail.motivation || person.motivation}</p></section>}
       <dl>
         <dt>{t("lifeRange", locale)}</dt>
@@ -283,6 +389,9 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
     const following = position >= 0 && position < ordered.length - 1 ? ordered[position + 1] : undefined;
     const routes = atlas.routes.filter((route) => event.routeSlugs.includes(route.slug));
     const eventMedia = atlas.media.filter((item) => item.entityKind === "event" && item.entityId === event.id).sort((left, right) => left.id.localeCompare(right.id));
+    const eventRefs = atlas.scriptureRefs.filter((item) => item.eventSlug === event.slug);
+    const eventQuotes = atlas.quotes.filter((item) => item.eventSlug === event.slug);
+    const eventMusic = atlas.crossWorkMusic.filter((item) => item.fromEntityKind === "event" && item.fromSlug === event.slug);
     return <Shell onClose={onClose} locale={locale}>
       <small>{atlas.work.title}{era ? ` · ${era.title}` : ""} · {label(event.eventType, locale)}</small>
       <h2>{event.title}</h2>
@@ -292,9 +401,16 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
         <span className={`confidence ${event.confidence}`}>{label(event.confidence, locale)}</span>
         <span>#{event.sequence}</span>
       </div>
-      <VisualMedia media={eventMedia} locale={locale} title={t("visualReference", locale)} />
       <p>{event.summary}</p>
       {(detail.detail || event.detail) && <p>{detail.detail || event.detail}</p>}
+      <ScriptureRefs refs={eventRefs} locale={locale} />
+      <Quotes quotes={eventQuotes} accent={colorForEvent(atlas, event)} locale={locale}
+        onEvent={(slug) => onSelect({ type: "event", workSlug: atlas.work.slug, id: slug }, "list")}
+        titleOf={() => undefined} />
+      {(eventMusic.length > 0 || eventMedia.length > 0) && <ReceptionBoundary locale={locale}>
+        <MusicalReception links={eventMusic} locale={locale} />
+        <VisualMedia media={eventMedia} locale={locale} title={t("visualReference", locale)} />
+      </ReceptionBoundary>}
       {(detail.significance || event.significance) && <section><h3>{t("significance", locale)}</h3><p>{detail.significance || event.significance}</p></section>}
       <div className="drawer-nav">
         <button type="button" disabled={!previous} title={previous?.title} onClick={() => previous && onSelect({ type: "event", workSlug: atlas.work.slug, id: previous.slug }, "list")}>← {previous ? previous.title : t("prevEvent", locale)}</button>
@@ -477,9 +593,20 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
         <span className={place.isInferred ? "confidence low" : "confidence high"}>{label(place.coordinateAccuracy, locale)}</span>
         {place.modernCountryCode && <span>{place.modernCountryCode}</span>}
       </div>
-      <VisualMedia media={placeMedia} locale={locale} title={t("visualReference", locale)} />
       <p>{place.summary}</p>
       {(detail.detail || place.detail) && <p>{detail.detail || place.detail}</p>}
+      {/* A present-day photograph of a site is documentary, not reception, so it
+          stays above the line; only interpreted images and settings go below. */}
+      <VisualMedia media={placeMedia.filter((item) => item.depictionStatus !== "illustrative")} locale={locale} title={t("visualReference", locale)} />
+      {(() => {
+        const placeMusic = atlas.crossWorkMusic.filter((item) => item.fromEntityKind === "location" && item.fromSlug === place.slug);
+        const interpreted = placeMedia.filter((item) => item.depictionStatus === "illustrative");
+        if (placeMusic.length === 0 && interpreted.length === 0) return null;
+        return <ReceptionBoundary locale={locale}>
+          <MusicalReception links={placeMusic} locale={locale} />
+          <VisualMedia media={interpreted} locale={locale} title={t("visualReference", locale)} />
+        </ReceptionBoundary>;
+      })()}
       {(detail.literarySignificance || place.literarySignificance) && <section><h3>{t("literarySignificance", locale)}</h3><p>{detail.literarySignificance || place.literarySignificance}</p></section>}
       {(detail.historicalBackground || place.historicalBackground) && <section><h3>{t("historicalBackground", locale)}</h3><p>{detail.historicalBackground || place.historicalBackground}</p></section>}
       {(detail.modernStatus || place.modernStatus) && <section><h3>{t("modernStatus", locale)}</h3><p>{detail.modernStatus || place.modernStatus}</p></section>}
@@ -540,7 +667,7 @@ export function EntityDrawer({ atlas, entity, locale, onClose, onSelect, onTab, 
       <p>{relation.summary || detail.summary}</p>
       <div className="relation-pair">
         {[from, to].map((person) => person ? <button key={person.slug} onClick={() => onSelect({ type: "character", workSlug: atlas.work.slug, id: person.slug }, "graph")}>
-          <PersonAvatar person={person} color={colorForCharacter(atlas, person)} />{person.name}
+          <PersonAvatar atlas={atlas} person={person} color={colorForCharacter(atlas, person)} />{person.name}
         </button> : null)}
       </div>
       <dl>
