@@ -104,7 +104,10 @@ function render(places: Place[], rivers: River[]): string {
   const parts: string[] = [];
   const emit = (part: string): void => { parts.push(part); };
 
-  emit(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true">`);
+  // No preserveAspectRatio override here: the consuming <image> element decides
+  // how the master is fitted, and forcing "slice" on the root would crop the
+  // composition in any standalone viewer.
+  emit(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-hidden="true">`);
   emit(`<defs>
 <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16333a"/><stop offset=".55" stop-color="#10262c"/><stop offset="1" stop-color="#0a181d"/></linearGradient>
 <linearGradient id="seaGlint" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5da294" stop-opacity=".22"/><stop offset=".5" stop-color="#5da294" stop-opacity="0"/><stop offset="1" stop-color="#5da294" stop-opacity=".18"/></linearGradient>
@@ -115,7 +118,7 @@ function render(places: Place[], rivers: River[]): string {
 <linearGradient id="river" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7fc0b2" stop-opacity=".85"/><stop offset="1" stop-color="#3f7a74" stop-opacity=".55"/></linearGradient>
 <linearGradient id="mist" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8e2cf" stop-opacity="0"/><stop offset=".5" stop-color="#e8e2cf" stop-opacity=".14"/><stop offset="1" stop-color="#e8e2cf" stop-opacity="0"/></linearGradient>
 <radialGradient id="aura"><stop offset="0" stop-color="#f5c15d" stop-opacity=".5"/><stop offset=".6" stop-color="#f5c15d" stop-opacity=".14"/><stop offset="1" stop-color="#f5c15d" stop-opacity="0"/></radialGradient>
-<filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7"/></filter>
+<filter id="soft" x="-100%" y="-400%" width="300%" height="900%"><feGaussianBlur stdDeviation="7"/></filter>
 <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 0.93 0 0 0 0 0.89 0 0 0 0 0.78 0 0 0 .05 0"/></filter>
 </defs>`);
 
@@ -140,7 +143,7 @@ function render(places: Place[], rivers: River[]): string {
   emit(`<path d="${hull}" fill="none" stroke="#d8c489" stroke-opacity=".28" stroke-width="2"/>`);
   // Elevation-style inner contours: reuse the hull scaled about its centroid.
   for (const scale of [0.86, 0.7, 0.54]) {
-    emit(`<use href="#hull" fill="none" stroke="#2f3a2c" stroke-opacity=".3" stroke-width="1.1" transform="translate(${fixed(cx * (1 - scale))} ${fixed(cy * (1 - scale))}) scale(${scale})"/>`);
+    emit(`<use href="#hull" fill="none" stroke="#2f3a2c" stroke-opacity=".16" stroke-width="1" transform="translate(${fixed(cx * (1 - scale))} ${fixed(cy * (1 - scale))}) scale(${scale})"/>`);
   }
 
   // Distant ranges hugging the inland horizon, clipped to the landmass so no
@@ -152,12 +155,17 @@ function render(places: Place[], rivers: River[]): string {
   const maxX = Math.max(...places.map((place) => place.x));
   emit(`<g clip-path="url(#landClip)">`);
   for (let band = 0; band < 2; band += 1) {
-    const baseY = minY - 78 + band * 24;
-    const segments: string[] = [`M${fixed(minX - 30)} ${fixed(baseY + 24)}`];
-    for (let x = minX - 30; x < maxX + 10; x += 40 + far() * 20) {
-      segments.push(`L${fixed(x + 18)} ${fixed(baseY - 8 - far() * 18 + band * 8)} L${fixed(x + 38)} ${fixed(baseY + 24)}`);
+    const baseY = minY - 74 + band * 22;
+    const segments: string[] = [`M${fixed(minX - 60)} ${fixed(baseY + 26)}`];
+    // Irregular ridgeline: varying summit spacing and height stops the row
+    // from reading as a decorative sawtooth border.
+    for (let x = minX - 60; x < maxX + 40; ) {
+      const run = 26 + far() * 46;
+      const rise = 6 + far() * 30 + band * 6;
+      segments.push(`L${fixed(x + run * 0.45)} ${fixed(baseY + 26 - rise)} L${fixed(x + run)} ${fixed(baseY + 26 - far() * 8)}`);
+      x += run;
     }
-    emit(`<path d="${segments.join(" ")}" fill="#414d38" opacity="${band === 0 ? ".42" : ".3"}"/>`);
+    emit(`<path d="${segments.join(" ")} L${fixed(maxX + 40)} ${fixed(baseY + 40)} L${fixed(minX - 60)} ${fixed(baseY + 40)} Z" fill="#414d38" opacity="${band === 0 ? ".38" : ".26"}"/>`);
   }
   emit(`</g>`);
 
@@ -178,18 +186,51 @@ function render(places: Place[], rivers: River[]): string {
       x = nx;
       y = ny;
     }
-    emit(`<path d="${points.join(" ")}" fill="none" stroke="url(#river)" stroke-width="4" stroke-linecap="round" opacity=".7"/>`);
-    emit(`<path d="${points.join(" ")}" fill="none" stroke="#d9efe6" stroke-width="1" stroke-linecap="round" opacity=".4"/>`);
-    emit(`<ellipse cx="${fixed(x)}" cy="${fixed(y)}" rx="9" ry="3.5" fill="#7fc0b2" opacity=".3"/>`);
+    // Clipped to the landmass: a watercourse ends at the coast rather than
+    // trailing across open sea as a wire.
+    emit(`<g clip-path="url(#landClip)">`);
+    emit(`<path d="${points.join(" ")}" fill="none" stroke="url(#river)" stroke-width="5" stroke-linecap="round" opacity=".65"/>`);
+    emit(`<path d="${points.join(" ")}" fill="none" stroke="#d9efe6" stroke-width="1.4" stroke-linecap="round" opacity=".35"/>`);
+    emit(`</g>`);
   }
+
+  // Horizontal room per place: distance to the nearest neighbour on the same
+  // route band. Routes vary from 9 to 17 mountains across the same width, so
+  // cluster size has to follow the crowding or the bands turn into a hedge.
+  const bandKey = (place: Place): number => Math.round(place.y / 70);
+  const byBand = new Map<number, Place[]>();
+  for (const place of places) {
+    const key = bandKey(place);
+    byBand.set(key, [...(byBand.get(key) ?? []), place]);
+  }
+  const roomBySlug = new Map<string, number>();
+  for (const band of byBand.values()) {
+    const sorted = [...band].sort((a, b) => a.x - b.x);
+    sorted.forEach((place, index) => {
+      const left = index > 0 ? place.x - sorted[index - 1].x : Number.POSITIVE_INFINITY;
+      const right = index < sorted.length - 1 ? sorted[index + 1].x - place.x : Number.POSITIVE_INFINITY;
+      const nearest = Math.min(left, right);
+      roomBySlug.set(place.slug, Number.isFinite(nearest) ? nearest : 130);
+    });
+  }
+  // Depth: southern (lower) routes read as nearer, so they run slightly larger
+  // and fully saturated while northern routes recede.
+  const minPlaceY = Math.min(...places.map((place) => place.y));
+  const maxPlaceY = Math.max(...places.map((place) => place.y));
+  const spanY = Math.max(maxPlaceY - minPlaceY, 1);
 
   // Mountain clusters, one per textual place; grandeur grows with creatures.
   const washes = ["url(#peakA)", "url(#peakB)", "url(#peakC)"];
-  for (const place of places) {
+  const drawOrder = [...places].sort((a, b) => a.y - b.y);
+  for (const place of drawOrder) {
     const rand = prng(`mount-${place.slug}`);
-    const grandeur = 1 + Math.min(place.creatures, 4) * 0.12;
-    emit(`<g transform="translate(${fixed(place.x)} ${fixed(place.y)})">`);
-    emit(`<ellipse cx="0" cy="26" rx="52" ry="12" fill="#0d1f22" opacity=".35" filter="url(#soft)"/>`);
+    const grandeur = 1 + Math.min(place.creatures, 4) * 0.1;
+    const depth = (place.y - minPlaceY) / spanY;
+    // Fit the cluster inside its share of the band, then apply depth scaling.
+    const fit = Math.max(0.42, Math.min(1, (roomBySlug.get(place.slug) ?? 130) / 118));
+    const scale = fit * (0.84 + depth * 0.26);
+    emit(`<g transform="translate(${fixed(place.x)} ${fixed(place.y)}) scale(${fixed(scale)})" opacity="${fixed(0.82 + depth * 0.18)}">`);
+    emit(`<ellipse cx="0" cy="26" rx="50" ry="11" fill="#0d1f22" opacity=".35" filter="url(#soft)"/>`);
     const peaks = 3 + Math.floor(rand() * 2);
     for (let peak = peaks - 1; peak >= 0; peak -= 1) {
       const offset = (peak - (peaks - 1) / 2) * (16 + rand() * 8);
@@ -212,7 +253,7 @@ function render(places: Place[], rivers: River[]): string {
       }
     }
     // Vegetation skirt: small stylised trees at the foot of each cluster.
-    const trees = 4 + Math.floor(rand() * 4);
+    const trees = 2 + Math.floor(rand() * 3);
     for (let tree = 0; tree < trees; tree += 1) {
       const tx = (rand() - 0.5) * 108;
       const ty = 22 + rand() * 16;
@@ -253,15 +294,21 @@ function landmassPath(places: Place[]): string {
   const points: Array<[number, number]> = [];
   for (let index = 0; index < samples; index += 1) {
     const angle = (index / samples) * Math.PI * 2;
+    // Support-function reach: already anisotropic, so the padded radius must be
+    // used for both axes. Scaling the vertical component separately would pull
+    // the coast inside the southernmost route.
     let reach = 0;
     for (const place of places) {
       const along = (place.x - cx) * Math.cos(angle) + (place.y - cy) * Math.sin(angle);
       reach = Math.max(reach, along);
     }
     // Headlands and bays: alternate the padding so the coast reads hand-drawn.
-    const bay = Math.sin(index * 2.4) * 22;
-    const radius = reach + 72 + wobble() * 46 + bay;
-    points.push([cx + Math.cos(angle) * radius, cy + Math.sin(angle) * Math.max(radius * 0.58, 108)]);
+    // Layered octaves plus an occasional deep inlet keep the coast from
+    // reading as a rounded rectangle once the hull is smoothed.
+    const bay = Math.sin(index * 2.4) * 20 + Math.sin(index * 1.1 + 0.7) * 15 + Math.sin(index * 4.3) * 9;
+    const inlet = index % 7 === 3 ? -34 : index % 5 === 0 ? 22 : 0;
+    const radius = reach + 26 + wobble() * 26 + bay + inlet;
+    points.push([cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius]);
   }
   const clamped = points.map(([x, y]): [number, number] => [Math.min(Math.max(x, 46), W - 46), Math.min(Math.max(y, 60), H - 40)]);
   const path: string[] = [];
