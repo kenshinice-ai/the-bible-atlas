@@ -1,8 +1,8 @@
 # 《山海经 Atlas》阶段交接
 
 - 状态：`review_ready`
-- 当前阶段：Phase 1 / V1 垂直试点已实现（外部签署与隔离库证据仍 pending）
-- Gate 状态：外部人工签署 `blocked`；V1 工程实现按用户授权先行，见第 0 节
+- 当前阶段：Phase 1 / V2 南山经全篇语料已实现并通过隔离库与领域验证
+- Gate 状态：内部工程门槛已由主负责人签署放行（SJ-D012）；外部机构签署仍 `pending`
 - 证据层级：`local_candidate`
 - 核心蓝图：[memoized-riding-giraffe.md](memoized-riding-giraffe.md)
 - 最后更新：2026-08-18
@@ -197,8 +197,8 @@
 - `handoffRevision`：`SJ-HANDOFF-004`
 - `inputChecksums`：文档输入 checksum 已记录于 `generated/document-consistency.json`；corpus/edition 输入仍为 `not_frozen`
 - `evidenceIndex`：`docs/shanhaijing/generated/document-consistency.json`
-- `reviewer`：项目责任角色已指定；外部人工签署 `pending`
-- `reviewDisposition`：`blocked`
+- `reviewer`：项目责任角色已指定；主负责人内部签署 `signed`（2026-08-18，SJ-D012）；外部人工签署 `pending`
+- `reviewDisposition`：内部工程门槛 `released`；外部机构签署门槛 `blocked`
 - `imageGeneration`：production prompt 与 CLI dry-run 已完成；`blocked_missing_api_key`
 - `nextOwner`：主负责人
 - `nextAction`：隔离库 bootstrap + 领域 verifier（`verify:shanhaijing`）；原创 SVG 艺术总览（SJ-D011）；南山经全篇语料扩量

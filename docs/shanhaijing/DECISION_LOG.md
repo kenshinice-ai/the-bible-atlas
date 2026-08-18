@@ -142,6 +142,18 @@
 - 影响：`shj_artistic_overviews` 状态从 `blocked_missing_api_key` 更新为程序化渲染态；`coordinate_space` 记为 `artistic-composite-svg-v1`；MAP-002 至 MAP-004 保持 `internal_candidate_only` 不阻断任何工作。艺术构图仍不得被解读为地望结论，disclosure 不变。
 - 证据：seed `066_shanhaijing_svg_overview.sql`；`ShanhaijingWorkspace.tsx` 的 SVG 渲染实现。
 
+### SJ-D012：主负责人内部签署,外部机构签署保持 pending
+
+- 状态：`accepted`
+- 日期：2026-08-18
+- 批准者：`主负责人(用户)明确确认`
+- 输入：`REVIEWER_ASSIGNMENTS_2026-08-15.md`；`generated/domain-verification.json`；`generated/isolated-bootstrap-2026-08-18.md`；SJ-D007
+- 决策：主负责人以项目负责人身份签署确认当前 reviewer 责任模型与 V2 内部编辑结论，授权项目在 `local_candidate` / `isolated_database` 证据层继续推进。**不将其记为外部专家签署**：`REVIEWER_ASSIGNMENTS` 中所有外部机构与个人保持 `external_not_contacted`，外部签署状态保持 `pending`。
+- 理由：SJ-D007 明确规定未联系的机构或个人不得写成已接受委任。以内部签署解除工程推进阻断，同时不制造任何虚构的学术、法律或无障碍背书，是唯一同时诚实且可执行的记录方式。
+- 影响：Gate 0 的内部工程门槛解除，schema/code/语料扩量在 V1/V2 范围内获授权；涉及外部专业判断的结论（底本学术定论、地望主张、版权法律意见、母语审校、辅助技术实测、真实设备性能）仍受阻，不得在对外文案中声称机构或专家认可。生产发布仍按 SJ-D006 需独立授权。
+- 前置动作（不阻断当前工作）：如需真正的外部签署，按 `REVIEWER_ASSIGNMENTS` 候选逐项联系并记录具名接受与结论。
+- 证据：`REVIEWER_ASSIGNMENTS_2026-08-15.md` 第 5 节。
+
 ## 待裁决问题索引
 
 - `EXPERT_REVIEW_QUESTIONS.md`：学科专家问题与 reviewer disposition。
@@ -156,3 +168,4 @@
 | `SJ-DLOG-002` | 2026-08-15 | 指定 reviewer 模型并裁决用户参考地图 | 主负责人 | `REVIEWER_ASSIGNMENTS_2026-08-15.md`、`REFERENCE_MAP_AUDIT.md` |
 | `SJ-DLOG-003` | 2026-08-15 | 采用艺术总览 + 四类权威证据视图的双轨地图 | 主负责人 | `MAP_IMPLEMENTATION_STRATEGY_2026-08-15.md`、`FANTASY_COMPOSITE_MAP_ART_DIRECTION_2026-08-15.md` |
 | `SJ-DLOG-004` | 2026-08-18 | 补记 V1 垂直试点授权（SJ-D010）；裁决艺术总览走原创 SVG（SJ-D011） | 主负责人 | `HANDOFF.md` 第 0 节、commit `5591228` |
+| `SJ-DLOG-005` | 2026-08-18 | 记录主负责人内部签署，外部机构签署保持 pending（SJ-D012） | 主负责人 | `REVIEWER_ASSIGNMENTS_2026-08-15.md` 第 5 节 |

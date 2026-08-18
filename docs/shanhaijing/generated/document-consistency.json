@@ -4,7 +4,7 @@
   "command": "npm run verify:shanhaijing-docs",
   "generatorVersion": "1.0.0",
   "generatorSha256": "4e8d55a5df39147d59a4b5a22a5cc82b40627492173fa64fc33e76f2d9de871f",
-  "generatedAt": "2026-08-18T00:47:49.130Z",
+  "generatedAt": "2026-08-18T00:57:54.735Z",
   "evidenceLevel": "local_candidate",
   "result": "pass",
   "gateTransitionAuthorized": false,
@@ -117,8 +117,8 @@
     },
     {
       "path": "docs/shanhaijing/HANDOFF.md",
-      "bytes": 18611,
-      "sha256": "d575f2720f88932aca9877ef848eed66e5c5558a54d7d58cb991b8322a95fb79"
+      "bytes": 18738,
+      "sha256": "34c78642528d1a0174c2e983a9688c3659c0af2fe0f42dfb8e3daf29908d2927"
     },
     {
       "path": "docs/shanhaijing/HANDOFF_TEMPLATE.md",
@@ -127,8 +127,8 @@
     },
     {
       "path": "docs/shanhaijing/DECISION_LOG.md",
-      "bytes": 12231,
-      "sha256": "107d20a100c07c21cb60d7c9f2fa57a8deadac698ba8fa651f67cc3505c237b2"
+      "bytes": 13905,
+      "sha256": "7dbe566c2c3da2271d80f84af7b0434b9eaa215e6ad196753eca808f8141ccd0"
     },
     {
       "path": "docs/shanhaijing/RISK_REGISTER.md",
@@ -147,8 +147,8 @@
     },
     {
       "path": "docs/shanhaijing/REVIEWER_ASSIGNMENTS_2026-08-15.md",
-      "bytes": 10562,
-      "sha256": "522491870bb32f4d2f9ab47aade5685384875c84c11876b4a4ca895989cda5da"
+      "bytes": 11314,
+      "sha256": "966c83cd776b86f9dfe43f7ff5c3c0f53bf4e8c6f87d2a4eae61c7f0deabcad6"
     },
     {
       "path": "docs/shanhaijing/MAP_IMPLEMENTATION_STRATEGY_2026-08-15.md",

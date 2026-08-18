@@ -5,6 +5,7 @@
 - 证据层级：`local_candidate`
 - 核心蓝图：[memoized-riding-giraffe.md](memoized-riding-giraffe.md)
 - 授权来源：用户于 2026-08-15 要求“参考各大权威网站为准，指定 reviewer，按照最优解执行”
+- 主负责人内部签署：`signed`（2026-08-18，SJ-D012）
 - 外部签署状态：`external_human_signoff_pending`
 
 > 本文件正式指定项目内 reviewer 责任角色，并登记首选外部机构或专家作为签署候选。机构名称或个人姓名出现在“外部签署候选”栏，不表示对方已接受委任、认可本项目或提供法律/学术背书；联系和接受状态必须另行记录。
@@ -160,11 +161,14 @@
 ## 5. Gate 结论
 
 - 项目责任 reviewer：`assigned`
-- 外部人工签署：`pending`
+- 主负责人内部签署：`signed`（2026-08-18，见 `DECISION_LOG.md` SJ-D012）
+- 外部人工签署：`pending`（未联系任何外部机构或个人；上表候选状态不变）
 - 权威来源基线：`assigned`
 - 用户提供地图：`internal_visual_reference_only`
-- Gate 0：`blocked`
-- schema/code 授权：`no`
+- Gate 0：内部工程门槛已由主负责人签署放行；外部机构签署门槛仍 `blocked`
+- schema/code 授权：`yes`（限 V1/V2 内部编辑候选范围，见 SJ-D010）
+
+主负责人内部签署只覆盖：当前 reviewer 责任模型、V2 语料与领域实现的内部编辑结论、以及在 `local_candidate` / `isolated_database` 证据层继续推进的授权。它**不构成**古籍校勘、历史地理、法律、母语翻译、辅助技术或真实设备性能的外部专业背书；任何对外发布文案不得据此声称获得机构或专家认可。
 
 下一步由各项目责任 reviewer 依据本文件更新 `EXPERT_REVIEW_QUESTIONS.md`；古籍底本、历史地理 candidate set、具体资产 rights、声音 target、双语 glossary、辅助技术矩阵和性能设备矩阵仍需实际输入与外部人工签署。
 
