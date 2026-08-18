@@ -120,6 +120,28 @@
 - 前置动作：冻结 Pilot、topology/candidate schema、两个 candidate set fixture、rights-approved source image fixture 和性能预算。
 - 证据：`MAP_IMPLEMENTATION_STRATEGY_2026-08-15.md`。
 
+### SJ-D010：授权 V1 垂直试点先于外部签署实现
+
+- 状态：`accepted`
+- 日期：2026-08-18（实现完成于 2026-08-16 至 2026-08-18；本条为补记）
+- 批准者：`用户授权；主负责人执行`
+- 输入：`memoized-riding-giraffe.md` 第 3 节 inventory-first Pilot 路线；SJ-D001 至 SJ-D005 的语义约束
+- 决策：在外部专家签署完成前，按已冻结的领域语义先实现《南山经》鹊山首列的 V1 垂直试点（schema、seed、API、UI），证据层级保持 `local_candidate`，`published` 状态限定为产品内部编辑候选通道。
+- 理由：垂直试点验证 occurrence/concept 分离、逐段 checksum、拓扑建模与 fail-closed 媒体门在真实代码中的可行性，是外部评审的最好输入；不实现则评审对象只有纸面契约。
+- 影响：部分放宽 SJ-D001 的"Gate 0 前不写实现"约束，放宽范围仅限 V1 垂直切片；隔离库证据、领域 verifier、静态 parity、性能基准与部署仍受原门禁约束。外部签署仍是 Scale 阶段扩量与任何发布的前置条件。
+- 证据：commit `5591228`；`HANDOFF.md` 第 0 节。
+
+### SJ-D011：艺术总览采用原创程序化 SVG，光栅生成推迟
+
+- 状态：`accepted`
+- 日期：2026-08-18
+- 批准者：`用户拍板`
+- 输入：`FANTASY_COMPOSITE_MAP_GENERATION_STATUS.md`（`blocked_missing_api_key`）；`REFERENCE_MAP_AUDIT.md` MAP-002 至 MAP-004（provenance pending）；`FANTASY_COMPOSITE_MAP_ART_DIRECTION_2026-08-15.md`
+- 决策：V1 艺术总览不再等待外部图像生成或外来候选图确权，改为项目自绘的**确定性程序化 SVG 手卷式拼接总览**：从 `shj_textual_places`/`shj_topology_edges`/`shj_creatures` 数据驱动渲染，山形、水系、异兽标记与图例均为原创矢量绘制，免责声明常驻。ImageGen 光栅母图与 MAP-002/003/004 的确权推迟到 Scale 阶段，作为可选升级而非阻断项。
+- 理由：原创 SVG 权利链零风险、完全可复现（无模型随机性）、随语料扩量自动生长、可访问性（DOM 文本、焦点、reduced-motion）优于位图热点方案；同时消除对外部 API key 与未确权图像的依赖。
+- 影响：`shj_artistic_overviews` 状态从 `blocked_missing_api_key` 更新为程序化渲染态；`coordinate_space` 记为 `artistic-composite-svg-v1`；MAP-002 至 MAP-004 保持 `internal_candidate_only` 不阻断任何工作。艺术构图仍不得被解读为地望结论，disclosure 不变。
+- 证据：seed `066_shanhaijing_svg_overview.sql`；`ShanhaijingWorkspace.tsx` 的 SVG 渲染实现。
+
 ## 待裁决问题索引
 
 - `EXPERT_REVIEW_QUESTIONS.md`：学科专家问题与 reviewer disposition。
@@ -133,3 +155,4 @@
 | `SJ-DLOG-001` | 2026-08-14 | 建立 Phase 0 决策记录 | 主负责人 | `HANDOFF.md` |
 | `SJ-DLOG-002` | 2026-08-15 | 指定 reviewer 模型并裁决用户参考地图 | 主负责人 | `REVIEWER_ASSIGNMENTS_2026-08-15.md`、`REFERENCE_MAP_AUDIT.md` |
 | `SJ-DLOG-003` | 2026-08-15 | 采用艺术总览 + 四类权威证据视图的双轨地图 | 主负责人 | `MAP_IMPLEMENTATION_STRATEGY_2026-08-15.md`、`FANTASY_COMPOSITE_MAP_ART_DIRECTION_2026-08-15.md` |
+| `SJ-DLOG-004` | 2026-08-18 | 补记 V1 垂直试点授权（SJ-D010）；裁决艺术总览走原创 SVG（SJ-D011） | 主负责人 | `HANDOFF.md` 第 0 节、commit `5591228` |

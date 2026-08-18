@@ -1,11 +1,28 @@
 # 《山海经 Atlas》阶段交接
 
 - 状态：`review_ready`
-- 当前阶段：Phase 0 / Gate 0
-- Gate 状态：`blocked`
+- 当前阶段：Phase 1 / V1 垂直试点已实现（外部签署与隔离库证据仍 pending）
+- Gate 状态：外部人工签署 `blocked`；V1 工程实现按用户授权先行，见第 0 节
 - 证据层级：`local_candidate`
 - 核心蓝图：[memoized-riding-giraffe.md](memoized-riding-giraffe.md)
-- 最后更新：2026-08-15
+- 最后更新：2026-08-18
+
+## 0. 2026-08-18 实现快照：V1 垂直试点（鹊山首列）
+
+本节记录 2026-08-15 后按用户授权完成的实现，修正下文 2026-08-15 版本中"尚未实现 schema/code"的过时表述。下文第 1–9 节保留为 Gate 0 文档阶段的历史记录；凡与本节冲突处，以本节为准。
+
+已实现并装载（本地共享库 `literary_atlas`，seed_history 登记于 2026-08-18 00:46）：
+
+- `db/migrations/020_shanhaijing_domain.sql`：17 张 `shj_*` 领域表 + `mythography` 类目；
+- `db/migrations/021_shanhaijing_release_hardening.sql`：移除 hobbit 特例约束、补版本溯源与审校字段；
+- `db/seeds/064_shanhaijing_v1.sql` / `065_shanhaijing_release_metadata.sql`：《南山经》鹊山首列 9 段公版文本（逐段 SHA-256）、9 异兽概念、9 处文本地点、9 次提及、8 条拓扑边、19 条分类指派、9 条段落审计、10 条编辑决策、1 条异文记录；全部双语翻译 published（此处 published 指产品内部编辑候选通道，不代表外部学术背书）；
+- `apps/api/src/shanhaijing.ts` + `app.ts` 接入：atlas/detail/search 域内加载；
+- `apps/web/src/components/ShanhaijingWorkspace.tsx` + profile/搜索/题词/样式接入：`shanhaijing` profile 可运行，艺术总览暂以结构化拓扑替代（`shj_artistic_overviews.status='blocked_missing_api_key'`）；
+- 实现检查点 commit：`5591228`（feat(shanhaijing): V1 vertical pilot for the first Queshan route）。
+
+本快照时点仍未实现/未运行（与第 2.3 节口径一致）：隔离库 fresh/repeat bootstrap、领域 verifier（现仅有文档一致性 verifier）、静态烘焙与 parity、性能基准、staging/production。外部专家签署全部 pending。
+
+数字来源：本节计数由 2026-08-18 对 `literary_atlas` 的直接 SQL 查询得出；后续必须由 `verify:shanhaijing` 生成报告替代人工查询。
 
 ## 1. Scope / completed
 
@@ -177,14 +194,14 @@
 
 本文件由下一次交接更新时补充：
 
-- `handoffRevision`：`SJ-HANDOFF-003`
+- `handoffRevision`：`SJ-HANDOFF-004`
 - `inputChecksums`：文档输入 checksum 已记录于 `generated/document-consistency.json`；corpus/edition 输入仍为 `not_frozen`
 - `evidenceIndex`：`docs/shanhaijing/generated/document-consistency.json`
 - `reviewer`：项目责任角色已指定；外部人工签署 `pending`
 - `reviewDisposition`：`blocked`
 - `imageGeneration`：production prompt 与 CLI dry-run 已完成；`blocked_missing_api_key`
 - `nextOwner`：主负责人
-- `nextAction`：安全配置 ImageGen API key 并生成幻想拼接总图 local candidate
-- `updatedAt`：2026-08-15
+- `nextAction`：隔离库 bootstrap + 领域 verifier（`verify:shanhaijing`）；原创 SVG 艺术总览（SJ-D011）；南山经全篇语料扩量
+- `updatedAt`：2026-08-18
 
 在外部人工签署、冻结输入和明确 Gate 授权未填充前，本文件保持 `review_ready`、`local_candidate`、`blocked`。统计区必须由生成报告提供，禁止手工补写“已完成”数字。

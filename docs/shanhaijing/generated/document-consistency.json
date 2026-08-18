@@ -3,8 +3,8 @@
   "reportId": "shanhaijing-document-consistency",
   "command": "npm run verify:shanhaijing-docs",
   "generatorVersion": "1.0.0",
-  "generatorSha256": "188ca38462bb272c1ee54f63c102be93437b989d3ecc48e2a2c5ab477c93a923",
-  "generatedAt": "2026-08-15T13:36:18.940Z",
+  "generatorSha256": "4e8d55a5df39147d59a4b5a22a5cc82b40627492173fa64fc33e76f2d9de871f",
+  "generatedAt": "2026-08-18T00:13:13.688Z",
   "evidenceLevel": "local_candidate",
   "result": "pass",
   "gateTransitionAuthorized": false,
@@ -67,8 +67,8 @@
     },
     {
       "path": "docs/shanhaijing/REFERENCE_MAP_AUDIT.md",
-      "bytes": 8139,
-      "sha256": "d96e8d7d77d019ef330989ca4a79600cc434b2f9d81f5710008b4a083c7586a7"
+      "bytes": 12386,
+      "sha256": "d8a6e2ce38918e2cade015e7ceebaf49e062784017cee5391ff5b437ac289dd4"
     },
     {
       "path": "docs/shanhaijing/CHRONOLOGY_MODEL.md",
@@ -117,8 +117,8 @@
     },
     {
       "path": "docs/shanhaijing/HANDOFF.md",
-      "bytes": 16506,
-      "sha256": "342ea75d1228d83ec12e9e18af9498340fda298ada52f113cadfdfff60cea07d"
+      "bytes": 18611,
+      "sha256": "d575f2720f88932aca9877ef848eed66e5c5558a54d7d58cb991b8322a95fb79"
     },
     {
       "path": "docs/shanhaijing/HANDOFF_TEMPLATE.md",
@@ -127,8 +127,8 @@
     },
     {
       "path": "docs/shanhaijing/DECISION_LOG.md",
-      "bytes": 9436,
-      "sha256": "75dcf4f8c2697054536f7aae6d09849199caada8a4ba97899fadba7e5be61dff"
+      "bytes": 12231,
+      "sha256": "107d20a100c07c21cb60d7c9f2fa57a8deadac698ba8fa651f67cc3505c237b2"
     },
     {
       "path": "docs/shanhaijing/RISK_REGISTER.md",

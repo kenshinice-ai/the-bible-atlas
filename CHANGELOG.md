@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased — Shanhaijing Atlas V1 vertical pilot (2026-08-16 → 2026-08-18)
+
+- Added the `shanhaijing` first-party profile with a passage-rooted domain model (17 `shj_*` tables, migrations 020/021) separating creature concepts, textual occurrences, corpus coverage, topology, taxonomy, and artistic interpretation.
+- Loaded the first Queshan route of the Nanshan Jing as an audited V1 slice: 9 checksummed passages, 9 creature concepts, 9 occurrences, 9 textual places, 8 topology edges, 19 taxonomy assignments, bilingual throughout (seeds 064/065).
+- Wired the API domain loader, Shanhaijing workspace UI, search, epigraphs, and profile metadata; the artistic overview currently falls back to the structured topology view.
+- Completed the Gate 0 document suite (20+ specs) with a mechanical consistency verifier (`verify:shanhaijing-docs`); external expert sign-off remains pending, evidence level `local_candidate`.
+- Recorded decisions SJ-D010 (V1 pilot authorized ahead of external sign-off) and SJ-D011 (artistic overview switches to an original procedural SVG composite; raster generation deferred to Scale).
+
 ## Unreleased — Bible visual pilot (2026-08-09)
 
 - Executed the approved P0/P1/P2 pilot locally: one public-domain visual each for a person, event and location.

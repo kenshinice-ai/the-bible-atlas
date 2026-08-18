@@ -367,33 +367,25 @@ async function main(): Promise<void> {
     }
   }
 
+  // Governance IDs must start at 001 and stay contiguous. New entries may be
+  // appended (the log is append-only), but the historical minimum may never
+  // shrink and no gaps may appear.
   const idChecks = [
-    {
-      file: "DECISION_LOG.md",
-      pattern: /^### (SJ-D\d{3})：/gmu,
-      expected: expectedSequence("SJ-D", 9),
-    },
-    {
-      file: "RISK_REGISTER.md",
-      pattern: /^\| (SJ-R\d{3}) \|/gmu,
-      expected: expectedSequence("SJ-R", 16),
-    },
-    {
-      file: "EXPERT_REVIEW_QUESTIONS.md",
-      pattern: /^\| (SJ-E\d{3}) \|/gmu,
-      expected: expectedSequence("SJ-E", 14),
-    },
+    { file: "DECISION_LOG.md", pattern: /^### (SJ-D\d{3})：/gmu, prefix: "SJ-D", minimum: 9 },
+    { file: "RISK_REGISTER.md", pattern: /^\| (SJ-R\d{3}) \|/gmu, prefix: "SJ-R", minimum: 16 },
+    { file: "EXPERT_REVIEW_QUESTIONS.md", pattern: /^\| (SJ-E\d{3}) \|/gmu, prefix: "SJ-E", minimum: 14 },
   ];
   for (const check of idChecks) {
     checks += 1;
     const text = texts.get(join(DOCS_ROOT, check.file)) ?? "";
     const actual = uniqueIds(text, check.pattern);
-    if (JSON.stringify(actual) !== JSON.stringify(check.expected)) {
+    const expected = expectedSequence(check.prefix, Math.max(actual.length, check.minimum));
+    if (JSON.stringify(actual) !== JSON.stringify(expected)) {
       addFinding(findings, {
         checkId: "governance-id-sequence",
         severity: "error",
         file: `docs/shanhaijing/${check.file}`,
-        message: `ID 序列不连续；expected=${check.expected.join(",")} actual=${actual.join(",")}`,
+        message: `ID 序列不连续或低于历史下限；expected=${expected.join(",")} actual=${actual.join(",")}`,
       });
     }
   }

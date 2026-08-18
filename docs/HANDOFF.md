@@ -2,6 +2,16 @@
 
 ## 项目现状
 
+### 2026-08-18 阶段性交接：山海经 Atlas V1 垂直试点落库 + Git 检查点恢复
+
+第六条内容线《山海经 Atlas》已从 Gate 0 文档阶段进入 V1 垂直试点实现（用户授权，决策 SJ-D010）。详细状态以 [docs/shanhaijing/HANDOFF.md](shanhaijing/HANDOFF.md) 第 0 节为准：
+
+- 领域 schema（migration `020/021`，17 张 `shj_*` 表 + `mythography` 类目）、《南山经》鹊山首列 9 段审计语料（seed `064/065`，逐段 SHA-256）、API 领域 loader、`shanhaijing` profile 与工作区 UI 均已实现并装载本地库；typecheck 与 Web 33 测试通过。
+- 证据层级 `local_candidate`；隔离库 bootstrap、领域 verifier、静态 parity、性能基准、部署均未做；外部专家签署 pending。
+- 艺术总览按 SJ-D011 改走**原创程序化 SVG** 路线，ImageGen 光栅母图与外来候选图确权推迟到 Scale 阶段。
+- **Git 检查点已恢复**：2026-08-09 记录的 iCloud `.git/refs` 权限问题已消失。积压工作分四个 commit 落盘：`ec3f59b`（圣经视觉试点）、`5591228`（山海经 V1）、`36c92ad`（红楼梦蓝图与独立原型）、`7c05453`（codex 代理配置）。**未推送远程**，push 待用户确认。
+- 红楼梦（Dream of the Red Chamber）为第七条线的蓝图+独立原型，未接入任何 profile。
+
 ### 2026-08-09 阶段性交接：Bible visual pilot（P0/P1/P2，本地候选）
 
 本轮按已批准的 P0/P1/P2 队列先做一个最小视觉试点：1 位人物、1 个事件、1 个地点各绑定 1 张经权利核验的 Wikimedia Commons 公有领域图片。试点只进入本地候选和验证流程，**没有部署、没有提交、没有推送，也没有改变现有 production**。

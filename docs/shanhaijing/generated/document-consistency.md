@@ -2,8 +2,8 @@
 
 - 生成命令：`npm run verify:shanhaijing-docs`
 - 生成器版本：`1.0.0`
-- 生成器 SHA-256：`188ca38462bb272c1ee54f63c102be93437b989d3ecc48e2a2c5ab477c93a923`
-- 生成时间：`2026-08-15T13:36:18.940Z`
+- 生成器 SHA-256：`4e8d55a5df39147d59a4b5a22a5cc82b40627492173fa64fc33e76f2d9de871f`
+- 生成时间：`2026-08-18T00:13:13.688Z`
 - 证据层级：`local_candidate`
 - 检查结果：`pass`
 - 输入文件：30
@@ -41,7 +41,7 @@
 | docs/shanhaijing/ENTITY_AND_DATA_DICTIONARY.md | 15229 | `9435dfe990b2577c4121212fc1813e9fc0908faab51a1e4485d1d5ec439b9eba` |
 | docs/shanhaijing/TAXONOMY.md | 10218 | `7f9a4a468adc3499b8aacf84a4b31c0124615ac6c5553bc5e6b2b56699114df9` |
 | docs/shanhaijing/GEOGRAPHY_AND_MAPS.md | 10526 | `47bc6d6c057a42b36f6da277a57fc6a14d9820d2a1d7fe0a465ce4d0355bae73` |
-| docs/shanhaijing/REFERENCE_MAP_AUDIT.md | 8139 | `d96e8d7d77d019ef330989ca4a79600cc434b2f9d81f5710008b4a083c7586a7` |
+| docs/shanhaijing/REFERENCE_MAP_AUDIT.md | 12386 | `d8a6e2ce38918e2cade015e7ceebaf49e062784017cee5391ff5b437ac289dd4` |
 | docs/shanhaijing/CHRONOLOGY_MODEL.md | 7573 | `b0fe562d4ddd9492a7e015f7daef487afb3aee107d13450ebcc59357d89ba8de` |
 | docs/shanhaijing/VISUAL_DESIGN_SYSTEM.md | 10029 | `91dadc1821ec88f4a493e63dc3ecb2f95f1aae9a4b0c31b9eb3585a29f14564e` |
 | docs/shanhaijing/MEDIA_ICON_ILLUSTRATION_POLICY.md | 13018 | `553b010b5d889e708778cbd9b680c29483940c2ab9723d0351f5b11f24053532` |
@@ -51,9 +51,9 @@
 | docs/shanhaijing/ASSET_MANIFEST_SPEC.md | 30678 | `e40b28bfdc7a1b759019f09c89057e42fa75bad3b4e0c8e2e286cc6bb349bd5b` |
 | docs/shanhaijing/PERFORMANCE_BUDGETS.md | 25392 | `210cd0f2d773f1a5d0ecab01c27206b0ad11a79a75000c096a1ff49828fa01b4` |
 | docs/shanhaijing/TEST_AND_VERIFICATION_PLAN.md | 34936 | `f7e2d5faf312cdd41e57e0c0d2fee22d3fd60846e24d50de7869be69fa1cca64` |
-| docs/shanhaijing/HANDOFF.md | 16506 | `342ea75d1228d83ec12e9e18af9498340fda298ada52f113cadfdfff60cea07d` |
+| docs/shanhaijing/HANDOFF.md | 18611 | `d575f2720f88932aca9877ef848eed66e5c5558a54d7d58cb991b8322a95fb79` |
 | docs/shanhaijing/HANDOFF_TEMPLATE.md | 8060 | `5f5dcdb36f7b659b4710be10b9eb56e7a39c576bbbcf4dc7cbfe6b570dbc3a2e` |
-| docs/shanhaijing/DECISION_LOG.md | 9436 | `75dcf4f8c2697054536f7aae6d09849199caada8a4ba97899fadba7e5be61dff` |
+| docs/shanhaijing/DECISION_LOG.md | 12231 | `107d20a100c07c21cb60d7c9f2fa57a8deadac698ba8fa651f67cc3505c237b2` |
 | docs/shanhaijing/RISK_REGISTER.md | 4701 | `9ae0ce9ac9f05dc806d1a067cd79bc70b3c35757eae078797ff1bd202a513500` |
 | docs/shanhaijing/EXPERT_REVIEW_QUESTIONS.md | 5779 | `08d14b6cd490694db13c1534103c3cc9148eb67047c9395a553197f8adf0045c` |
 | docs/shanhaijing/RELEASE_CHECKLIST.md | 5063 | `1ede58c490a85c45f70e0e590f3df2b2bdb84ec09a4e3c2f97bdf10e7ecda3f2` |
