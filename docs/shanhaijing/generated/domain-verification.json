@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-08-18T00:17:23.987Z",
+  "command": "npm run verify:shanhaijing",
+  "evidenceLevel": "isolated_database",
+  "database": "literary_atlas_shj_iso_20260818",
+  "postgres": "PostgreSQL 18.6 (Homebrew)",
+  "result": "pass",
+  "checks": 62,
+  "errors": 0,
+  "statistics": {
+    "uniqueCreatureConcepts": 9,
+    "textualOccurrences": 9,
+    "corpusCoverage": {
+      "passagesReviewed": 9,
+      "passagesTotal": 9
+    }
+  },
+  "findings": []
+}

@@ -234,14 +234,15 @@ INSERT INTO shj_creature_occurrences(
 ('16000000-0000-4000-8000-000000000001','14000000-0000-4000-8000-000000000001','13000000-0000-4000-8000-000000000001','15000000-0000-4000-8000-000000000001','狌狌','其狀如禺而白耳，伏行人走，其名曰狌狌。',1,'text_direct','transcription','high','Named occurrence in the Zhaoyao passage.','published'),
 ('16000000-0000-4000-8000-000000000002','14000000-0000-4000-8000-000000000002','13000000-0000-4000-8000-000000000004','15000000-0000-4000-8000-000000000004','鹿蜀','其狀如馬而白首，其文如虎而赤尾，其音如謠，其名曰鹿蜀。',1,'text_direct','transcription','high','Named occurrence in the Niuyang passage.','published'),
 ('16000000-0000-4000-8000-000000000003','14000000-0000-4000-8000-000000000003','13000000-0000-4000-8000-000000000004','15000000-0000-4000-8000-000000000004','玄龜／旋龜','其狀如龜而鳥首虺尾，其名曰旋龜，其音如判木。',2,'text_direct','transcription','high','Surface-form variation is preserved for review.','published'),
-('16000000-0000-4000-8000-000000000004','14000000-0000-4000-8000-000000000004','13000000-0000-4000-8000-000000000005','15000000-0000-4000-8000-000000000005','鯥','其狀如牛，陵居，蛇尾有翼，其名曰鯥。',1,'text_direct','transcription','high','Named occurrence in the Di passage.','published'),
+('16000000-0000-4000-8000-000000000004','14000000-0000-4000-8000-000000000004','13000000-0000-4000-8000-000000000005','15000000-0000-4000-8000-000000000005','鯥','其狀如牛，陵居，蛇尾有翼，其羽在魼下，其音如留牛，其名曰鯥。',1,'text_direct','transcription','high','Named occurrence in the Di passage.','published'),
 ('16000000-0000-4000-8000-000000000005','14000000-0000-4000-8000-000000000005','13000000-0000-4000-8000-000000000006','15000000-0000-4000-8000-000000000006','類','其狀如狸而有髦，其名曰類，自為牝牡。',1,'text_direct','transcription','high','Named occurrence in the Danyuan passage.','published'),
 ('16000000-0000-4000-8000-000000000006','14000000-0000-4000-8000-000000000006','13000000-0000-4000-8000-000000000007','15000000-0000-4000-8000-000000000007','猼訑','其狀如羊，九尾四耳，其目在背，其名曰猼訑。',1,'text_direct','transcription','high','Named occurrence in the Ji passage.','published'),
 ('16000000-0000-4000-8000-000000000007','14000000-0000-4000-8000-000000000007','13000000-0000-4000-8000-000000000008','15000000-0000-4000-8000-000000000008','灌灌','其狀如鳩，其音若呵，名曰灌灌。',1,'text_direct','transcription','high','Named bird occurrence in the Qingqiu passage.','published'),
-('16000000-0000-4000-8000-000000000008','14000000-0000-4000-8000-000000000008','13000000-0000-4000-8000-000000000008','15000000-0000-4000-8000-000000000008','九尾狐','其狀如狐而九尾，其音如嬰兒，能食人。',2,'text_direct','transcription','high','Named fox occurrence in the Qingqiu passage.','published'),
+('16000000-0000-4000-8000-000000000008','14000000-0000-4000-8000-000000000008','13000000-0000-4000-8000-000000000008','15000000-0000-4000-8000-000000000008','狐而九尾','其狀如狐而九尾，其音如嬰兒，能食人。',2,'text_direct','transcription','high','The fox occurrence in the Qingqiu passage; the conventional name Nine-tailed Fox is an editorial concept label, so the surface form records the passage wording.','published'),
 ('16000000-0000-4000-8000-000000000009','14000000-0000-4000-8000-000000000009','13000000-0000-4000-8000-000000000008','15000000-0000-4000-8000-000000000008','赤鱬','其狀如魚而人面，其音如鴛鴦。',3,'text_direct','transcription','high','Named aquatic occurrence in the Qingqiu passage.','published')
 ON CONFLICT (id) DO UPDATE SET
-  quote_zh=EXCLUDED.quote_zh,evidence_note=EXCLUDED.evidence_note,
+  surface_form=EXCLUDED.surface_form,quote_zh=EXCLUDED.quote_zh,
+  evidence_note=EXCLUDED.evidence_note,
   confidence=EXCLUDED.confidence,review_status=EXCLUDED.review_status;
 
 INSERT INTO shj_topology_edges(

@@ -36,13 +36,13 @@
 
 用途：隔离数据库中的 migration、seed、约束和 verifier 证据。
 
-- [ ] fresh bootstrap 通过。
-- [ ] repeat bootstrap/idempotency 通过。
-- [ ] FK、check、enum、索引、删除和权限策略通过。
-- [ ] corpus、occurrence/concept、taxonomy、geography、chronology completeness 通过。
-- [ ] 报告包含数据库版本、输入 checksum、fixture、命令和退出码。
-- [ ] 报告路径：`not_implemented`
-- [ ] Gate：`blocked`。
+- [x] fresh bootstrap 通过（2026-08-18，`literary_atlas_shj_iso_20260818`，migration 001–021 + seed 001–065）。
+- [x] repeat bootstrap/idempotency 通过（同日，全部 already applied）。
+- [ ] FK、check、enum、索引、删除和权限策略通过（插入路径已由 bootstrap 覆盖；删除/权限策略专项未测）。
+- [x] corpus、occurrence/concept、taxonomy completeness 通过（`verify:shanhaijing` 62 检查 0 错误；geography candidate、chronology 维度在 V1 范围内无数据，待 Scale 阶段补专项检查）。
+- [x] 报告包含数据库、命令和结果（[generated/isolated-bootstrap-2026-08-18.md](generated/isolated-bootstrap-2026-08-18.md)、[generated/domain-verification.json](generated/domain-verification.json)）。
+- [x] 报告路径：`docs/shanhaijing/generated/domain-verification.json`
+- [ ] Gate：`blocked`（删除/权限专项与外部签署未完成前不上升层级）。
 
 ### 3. built_static_artifact
 

@@ -3,11 +3,11 @@
 - 生成命令：`npm run verify:shanhaijing-docs`
 - 生成器版本：`1.0.0`
 - 生成器 SHA-256：`4e8d55a5df39147d59a4b5a22a5cc82b40627492173fa64fc33e76f2d9de871f`
-- 生成时间：`2026-08-18T00:13:13.688Z`
+- 生成时间：`2026-08-18T00:17:58.364Z`
 - 证据层级：`local_candidate`
 - 检查结果：`pass`
 - 输入文件：30
-- 检查数：265
+- 检查数：268
 - errors / warnings / info：0 / 0 / 1
 - Gate 结论：`blocked`；本报告只证明机械一致性，不替代专家评审、输入冻结或 Gate 0 授权。
 
@@ -56,7 +56,7 @@
 | docs/shanhaijing/DECISION_LOG.md | 12231 | `107d20a100c07c21cb60d7c9f2fa57a8deadac698ba8fa651f67cc3505c237b2` |
 | docs/shanhaijing/RISK_REGISTER.md | 4701 | `9ae0ce9ac9f05dc806d1a067cd79bc70b3c35757eae078797ff1bd202a513500` |
 | docs/shanhaijing/EXPERT_REVIEW_QUESTIONS.md | 5779 | `08d14b6cd490694db13c1534103c3cc9148eb67047c9395a553197f8adf0045c` |
-| docs/shanhaijing/RELEASE_CHECKLIST.md | 5063 | `1ede58c490a85c45f70e0e590f3df2b2bdb84ec09a4e3c2f97bdf10e7ecda3f2` |
+| docs/shanhaijing/RELEASE_CHECKLIST.md | 5622 | `a1db7b2db7db9f71478a1532c7d3bcf4c89292564119ac7e75a29c70b0f3121a` |
 | docs/shanhaijing/REVIEWER_ASSIGNMENTS_2026-08-15.md | 10562 | `522491870bb32f4d2f9ab47aade5685384875c84c11876b4a4ca895989cda5da` |
 | docs/shanhaijing/MAP_IMPLEMENTATION_STRATEGY_2026-08-15.md | 9483 | `1a810a4d8022d028664fad9a0fd88bd89d2b2761415cc750a0783a28912ff43b` |
 | docs/shanhaijing/FANTASY_COMPOSITE_MAP_ART_DIRECTION_2026-08-15.md | 7628 | `c3191b2aaba8a66519cfa1e9d34e0d31acf17d0eb05138905b4a5db23ebb7d46` |
