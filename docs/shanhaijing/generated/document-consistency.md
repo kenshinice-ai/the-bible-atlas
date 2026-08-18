@@ -3,11 +3,11 @@
 - 生成命令：`npm run verify:shanhaijing-docs`
 - 生成器版本：`1.0.0`
 - 生成器 SHA-256：`4e8d55a5df39147d59a4b5a22a5cc82b40627492173fa64fc33e76f2d9de871f`
-- 生成时间：`2026-08-18T00:57:54.735Z`
+- 生成时间：`2026-08-18T01:11:18.919Z`
 - 证据层级：`local_candidate`
 - 检查结果：`pass`
 - 输入文件：30
-- 检查数：269
+- 检查数：272
 - errors / warnings / info：0 / 0 / 1
 - Gate 结论：`blocked`；本报告只证明机械一致性，不替代专家评审、输入冻结或 Gate 0 授权。
 
@@ -51,12 +51,12 @@
 | docs/shanhaijing/ASSET_MANIFEST_SPEC.md | 30678 | `e40b28bfdc7a1b759019f09c89057e42fa75bad3b4e0c8e2e286cc6bb349bd5b` |
 | docs/shanhaijing/PERFORMANCE_BUDGETS.md | 25392 | `210cd0f2d773f1a5d0ecab01c27206b0ad11a79a75000c096a1ff49828fa01b4` |
 | docs/shanhaijing/TEST_AND_VERIFICATION_PLAN.md | 34936 | `f7e2d5faf312cdd41e57e0c0d2fee22d3fd60846e24d50de7869be69fa1cca64` |
-| docs/shanhaijing/HANDOFF.md | 18738 | `34c78642528d1a0174c2e983a9688c3659c0af2fe0f42dfb8e3daf29908d2927` |
+| docs/shanhaijing/HANDOFF.md | 21123 | `2cb3f217a606f4a71c6128aca35b904e5d1456b15182f7deba8e7d5a24e64c9a` |
 | docs/shanhaijing/HANDOFF_TEMPLATE.md | 8060 | `5f5dcdb36f7b659b4710be10b9eb56e7a39c576bbbcf4dc7cbfe6b570dbc3a2e` |
 | docs/shanhaijing/DECISION_LOG.md | 13905 | `7dbe566c2c3da2271d80f84af7b0434b9eaa215e6ad196753eca808f8141ccd0` |
 | docs/shanhaijing/RISK_REGISTER.md | 4701 | `9ae0ce9ac9f05dc806d1a067cd79bc70b3c35757eae078797ff1bd202a513500` |
 | docs/shanhaijing/EXPERT_REVIEW_QUESTIONS.md | 5779 | `08d14b6cd490694db13c1534103c3cc9148eb67047c9395a553197f8adf0045c` |
-| docs/shanhaijing/RELEASE_CHECKLIST.md | 5622 | `a1db7b2db7db9f71478a1532c7d3bcf4c89292564119ac7e75a29c70b0f3121a` |
+| docs/shanhaijing/RELEASE_CHECKLIST.md | 6244 | `4622d7fea0588c78ba54c156c348c9a63fa8bd4d9e6cfb50db1d96238752ef78` |
 | docs/shanhaijing/REVIEWER_ASSIGNMENTS_2026-08-15.md | 11314 | `966c83cd776b86f9dfe43f7ff5c3c0f53bf4e8c6f87d2a4eae61c7f0deabcad6` |
 | docs/shanhaijing/MAP_IMPLEMENTATION_STRATEGY_2026-08-15.md | 9483 | `1a810a4d8022d028664fad9a0fd88bd89d2b2761415cc750a0783a28912ff43b` |
 | docs/shanhaijing/FANTASY_COMPOSITE_MAP_ART_DIRECTION_2026-08-15.md | 7628 | `c3191b2aaba8a66519cfa1e9d34e0d31acf17d0eb05138905b4a5db23ebb7d46` |

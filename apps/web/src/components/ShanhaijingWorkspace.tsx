@@ -51,6 +51,18 @@ function ArtisticOverview({ atlas, locale, selected, onSelect }: Pick<Props, "at
       : selected?.type === "textual_place" ? [selected.id] : [],
   );
   const artMaster = overview?.assetUrl ?? null;
+  // Rank each place within its own route band (west to east) so labels can be
+  // staggered against their immediate neighbours rather than globally.
+  const labelRank = new Map<string, number>();
+  const bands = new Map<number, ShanhaijingPlace[]>();
+  for (const place of domain.places) {
+    const key = Math.round(place.layoutY / 14);
+    bands.set(key, [...(bands.get(key) ?? []), place]);
+  }
+  for (const band of bands.values()) {
+    [...band].sort((a, b) => a.layoutX - b.layoutX).forEach((place, index) => labelRank.set(place.slug, index));
+  }
+  const dense = domain.places.length > 20;
   return <section className="shj-overview">
     <div className="shj-overview-heading">
       <div>
@@ -64,7 +76,7 @@ function ArtisticOverview({ atlas, locale, selected, onSelect }: Pick<Props, "at
     </div>
     <div className="shj-atlas-frame">
       <svg className="shj-atlas-canvas" viewBox="0 0 1000 600" role="group" aria-labelledby="shj-map-title shj-map-desc">
-        <title id="shj-map-title">{locale === "zh-CN" ? "南山经鹊山首列文本拓扑" : "Textual topology of the first Queshan route"}</title>
+        <title id="shj-map-title">{locale === "zh-CN" ? "南山经三列山系文本拓扑" : "Textual topology of the three Nanshan Jing routes"}</title>
         <desc id="shj-map-desc">{overview?.disclosure}</desc>
         <defs>
           <linearGradient id="shj-ocean" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#223d3d" /><stop offset="1" stopColor="#132726" /></linearGradient>
@@ -97,6 +109,11 @@ function ArtisticOverview({ atlas, locale, selected, onSelect }: Pick<Props, "at
           const y = place.layoutY * 5 + 60;
           const active = selectedPlaces.has(place.slug);
           const creatures = domain.creatures.filter((creature) => creature.placeSlugs.includes(place.slug));
+          // Labels on a crowded route would overlap, so alternate them above
+          // and below the node and drop a step in size once a band fills up.
+          const rank = labelRank.get(place.slug) ?? 0;
+          const below = rank % 2 === 0;
+          const labelY = below ? 44 : -40;
           return <g
             key={place.slug}
             className={`shj-map-node${active ? " active" : ""}`}
@@ -113,13 +130,13 @@ function ArtisticOverview({ atlas, locale, selected, onSelect }: Pick<Props, "at
             }}
           >
             {!artMaster && <path className="shj-mountain" d={`M-28 20 L-4 -${42 + index % 3 * 8} L12 -12 L30 20Z`} />}
-            <circle className="shj-node-ring" r={active ? 30 : 23} filter={active ? "url(#shj-glow)" : undefined} />
-            <text className="shj-node-label" y="43">{place.name}</text>
-            {creatures.length > 0 && <text className="shj-node-count" y="-32">{creatures.length}</text>}
+            <circle className="shj-node-ring" r={active ? 26 : 19} filter={active ? "url(#shj-glow)" : undefined} />
+            <text className={`shj-node-label${dense ? " dense" : ""}`} y={labelY}>{place.name}</text>
+            {creatures.length > 0 && <text className="shj-node-count" y="5">{creatures.length}</text>}
           </g>;
         })}
-        <text className="shj-sea-label" x="72" y="300">{locale === "zh-CN" ? "西海" : "WESTERN SEA"}</text>
-        <text className="shj-sea-label east" x="918" y="300">{locale === "zh-CN" ? "东海" : "EASTERN SEA"}</text>
+        <text className="shj-sea-label" x="54" y="38">{locale === "zh-CN" ? "西海" : "WESTERN SEA"}</text>
+        <text className="shj-sea-label east" x="946" y="574">{locale === "zh-CN" ? "东海" : "EASTERN SEA"}</text>
       </svg>
       <div className="shj-map-legend">
         <strong>{locale === "zh-CN" ? "图层说明" : "Layer disclosure"}</strong>
@@ -180,16 +197,24 @@ function PassageList({ atlas, locale, query, selected, onSelect }: Pick<Props, "
 function PlaceRoute({ atlas, locale, query, selected, onSelect }: Pick<Props, "atlas" | "locale" | "query" | "selected" | "onSelect">) {
   const domain = atlas.shanhaijing!;
   const items = domain.places.filter((place) => matches(query, place.name, place.summary, place.aliases));
+  // A place belongs to the route section of the passage that mentions it.
+  const sectionByPassage = new Map(domain.passages.map((passage) => [passage.slug, passage.sectionSlug]));
+  const sectionOf = (place: ShanhaijingPlace): string =>
+    place.passageSlugs.map((slug) => sectionByPassage.get(slug)).find(Boolean) ?? domain.sections[0]?.slug ?? "";
+  const routes = domain.sections
+    .map((section) => ({ section, places: items.filter((place) => sectionOf(place) === section.slug) }))
+    .filter((route) => route.places.length > 0);
   return <div className="shj-route-table-wrap">
     {items.length === 0 && <p className="shj-empty" role="status">{locale === "zh-CN" ? "没有匹配的地点。" : "No matching places."}</p>}
-    <table className="shj-route-table" aria-label={locale === "zh-CN" ? "鹊山首列路线表" : "First Queshan route table"}>
+    {routes.map(({ section, places }) => <table key={section.slug} className="shj-route-table" aria-label={`${section.title} · ${locale === "zh-CN" ? "路线表" : "route table"}`}>
+      <caption>{section.title}<small>{places.length} {locale === "zh-CN" ? "座山" : places.length === 1 ? "mountain" : "mountains"}</small></caption>
       <thead><tr>
         <th scope="col">{locale === "zh-CN" ? "序号" : "No."}</th>
         <th scope="col">{locale === "zh-CN" ? "文本地点" : "Textual place"}</th>
         <th scope="col">{locale === "zh-CN" ? "方向与里距" : "Direction and li-distance"}</th>
         <th scope="col">{locale === "zh-CN" ? "异兽提及" : "Creature mentions"}</th>
       </tr></thead>
-      <tbody>{items.map((place: ShanhaijingPlace, index) => {
+      <tbody>{places.map((place: ShanhaijingPlace, index) => {
         const edge = domain.topologyEdges.find((item) => item.toSlug === place.slug);
         const isSelected = selected?.type === "textual_place" && selected.id === place.slug;
         return <tr key={place.slug} className={isSelected ? "selected" : ""}>
@@ -200,11 +225,11 @@ function PlaceRoute({ atlas, locale, query, selected, onSelect }: Pick<Props, "a
             </button>
             <LocaleNote locale={locale} resolvedLocale={place.resolvedLocale} fallbackUsed={place.fallbackUsed} />
           </th>
-          <td>{edge ? `${edge.directionText} ${edge.distanceValue} ${edge.distanceUnit}` : (locale === "zh-CN" ? "首列起点" : "Route origin")}</td>
+          <td>{edge ? `${edge.directionText} ${edge.distanceValue} ${edge.distanceUnit}` : (locale === "zh-CN" ? "本列起点" : "Route origin")}</td>
           <td>{place.creatureSlugs.length}</td>
         </tr>;
       })}</tbody>
-    </table>
+    </table>)}
   </div>;
 }
 

@@ -20,9 +20,21 @@
 - `apps/web/src/components/ShanhaijingWorkspace.tsx` + profile/搜索/题词/样式接入：`shanhaijing` profile 可运行，艺术总览暂以结构化拓扑替代（`shj_artistic_overviews.status='blocked_missing_api_key'`）；
 - 实现检查点 commit：`5591228`（feat(shanhaijing): V1 vertical pilot for the first Queshan route）。
 
-本快照时点仍未实现/未运行（与第 2.3 节口径一致）：隔离库 fresh/repeat bootstrap、领域 verifier（现仅有文档一致性 verifier）、静态烘焙与 parity、性能基准、staging/production。外部专家签署全部 pending。
+### 0.1 同日续做：V2 全篇语料、领域 verifier、SVG 母图与 parity
 
-数字来源：本节计数由 2026-08-18 对 `literary_atlas` 的直接 SQL 查询得出；后续必须由 `verify:shanhaijing` 生成报告替代人工查询。
+在上述 V1 快照之后，同日完成 V2 并全部落库：
+
+- **语料扩量**：`db/seeds/067_shanhaijing_nanshan_full.sql` 覆盖《南山经》全部 43 段（三列山系 + 三段祠礼 + 结语），segmentation 升级为 `nanshan-full-v2`。底本校核冻结于 `scripts/data/shanhaijing_nanshan_corpus_v2.json`（ctext 底稿、维基文库交叉核对、两处校核裁定登记为异文），seed 由 `scripts/generate_shanhaijing_nanshan_full.ts` 确定性产出，构建时断言每条引文均为原文连续子串并从段首自解析方向与里距。
+- **当前计数**（由 `verify:shanhaijing` 报告，勿手抄）：43/43 段落已审核、23 个异兽概念、24 次文本提及、39 个文本地点、36 条拓扑边、3 个山系 section。凤皇在丹穴与南禺两次出现，鹓鶵为「仅名无描述」的 provisional 概念——两者共同实证 concept/occurrence 分离。
+- **领域 verifier**：`npm run verify:shanhaijing`（196 检查 0 错误）。首跑即抓出 V1 两处数据缺陷（鯥的拼接引文、九尾狐 surface form 不在原文），已修正并重放。
+- **隔离库**：`literary_atlas_shj_iso_20260818` 上 migration `001–021` + seed `001–067` 的 fresh/repeat bootstrap 均通过，见 [generated/isolated-bootstrap-2026-08-18.md](generated/isolated-bootstrap-2026-08-18.md)。
+- **艺术总览**：按 SJ-D011 改为项目自绘的确定性程序化 SVG 母图（`scripts/generate_shanhaijing_overview.ts` → `apps/web/public/media/shanhaijing/artistic-overview-v1.svg`），seed `066` 记录发布态与生成器 checksum；工作区以母图为底、程序叠加热点与图例。
+- **静态 parity**：dynamic 与 static 双语逐 key 零差异，见 [generated/static-parity-2026-08-18.md](generated/static-parity-2026-08-18.md)；`deploy/deploy-static.sh` 已补 `shanhaijing` profile 分支（CF 项目名 `shanhaijing-atlas`，**未创建、未部署**）。
+- **顺带修复的既有缺陷**：API 领域 loader 有两处查询传了 3 个绑定参数却只用 2 个占位符，导致 `/atlas` 动态接口此前从未成功返回过；SVG 母图的 `soft` 滤镜区域对扁椭圆过窄，被裁成硬边横带；`.shj-workspace` 的 grid 子项 `min-width:auto` 让路线表的窄屏 min-width 漏到文档层，造成 390px 横向溢出。
+
+仍未实现/未运行：性能基准、无障碍与 reduced-data 报告、staging/production。外部机构签署仍 pending（主负责人内部签署见 SJ-D012）。发布前还需处理 `dist/` 混入其他 profile 资产的既有问题（见 parity 报告「已知问题」）。
+
+数字来源：所有计数以 `generated/domain-verification.json` 为准；本文件不手抄会漂移的数值。
 
 ## 1. Scope / completed
 

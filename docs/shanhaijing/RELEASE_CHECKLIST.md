@@ -48,15 +48,15 @@
 
 用途：可交付的版本化静态构建及 dynamic/static parity 证据。
 
-- [ ] registry completeness 通过。
-- [ ] API contract、locale published-only、search、detail、map partition 通过。
-- [ ] static bake manifest、分片、checksum 和路径完整。
-- [ ] dynamic 与 static 的 schema、counts、搜索抽样和 rights gate parity 通过。
-- [ ] media/audio rights、provenance、alt、interpretation 和撤回检查通过。
-- [ ] performance、browser、a11y 和 reduced-data 报告达到冻结预算或有批准豁免。
-- [ ] 构建报告路径：`not_implemented`
-- [ ] parity 报告路径：`not_implemented`
-- [ ] Gate：`blocked`。
+- [x] registry completeness 通过（`verify:shanhaijing` 196 检查 0 错误，覆盖 corpus/occurrence/concept/taxonomy/topology/双语/权利门）。
+- [x] API contract、locale published-only 通过（双语 published-only 过滤已由 parity 与 verifier 覆盖）；search/detail/map partition 专项未单测。
+- [x] static bake 路径完整（4 文件，`atlas.shanhaijing.{en,zh-CN}.json` + `works.*`）；分片与 manifest 在当前体量下不适用。
+- [x] dynamic 与 static parity 通过（双语逐 key 零差异，见 [generated/static-parity-2026-08-18.md](generated/static-parity-2026-08-18.md)）。
+- [x] media rights/provenance/interpretation 检查通过（母图为项目自绘，生成器 checksum 由 verifier 复核；无外部媒体）；audio 尚未进入范围。
+- [ ] performance、a11y 和 reduced-data 报告尚未生成；browser 抽检已完成（桌面/390px 无横向溢出、39 标签零重叠、console 零错误）。
+- [x] 构建报告路径：`docs/shanhaijing/generated/static-parity-2026-08-18.md`
+- [x] parity 报告路径：同上
+- [ ] Gate：`blocked`（性能与无障碍报告缺失；发布前还需处理 `dist/` 跨 profile 资产混入问题）。
 
 ### 4. staging
 

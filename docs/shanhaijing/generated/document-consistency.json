@@ -4,14 +4,14 @@
   "command": "npm run verify:shanhaijing-docs",
   "generatorVersion": "1.0.0",
   "generatorSha256": "4e8d55a5df39147d59a4b5a22a5cc82b40627492173fa64fc33e76f2d9de871f",
-  "generatedAt": "2026-08-18T00:57:54.735Z",
+  "generatedAt": "2026-08-18T01:11:18.919Z",
   "evidenceLevel": "local_candidate",
   "result": "pass",
   "gateTransitionAuthorized": false,
   "gateStatus": "blocked",
   "counts": {
     "inputs": 30,
-    "checks": 269,
+    "checks": 272,
     "errors": 0,
     "warnings": 0,
     "info": 1
@@ -117,8 +117,8 @@
     },
     {
       "path": "docs/shanhaijing/HANDOFF.md",
-      "bytes": 18738,
-      "sha256": "34c78642528d1a0174c2e983a9688c3659c0af2fe0f42dfb8e3daf29908d2927"
+      "bytes": 21123,
+      "sha256": "2cb3f217a606f4a71c6128aca35b904e5d1456b15182f7deba8e7d5a24e64c9a"
     },
     {
       "path": "docs/shanhaijing/HANDOFF_TEMPLATE.md",
@@ -142,8 +142,8 @@
     },
     {
       "path": "docs/shanhaijing/RELEASE_CHECKLIST.md",
-      "bytes": 5622,
-      "sha256": "a1db7b2db7db9f71478a1532c7d3bcf4c89292564119ac7e75a29c70b0f3121a"
+      "bytes": 6244,
+      "sha256": "4622d7fea0588c78ba54c156c348c9a63fa8bd4d9e6cfb50db1d96238752ef78"
     },
     {
       "path": "docs/shanhaijing/REVIEWER_ASSIGNMENTS_2026-08-15.md",

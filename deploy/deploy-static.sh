@@ -19,7 +19,7 @@ cd "$ROOT"
 
 API_URL="${BAKE_API_URL:-http://localhost:4000}"
 
-# --profile bible|three-kingdoms|galaxy|european-art-history|european-classical-music-history 决定烘焙哪些作品、构建哪个品牌与发布到哪个项目
+# --profile bible|three-kingdoms|galaxy|european-art-history|european-classical-music-history|shanhaijing 决定烘焙哪些作品、构建哪个品牌与发布到哪个项目
 PROFILE="bible"
 PUBLISH=""
 while [[ $# -gt 0 ]]; do
@@ -37,7 +37,8 @@ case "$PROFILE" in
   galaxy)         WORKS="skywalker-saga"; CF_PROJECT="galactic-force-atlas"; PROBE="atlas.skywalker-saga.en.json" ;;
   european-art-history) WORKS="european-art-history"; CF_PROJECT="european-art-history-atlas"; PROBE="atlas.european-art-history.zh-CN.json" ;;
   european-classical-music-history) WORKS="european-classical-music-history"; CF_PROJECT="european-classical-music-history-atlas"; PROBE="atlas.european-classical-music-history.zh-CN.json" ;;
-  *) echo "未知 profile:$PROFILE(支持 bible / three-kingdoms / galaxy / european-art-history / european-classical-music-history)" >&2; exit 1 ;;
+  shanhaijing)    WORKS="shanhaijing"; CF_PROJECT="shanhaijing-atlas"; PROBE="atlas.shanhaijing.zh-CN.json" ;;
+  *) echo "未知 profile:$PROFILE(支持 bible / three-kingdoms / galaxy / european-art-history / european-classical-music-history / shanhaijing)" >&2; exit 1 ;;
 esac
 
 echo "[1/4] 检查本地 API(烘焙数据源):$API_URL"

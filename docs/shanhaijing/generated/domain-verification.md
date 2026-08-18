@@ -1,7 +1,7 @@
 # 《山海经 Atlas》领域验证报告
 
 - 生成命令：`npm run verify:shanhaijing`
-- 生成时间：`2026-08-18T00:55:06.646Z`
+- 生成时间：`2026-08-18T01:09:50.807Z`
 - 数据库：`literary_atlas`（PostgreSQL 18.6 (Homebrew)）
 - 证据层级：`local_candidate`
 - 检查结果：`pass`（196 检查，0 错误）

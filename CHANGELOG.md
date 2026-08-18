@@ -6,7 +6,10 @@
 - Loaded the first Queshan route of the Nanshan Jing as an audited V1 slice: 9 checksummed passages, 9 creature concepts, 9 occurrences, 9 textual places, 8 topology edges, 19 taxonomy assignments, bilingual throughout (seeds 064/065).
 - Wired the API domain loader, Shanhaijing workspace UI, search, epigraphs, and profile metadata; the artistic overview currently falls back to the structured topology view.
 - Completed the Gate 0 document suite (20+ specs) with a mechanical consistency verifier (`verify:shanhaijing-docs`); external expert sign-off remains pending, evidence level `local_candidate`.
-- Recorded decisions SJ-D010 (V1 pilot authorized ahead of external sign-off) and SJ-D011 (artistic overview switches to an original procedural SVG composite; raster generation deferred to Scale).
+- Recorded decisions SJ-D010 (V1 pilot authorized ahead of external sign-off), SJ-D011 (artistic overview switches to an original procedural SVG composite; raster generation deferred to Scale), and SJ-D012 (owner internal sign-off; external institutional sign-off stays pending).
+- Expanded the corpus to the complete Nanshan Jing (segmentation `nanshan-full-v2`): 43 audited passages across three routes, 39 textual places, 23 creature concepts, 24 occurrences, 36 topology edges, emitted deterministically from a frozen collation.
+- Added `verify:shanhaijing`, isolated-database fresh/repeat bootstrap evidence, and a dynamic/static parity report with zero key differences in both locales.
+- Fixed three latent defects found while building: the atlas API loader passed three bind parameters to two-placeholder queries (the dynamic shanhaijing payload had never loaded), an SVG filter region clipped flat-ellipse shadows into hard horizontal seams, and `min-width:auto` on workspace grid children leaked the route table's narrow-screen min-width into document-level horizontal overflow at 390px.
 
 ## Unreleased — Bible visual pilot (2026-08-09)
 
