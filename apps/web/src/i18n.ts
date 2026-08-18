@@ -1,5 +1,5 @@
 import { PROFILE } from "./profile";
-import type { Locale } from "./types";
+import type { DepictionStatus, Locale, MediaRole } from "./types";
 
 /**
  * Every enum value the API can return, in both public locales.
@@ -65,7 +65,7 @@ const ENUMS: Record<string, Pair> = {
   score: ["乐谱", "Score"], instrument_catalog: ["乐器目录", "Instrument catalogue"],
   // work + group
   historical_document: ["历史文献", "Historical document"], historical_fiction: ["历史小说", "Historical fiction"],
-  realist_fiction: ["现实主义小说", "Realist fiction"], fantasy: ["奇幻", "Fantasy"], mythic_epic: ["神话史诗", "Mythic epic"], art_history: ["艺术史", "Art history"], music_history: ["音乐史", "Music history"],
+  realist_fiction: ["现实主义小说", "Realist fiction"], fantasy: ["奇幻", "Fantasy"], mythic_epic: ["神话史诗", "Mythic epic"], art_history: ["艺术史", "Art history"], music_history: ["音乐史", "Music history"], mythography: ["古籍博物志", "Ancient mythography"],
   workshop: ["工坊", "Workshop"], anonymous_master: ["匿名大师", "Anonymous master"], artist: ["艺术家人物", "Artist person"],
   confirmed: ["已确认", "Confirmed"], attributed: ["归属推定", "Attributed"], destroyed: ["已毁损", "Destroyed"],
   commissioned: ["委托", "Commissioned"], produced: ["创作", "Produced"], completed: ["完成", "Completed"], exhibited: ["展出", "Exhibited"], acquired: ["收藏", "Acquired"], relocated: ["转移", "Relocated"], restored: ["修复", "Restored"],
@@ -85,6 +85,10 @@ const ENUMS: Record<string, Pair> = {
   listening: ["聆听", "Listening"], score_reading: ["读谱", "Score reading"], comparison: ["比较", "Comparison"], route: ["路径", "Route"], introductory: ["入门", "Introductory"], intermediate: ["进阶", "Intermediate"], advanced: ["高级", "Advanced"],
   source_marking: ["来源速度标记", "Source tempo marking"], editorial_learning: ["教学速度", "Editorial learning tempo"],
   verified: ["已核验", "Verified"], pending: ["待核验", "Pending"], rejected: ["不采用", "Rejected"],
+  resolved: ["已归并", "Resolved"], provisional: ["暂定", "Provisional"], disputed: ["有争议", "Disputed"], superseded: ["已替代", "Superseded"],
+  mountain: ["山", "Mountain"], mountain_range: ["山系", "Mountain range"], river: ["水", "River"], water_source: ["水源", "Water source"], marsh: ["泽", "Marsh"], sea: ["海", "Sea"],
+  text_direct: ["原文直证", "Direct text"], transcription: ["原文转录", "Transcription"], editorial_summary: ["编辑归纳", "Editorial synthesis"], scholarly_hypothesis: ["学术假说", "Scholarly hypothesis"], artistic_interpretation: ["艺术演绎", "Artistic interpretation"],
+  blocked_missing_api_key: ["待生成（缺少 API 密钥）", "Awaiting generation (API key missing)"], generated: ["已生成待审", "Generated, awaiting review"], withdrawn: ["已撤回", "Withdrawn"],
   // translation status
   draft: ["草稿", "Draft"], reviewed: ["已审阅", "Reviewed"], published: ["已发布", "Published"],
 };
@@ -156,6 +160,52 @@ export function formatCount(count: number, kind: "characters" | "artists" | "art
   return locale === "zh-CN" ? `${count} ${noun}` : `${count} ${noun}`;
 }
 
+const ORIGIN_REGIONS: Record<string, Pair> = {
+  "Ancient Near East / Mediterranean": ["古代近东 / 地中海", "Ancient Near East / Mediterranean"],
+  "Ancient China / textual cosmography": ["古代中国 / 文本宇宙地理", "Ancient China / textual cosmography"],
+};
+
+/** Localise the small set of canonical geographic labels stored on works. */
+export function originRegionLabel(region: string, locale: Locale): string {
+  const pair = ORIGIN_REGIONS[region];
+  return pair?.[locale === "zh-CN" ? 0 : 1] ?? region;
+}
+
+const BIBLE_BOOK_LABELS: readonly (readonly [string, string])[] = [
+  ["Genesis", "创世记"], ["Exodus", "出埃及记"], ["Leviticus", "利未记"], ["Numbers", "民数记"], ["Deuteronomy", "申命记"],
+  ["Joshua", "约书亚记"], ["Judges", "士师记"], ["Ruth", "路得记"], ["Samuel", "撒母耳记"], ["Kings", "列王纪"], ["Chronicles", "历代志"],
+  ["Ezra", "以斯拉记"], ["Nehemiah", "尼希米记"], ["Esther", "以斯帖记"], ["Job", "约伯记"], ["Psalms", "诗篇"], ["Proverbs", "箴言"],
+  ["Isaiah", "以赛亚书"], ["Jeremiah", "耶利米书"], ["Ezekiel", "以西结书"], ["Daniel", "但以理书"], ["Hosea", "何西阿书"], ["Joel", "约珥书"],
+  ["Amos", "阿摩司书"], ["Obadiah", "俄巴底亚书"], ["Jonah", "约拿书"], ["Micah", "弥迦书"], ["Nahum", "那鸿书"], ["Habakkuk", "哈巴谷书"],
+  ["Zephaniah", "西番雅书"], ["Haggai", "哈该书"], ["Zechariah", "撒迦利亚书"], ["Malachi", "玛拉基书"], ["Matthew", "马太福音"], ["Mark", "马可福音"],
+  ["Luke", "路加福音"], ["John", "约翰福音"], ["Acts", "使徒行传"], ["Romans", "罗马书"], ["Corinthians", "哥林多书"], ["Revelation", "启示录"],
+];
+
+/** Keep chapter/source reference labels from leaking English into zh-CN. */
+export function referenceLabel(value: string, locale: Locale): string {
+  if (locale !== "zh-CN") return value;
+  return BIBLE_BOOK_LABELS.reduce((result, [english, chinese]) => result.split(english).join(chinese), value);
+}
+
+const MEDIA_ROLE_LABELS: Record<MediaRole, Pair> = {
+  character_depiction: ["人物形象", "Character depiction"],
+  place_view: ["地点影像", "Place view"],
+  event_scene: ["事件场景", "Event scene"],
+  artwork: ["作品图像", "Artwork image"],
+  map: ["地图资料", "Map reference"],
+  other: ["视觉资料", "Visual reference"],
+};
+
+const MEDIA_STATUS_LABELS: Record<DepictionStatus, Pair> = {
+  illustrative: ["艺术性示意", "Illustrative"],
+  documentary: ["现代地点记录", "Documentary site view"],
+  cartographic: ["制图资料", "Cartographic"],
+  unknown: ["未分类", "Unclassified"],
+};
+
+export function mediaRoleLabel(role: MediaRole, locale: Locale): string { return MEDIA_ROLE_LABELS[role][locale === "zh-CN" ? 0 : 1]; }
+export function depictionStatusLabel(status: DepictionStatus, locale: Locale): string { return MEDIA_STATUS_LABELS[status][locale === "zh-CN" ? 0 : 1]; }
+
 /** All fixed interface strings. Keeping them in one table makes gaps obvious. */
 export const UI = {
   title: ["圣经舆图", "The Bible Atlas"],
@@ -166,10 +216,14 @@ export const UI = {
   characters: ["人物", "People"], events: ["事件", "Events"], locations: ["地点", "Places"],
   routes: ["路线", "Routes"], relations: ["关系", "Relations"], artists: ["艺术家", "Artists"], artworks: ["作品", "Artworks"], movements: ["流派", "Movements"],
   compositions: ["曲目", "Compositions"], instruments: ["乐器", "Instruments"], scoreFragments: ["乐谱片段", "Score excerpts"], musicInstitutions: ["音乐机构", "Music institutions"],
+  overview: ["艺术总览", "Overview"], creatures: ["异兽与生灵", "Creatures"], passages: ["原文段落", "Passages"], textualPlaces: ["山川路线", "Textual places"],
   musicStudy: ["学习路径", "Study paths"], learningPath: ["学习路径", "Learning path"], catalog: ["音乐目录", "Music catalogue"], targetMinutes: ["目标时长", "Target time"], studyOpenComposition: ["打开曲目", "Open composition"], studyOpenFragment: ["打开乐谱片段", "Open score excerpt"],
   creationPlace: ["创作地点", "Creation place"], currentLocation: ["现藏地点", "Current collection"], medium: ["媒介", "Medium"],
   artworkDescription: ["作品简介", "About this work"],
   artworkImage: ["作品展示图", "Artwork image"], imageAttribution: ["图片归属", "Image attribution"], viewSource: ["查看来源页", "View source page"],
+  visualReference: ["视觉参考", "Visual reference"], illustrativeMediaNote: ["艺术性诠释，不是历史肖像或现场记录。", "Artistic depiction; not a historical portrait or eyewitness record."],
+  documentaryMediaNote: ["现代地点影像，不等同于古代场景。", "Present-day site view; not an ancient scene."], cartographicMediaNote: ["制图辅助资料，不是实体照片。", "Cartographic aid; not a physical photograph."],
+  unclassifiedMediaNote: ["媒体性质尚未分类。", "Media context is not classified."],
   externalImageNote: ["图片由来源站点托管，本图集不复制该文件。", "The provider hosts this image; this atlas does not redistribute the file."],
   imageUnavailable: ["暂无可再发布的图片；请打开来源页查看。", "No redistributable image is available; open the source page to view it."],
   formalTitles: ["正式爵位或荣誉称号", "Formal rank or honorific"],
@@ -187,6 +241,7 @@ export const UI = {
   searchEverything: ["寻访人物、艺术家、作品、事件与地点…", "Search people, artists, artworks, events and places…"],
   kindWork: ["作品集", "Work"], kindCharacter: ["人物", "Person"], kindEvent: ["事件", "Event"], kindLocation: ["地点", "Place"], kindArtist: ["艺术家", "Artist"], kindArtwork: ["作品", "Artwork"], kindMovement: ["流派", "Movement"], kindInstitution: ["机构", "Institution"],
   kindComposition: ["曲目", "Composition"], kindMusicStyle: ["音乐风格", "Music style"], kindInstrument: ["乐器", "Instrument"], kindMusicInstitution: ["音乐机构", "Music institution"], kindScoreFragment: ["乐谱片段", "Score excerpt"],
+  kindCreature: ["异兽", "Creature"], kindPassage: ["原文段落", "Passage"], kindTextualPlace: ["文本地点", "Textual place"],
   noResults: ["没有匹配结果", "No matches"],
   clear: ["清除", "Clear"],
   clearFilters: ["清除全部筛选", "Clear all filters"],
@@ -206,6 +261,7 @@ export const UI = {
   historyMode: ["历史时间", "Historical time"], narrativeMode: ["叙事顺序", "Narrative order"],
   fullRange: ["完整范围", "Full range"],
   eraBands: ["时代", "Eras"],
+  datedEvents: ["有年代事件", "dated events"],
   brushHint: ["在轴上拖动可框选时间范围", "Drag across the axis to select a range"],
   undated: ["年代不详", "Undated"],
   undatedNote: ["以下事件没有历史年代，只出现在叙事顺序中", "These events carry no historical year and appear only in narrative order"],

@@ -90,8 +90,8 @@ export function RelationGraph({ atlas, locale, characters, relations, zoomLevel,
 
   const focusSlug = selected?.type === "character" ? selected.id : null;
   const model = useMemo(
-    () => buildGraph(atlas, zoomLevel, characters, relations, focusSlug),
-    [atlas, zoomLevel, characters, relations, focusSlug],
+    () => buildGraph(atlas, zoomLevel, characters, relations, focusSlug, locale),
+    [atlas, locale, zoomLevel, characters, relations, focusSlug],
   );
 
   // Keep node positions across tier changes so expanding a group does not

@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { colorForEvent } from "../hierarchy";
-import { formatEventTime, formatYear, t } from "../i18n";
+import { formatEventTime, formatYear, referenceLabel, t } from "../i18n";
 import type { SelectedEntity, TimelineMode } from "../state";
 import type { Atlas, AtlasEvent, Locale } from "../types";
 
@@ -44,8 +44,8 @@ function activate(event: React.KeyboardEvent<SVGGElement>, action: () => void) {
 /** Rough pixel width of a label in viewBox units, used for collision packing. */
 function labelWidth(text: string): number {
   let width = 0;
-  for (const character of text) width += character.charCodeAt(0) > 0x2e80 ? 11 : 6;
-  return width + 8;
+  for (const character of text) width += character.charCodeAt(0) > 0x2e80 ? 11.5 : 7;
+  return width + 12;
 }
 
 /**
@@ -167,7 +167,9 @@ export function TimelineRibbon(props: Props) {
       <div className="timeline-actions">
         {mode === "history" && <button type="button" disabled={isDefaultRange} onClick={() => props.onRange(null, null)}>{t("fullRange", locale)}</button>}
         {mode === "narrative" && <button type="button" disabled={until === null} onClick={() => props.onNarrative(null)}>{t("showAllNarrative", locale)}</button>}
-        <output>{t("showing", locale)} {events.length} / {activeAtlas.events.length}</output>
+        <output>{mode === "history"
+          ? `${t("showing", locale)} ${dated.length} ${t("datedEvents", locale)} · ${undated.length} ${t("undated", locale)} / ${activeAtlas.events.length} ${t("events", locale)}`
+          : `${t("showing", locale)} ${events.length} / ${activeAtlas.events.length} ${t("events", locale)}`}</output>
       </div>
     </header>
 
@@ -183,7 +185,7 @@ export function TimelineRibbon(props: Props) {
             onKeyDown={(event) => activate(event, () => props.onChapter(selectedBand ? null : band.slug))}>
             <rect x={x1} y={10} width={Math.max(2, x2 - x1)} height={16} rx={4} fill={band.accentColor} opacity={selectedBand ? 0.95 : 0.45} />
             {x2 - x1 > 46 && <text x={(x1 + x2) / 2} y={22} textAnchor="middle" className="era-label">{band.title}</text>}
-            <title>{band.title} · {band.referenceLabel}</title>
+            <title>{band.title} · {referenceLabel(band.referenceLabel, locale)}</title>
           </g>;
         })}
 

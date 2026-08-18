@@ -25,6 +25,17 @@ Seed sources distinguish primary-text passage references, scholarly works, histo
 
 No unlicensed image is bundled. A publishable `media_assets` row requires source, licence, author, URL, attribution and bilingual alt text. Empty media is a supported state. Future assets should prefer public-domain or clearly compatible open licences, and attribution must remain visible in the entity detail.
 
+## Visual media semantics addendum (2026-08-09)
+
+For the Bible visual pilot and all later visual media, media_role describes the
+context of the asset (character depiction, event scene, place view, artwork,
+map or other), while depiction_status describes whether it is illustrative,
+documentary, cartographic or unknown. These labels do not increase historical
+certainty: a character depiction is not a portrait, an event scene is not
+eyewitness evidence, and a present-day place view is not an ancient
+reconstruction. Provenance and checksum are required alongside the existing
+licence, author, URL, attribution and bilingual alt-text gate.
+
 ## Editorial corrections
 
 Stable slugs and IDs should be preserved. Corrections are applied through a new migration/seed version, recorded in `seed_history`, reviewed in both locales, and validated against the invariants in `TEST_PLAN_v3.1.md`.

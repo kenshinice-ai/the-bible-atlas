@@ -28,6 +28,26 @@ image unless a separate reusable licence is explicitly documented.
 - The three existing profiles (Bible, Three Kingdoms, Galactic Force) are not
   reseeded or rewritten by R8.
 
+## Generic visual context contract (Bible pilot, 2026-08-09)
+
+The same rights gate now applies to Bible people, events and locations. A
+visual asset is not evidence that a person looked a particular way, that an
+event was witnessed at the depicted moment, or that a present-day place
+photograph reproduces an ancient scene.
+
+- media_role=character_depiction means an illustrative character depiction,
+  not a historical portrait or a canonical likeness.
+- media_role=event_scene means an illustrative scene, not eyewitness
+  documentation.
+- media_role=place_view means a documentary view of the named place; the
+  UI must state when it is a modern view rather than an ancient reconstruction.
+- depiction_status=illustrative and depiction_status=documentary are semantic
+  display labels, not licence claims. The licence fields remain the authority
+  for redistribution.
+- The Bible pilot bundles only three verified Public Domain images locally.
+  Any future candidate whose reusable licence, provenance or checksum is not
+  verified stays external-link-only and must not be rendered as a remote image.
+
 ## Rebuild and verification
 
 Use a disposable PostgreSQL database when refreshing Commons selections:

@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased — Bible visual pilot (2026-08-09)
+
+- Executed the approved P0/P1/P2 pilot locally: one public-domain visual each for a person, event and location.
+- Added visual-context metadata (media_role, depiction_status), bundled Commons provenance/checksum verification, and generic person/event/place drawer media cards with explicit semantic disclaimers.
+- Closed the main bilingual UI leaks found in audit: origin region, Bible reference labels, dated/undated event counts, and narrow-screen timeline overflow handling.
+- Added db/migrations/019_media_visual_context.sql, db/seeds/063_bible_visual_media_pilot.sql, scripts/verify_bible_visual_media.ts, and the dated handoff/decision records.
+- Passed one local validation pass: fresh/repeat bootstrap, media verifier, typecheck, API 5 + Web 33 tests, build, PostGIS/API smoke, English/Chinese drawer checks, and 390px no-overflow check.
+- Local candidate only; the public Bible Atlas deployment was not changed. Commit/push remain pending because the iCloud Git refs checkpoint could not be created.
+
 ## 2026-08-09 — European Classical Music History Atlas Foundation
 
 - Added the independent bilingual `european-classical-music-history` profile with 48 people, 72 compositions, 20 styles, 24 instruments, 16 institutions, 96 events, 80 relationships and 8 routes.

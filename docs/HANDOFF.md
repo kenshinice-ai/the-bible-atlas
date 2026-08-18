@@ -2,6 +2,19 @@
 
 ## 项目现状
 
+### 2026-08-09 阶段性交接：Bible visual pilot（P0/P1/P2，本地候选）
+
+本轮按已批准的 P0/P1/P2 队列先做一个最小视觉试点：1 位人物、1 个事件、1 个地点各绑定 1 张经权利核验的 Wikimedia Commons 公有领域图片。试点只进入本地候选和验证流程，**没有部署、没有提交、没有推送，也没有改变现有 production**。
+
+- 试点媒体：character:abraham（多雷人物形象示意）、event:flood-narrative-ends-at-ararat（多雷事件场景示意）、location:jerusalem（现代西墙地点照片）。
+- 权利与语义：三条记录均有 Commons 文件页、原图 URL、作者、许可 URL、署名、双语 alt text、retrieved_at 和 SHA-256；人物/事件标注为 illustrative，地点标注为 documentary。人物图明确不是历史肖像，地点照片明确不等同于古代场景。
+- 数据契约：新增 media_role 与 depiction_status；未验证许可的候选继续走 external-link-only，禁止以远程 img 静默绕过权利门禁。
+- UI/P0 收口：人物、事件、地点抽屉共享视觉媒体卡片，显示角色/状态、免责声明、署名、来源与许可；中文 origin region、经文来源/时间轴标签、事件计数和窄屏时间轴滚动逻辑已补齐。
+- 关键实现：db/migrations/019_media_visual_context.sql、db/seeds/063_bible_visual_media_pilot.sql、scripts/verify_bible_visual_media.ts、apps/web/src/components/EntityDrawer.tsx、apps/web/src/i18n.ts、apps/web/src/components/TimelineRibbon.tsx。
+- 一次验证已通过：fresh/repeat bootstrap、Bible visual media verifier、typecheck、API 5 + Web 33 tests、build、verify:postgis、390px 浏览器抽检和 console error/warn=0；详见 [BIBLE_VISUAL_PILOT_2026-08-09.md](BIBLE_VISUAL_PILOT_2026-08-09.md)。
+- 详细试点说明：[docs/BIBLE_VISUAL_PILOT_2026-08-09.md](BIBLE_VISUAL_PILOT_2026-08-09.md)；本轮决策：[docs/HANDOFF_DECISIONS_2026-08-09.md](HANDOFF_DECISIONS_2026-08-09.md)。
+- Git 纪律：当前仍在 main；创建 codex/bible-visual-pilot-20260809 检查点时，iCloud 工作区的 .git/refs 返回权限错误，未绕过、未写入 refs。后续提交/推送必须先重新建立可写检查点。
+
 ### 2026-08-09 最终交接：欧洲古典音乐史 Atlas Phase 2 扩容、同步与 production 发布完成
 
 Phase 2 已按扩展审计完成实现、验证、Git 同步和 Cloudflare Pages production 发布。Foundation `057–059` 未被改写；新增 `017/018` migration、`060–062` seed、28 组乐谱/自产声音资产与 12 个学习单元。圣经、三国、银河原力和欧洲美术史四个既有 profile 未修改、未重烘焙。
@@ -247,7 +260,7 @@ v4 Bible-first 架构已落地并提交(commit `9b47ea0`):以「时代 → 人�
 ## 下一步
 
 1. 真实数据量下的三视图压测与参数微调(当前 UI 优先级;顺带重验第三~五批装载后的浏览器渲染)
-2. 媒体资产扩充(`media_assets` 表当前为 0 条记录)
+2. 媒体资产扩充：Bible visual pilot 已完成 3 条本地记录；下一批仍须按角色、语义状态、许可和 checksum 分批审核
 3. 其他四部作品(圣经之外)的数据扩充
 
 远期规划:

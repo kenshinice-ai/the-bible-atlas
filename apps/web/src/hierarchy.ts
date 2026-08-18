@@ -1,5 +1,6 @@
 import { relationVisibleAtSequence, type ExploreState, type ZoomLevel } from "./state";
-import type { Atlas, AtlasCharacter, AtlasEvent, AtlasLocation, AtlasRelation } from "./types";
+import { referenceLabel } from "./i18n";
+import type { Atlas, AtlasCharacter, AtlasEvent, AtlasLocation, AtlasRelation, Locale } from "./types";
 
 /**
  * Derives every view's data from one in-memory atlas index.
@@ -133,6 +134,7 @@ export function buildGraph(
   characters: readonly AtlasCharacter[],
   relations: readonly AtlasRelation[],
   focusSlug: string | null,
+  locale: Locale = "en",
 ): GraphModel {
   const byCharacter = new Map(characters.map((person) => [person.slug, person]));
 
@@ -143,7 +145,7 @@ export function buildGraph(
       if (members.length === 0) continue;
       used.set(chapter.slug, {
         id: `era:${chapter.slug}`, kind: "era", slug: chapter.slug, label: chapter.title,
-        sublabel: chapter.referenceLabel, color: chapter.accentColor, weight: members.length, members, importance: 5,
+        sublabel: referenceLabel(chapter.referenceLabel, locale), color: chapter.accentColor, weight: members.length, members, importance: 5,
       });
     }
     const edges = new Map<string, GraphEdge>();
