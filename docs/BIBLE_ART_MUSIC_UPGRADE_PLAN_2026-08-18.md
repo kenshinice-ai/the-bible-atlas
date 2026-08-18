@@ -2,8 +2,8 @@
 
 - 文档状态：`batch_one_implemented`（用户 2026-08-18 批准 A/B/C/D 四条轨全做；本轮批次已实现并验证）
 - 证据层级：`local_candidate` —— 未部署。实现进度与证据边界以 [HANDOFF.md](HANDOFF.md) 与 [HANDOFF_DECISIONS_2026-08-18.md](HANDOFF_DECISIONS_2026-08-18.md) 为准
-- 已落地：43 人物徽章 + 13 时代徽章、25 张多雷版画（希伯来圣经批次）、59 条经文引用、41 条逐字核验引文、13 条音乐接受链接、1 张确定性总览母图
-- 未落地：新约多雷批次（14 张，已定稿并通过权利探测，因 Wikimedia 限流仅抓完 6 张，seed 未生成）
+- 已落地：43 人物徽章 + 13 时代徽章、**39 张多雷版画（希伯来圣经 25 + 新约 14）**、59 条经文引用、41 条逐字核验引文、13 条音乐接受链接、1 张确定性总览母图
+- 待办：受难系列单独批次（须逐张审）
 - 前置：[BIBLE_VISUAL_PILOT_2026-08-09.md](BIBLE_VISUAL_PILOT_2026-08-09.md)（媒体权利契约）、[EVOLUTION_DIRECTIONS.md](EVOLUTION_DIRECTIONS.md) 1.3 / 2.3
 
 ## 0. 一句话
@@ -31,7 +31,7 @@
 | 编号 | 内容 | 量级 | 状态 |
 |---|---|---|---|
 | A1 | 程序化 SVG 纹章徽章：策展符号库 + 全量程序回退 | M | 本轮实现 |
-| A2 | 公版艺术描绘分批扩容（多雷版画为主） | 每批 S | 希伯来圣经 25 张已上线；新约 14 张待续跑；受难系列单独批次 |
+| A2 | 公版艺术描绘分批扩容（多雷版画为主） | 每批 S | 希伯来圣经 25 张 + 新约 14 张已上线；受难系列单独批次 |
 | A3 | 徽章与画作在 UI 中的分工收口 | S | 本轮实现 |
 
 **A1 数据契约**：`character_emblems(character_id, symbol_key, ring_key, ground_key, ...)` + `character_emblem_translations(symbol_meaning, attribution_note)`。`symbol_key` 是策展决定（谁配什么象征物），前端 `Emblem.tsx` 按 key 确定性绘制。没有策展记录的人物走**程序回退**：以 slug 为种子的 mulberry32 PRNG 决定环纹与底纹，时代色来自 `chapters.accent_color`，保证同 slug 永远同图。

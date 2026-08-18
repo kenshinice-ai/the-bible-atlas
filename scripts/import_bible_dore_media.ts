@@ -319,7 +319,7 @@ async function main(): Promise<void> {
       );
       bundled += 1;
       console.log(`  ${item.slug}: ${bytes.length} bytes, ${checksum.slice(0, 12)}…${existing ? " (already on disk)" : ""}`);
-      await sleep(existing ? 250 : 6000);
+      await sleep(existing ? 250 : 15000);
     }
 
     statements.push("COMMIT;");

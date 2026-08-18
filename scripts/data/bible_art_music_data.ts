@@ -339,8 +339,8 @@ export const CHARACTER_EMBLEMS: readonly CharacterEmblem[] = [
     nameZh: "基督符号（Chi-Rho）", nameEn: "Chi-Rho",
     meaningZh: "希腊文 ΧΡΙΣΤΟΣ 的头两个字母，四世纪起为通行的基督符号。",
     meaningEn: "The first two letters of ΧΡΙΣΤΟΣ, in use as a Christ monogram since the fourth century.",
-    noteZh: "本图集不为耶稣绘制面容：具象描绘在多个传统中属敏感问题，符号是中立表达。",
-    noteEn: "This atlas draws no face for Jesus; figural depiction is contested in several traditions, and a monogram stays neutral.",
+    noteZh: "本图集的身份层不为耶稣绘制面容，用字母符号。这不是判定具象描绘为错：第二次尼西亚会议（787）以道成肉身为据肯定基督可被描绘，海德堡要理问答第 98 问与韦斯敏斯特大要理问答第 109 问则禁止；两者都是有份量的传统，本图集不代读者选择。「后世接受」区块中的多雷版画属于后者所争论的那类图像，标注为艺术性诠释。",
+    noteEn: "The identity layer gives Jesus a monogram rather than a face. That is not a ruling that figural depiction is wrong: Nicaea II (787) affirmed on the grounds of the incarnation that Christ may be depicted, while Heidelberg Q98 and Westminster Larger Q109 forbid it. Both are serious traditions, and this atlas does not choose between them for the reader. The Doré engravings under \"later reception\" are exactly the kind of image at issue, and are labelled as artistic interpretation.",
   },
   {
     character: "peter", symbol: "keys", ring: "braided", ground: "gold", attestation: "scriptural",

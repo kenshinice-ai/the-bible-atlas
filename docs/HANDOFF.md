@@ -21,7 +21,7 @@ Git 与 Cloudflare Pages：
 - 线上抽检：首页 HTTP 200；中文 atlas JSON 947,401 bytes，含 41 徽章 / 13 时代徽章 / 59 经文引用 / 38 引文（38/38 标记节选）/ 13 音乐链接 / 28 媒体；总览 SVG、多雷版画、音乐 WAV 均 200 且 content-type 正确；约翰福音 1:29 中文为完整的「看哪，神的羔羊，除去世人罪孽的」；夏娃徽章为「众生之母」；页面无 "King James" 字样；console error = 0。
 - 回滚点：上一版 production deployment `704f69dd-a414-4031-9c9c-61c8ca796ad6`（source `583ae49`，三周前）仍保留。
 - **神职/设计双重评审**：`liturgical-design-director` 初判**暂不放行**，列 7 项阻断（页脚仍宣称 KJV 为公版、同屏两套经文系统、节录未标记、约翰福音 1:29 中英不对等、`confession` 误译为「表白」、夏娃配蛇、中文界面打印原始 OSIS 码）。**全部已修并复验**，另同批采纳 S1/S2/B1/B2/B3/B7/B9/S4/S5/S6 建议项。逐条处置见 [HANDOFF_DECISIONS_2026-08-18.md](HANDOFF_DECISIONS_2026-08-18.md) 第 9 节。
-- 已知待决：新约多雷批次已按四条件定稿并开抓，因 Wikimedia 限流仅完成 6/14，**未随本次发布上线**，`npm run import:bible-dore-media new-testament` 可续跑；《Spem in alium》所据《友第德传》属次经，profile 无对应实体，记为缺口；主 JS chunk 增至 716 KB，仍超 500 KB 建议阈值。
+- 已知待决：多雷受难系列（客西马尼之后全部情节、进耶路撒冷、最后晚餐、司提反被石打）须单独成批逐张审，尚未开始；《Spem in alium》所据《友第德传》属次经，profile 无对应实体，记为缺口；主 JS chunk 增至 716 KB，仍超 500 KB 建议阈值。
 - 环境修复：`scripts/verify_postgis.sh` 加入 `export LC_ALL=${LC_ALL:-C}`，否则 PostgreSQL 18 在 macOS 上无法启动临时实例（与本轮功能无关）。
 
 ### 2026-08-18 发布：评审收尾项与两条内容线迁出（production 已更新）
@@ -30,7 +30,7 @@ Git 与 Cloudflare Pages：
 - 线上核对：首页 HTTP 200；中文静态 JSON 为 **43 徽章 / 13 时代徽章 / 41 引文 / 59 经文引用 / 13 音乐链接**，`shanhaijing` 键已不存在；多雷版画与总览母图均 HTTP 200。
 - 线上 bundle 字符串核对：`King James` 与 `KJV` 出现 **0 次**（页脚不再宣称 KJV 为公版），`World English Bible`、`和合本·新标点`、`认信` 各出现 1 次，`表白` **0 次**。
 - 耶洗别徽章为 `vineyard`（拿伯的葡萄园，`ring=plain`），夏娃为 `living-branch`（众生之母），约翰福音 1:29 中文恢复完整谓语。
-- **新约多雷批次未随本次发布上线**：14 张已定稿并通过权利探测，Wikimedia 对本地址限流（curl 与 Node 同样 429），仅抓完 6 张，seed `072` 未生成。续跑命令 `npm run import:bible-dore-media new-testament`；已下载的 6 张暂存于会话 scratchpad 的 `nt-partial/`，放回 `apps/web/public/media/bible/dore/` 可免重复抓取。
+- **新约多雷批次已于同日补齐**：Wikimedia 限流窗口约半小时后解除，把单张间隔放宽到 15 秒后 14 张一次跑完，seed `072` 已生成并装载。圣经媒体总数由 28 升至 **42**（人物形象 25 / 事件场景 16 / 地点影像 1），媒体目录 43 个文件 checksum 全对。
 
 ### 2026-08-18 收口：山海经与红楼梦迁出本仓库
 
