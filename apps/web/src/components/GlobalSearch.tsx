@@ -8,7 +8,6 @@ import type { Atlas, Locale, SearchResponse } from "../types";
 const KIND_KEY: Record<SearchResponse["items"][number]["kind"], UIKey> = {
   work: "kindWork", character: "kindCharacter", event: "kindEvent", location: "kindLocation", artist: "kindArtist", artwork: "kindArtwork", movement: "kindMovement", institution: "kindInstitution",
   composition: "kindComposition", music_style: "kindMusicStyle", instrument: "kindInstrument", music_institution: "kindMusicInstitution", score_fragment: "kindScoreFragment",
-  creature: "kindCreature", passage: "kindPassage", textual_place: "kindTextualPlace",
 };
 
 interface Props {
@@ -44,11 +43,6 @@ function searchAtlases(atlases: Atlas[], query: string): SearchResponse["items"]
     for (const instrument of atlas.instruments) if (hit(instrument.name, instrument.summary, instrument.family, instrument.hornbostelSachsCode, ...instrument.aliases)) items.push({ kind: "instrument", slug: instrument.slug, label: instrument.name, context: instrument.summary, workSlug });
     for (const institution of atlas.musicInstitutions) if (hit(institution.name, institution.summary, institution.institutionType)) items.push({ kind: "music_institution", slug: institution.slug, label: institution.name, context: institution.summary, workSlug });
     for (const fragment of atlas.scoreFragments) if (hit(fragment.title, fragment.summary, fragment.analysisNote)) items.push({ kind: "score_fragment", slug: fragment.slug, label: fragment.title, context: fragment.summary, workSlug });
-    if (atlas.shanhaijing) {
-      for (const creature of atlas.shanhaijing.creatures) if (hit(creature.name, creature.summary, creature.detail, ...creature.aliases)) items.push({ kind: "creature", slug: creature.slug, label: creature.name, context: creature.summary, workSlug });
-      for (const passage of atlas.shanhaijing.passages) if (hit(passage.title, passage.summary, passage.textZh, passage.referenceKey)) items.push({ kind: "passage", slug: passage.slug, label: passage.title, context: passage.summary, workSlug });
-      for (const place of atlas.shanhaijing.places) if (hit(place.name, place.summary, ...place.aliases)) items.push({ kind: "textual_place", slug: place.slug, label: place.name, context: place.summary, workSlug });
-    }
   }
   return items.slice(0, 200);
 }

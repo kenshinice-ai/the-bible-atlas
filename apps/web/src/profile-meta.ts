@@ -66,11 +66,4 @@ export const PROFILE_META: Record<string, ProfileMeta> = {
     ogDescription: "聆听时代，连接人物、曲目与乐器。Hear the eras through people, works and instruments.",
     themeColor: "#15110E",
   },
-  shanhaijing: {
-    lang: "zh-CN",
-    title: "山海经 Atlas · Shanhaijing Atlas",
-    description: "山海经 Atlas——以原文段落为根，分离异兽概念、文本提及、山川拓扑、学术候选与艺术总览；首版聚焦《南山经》鹊山首列。Shanhaijing Atlas: a passage-rooted atlas of creatures, occurrences, textual topology, scholarly candidates, and artistic interpretation.",
-    ogDescription: "循山海原文，见万物异象。Follow the text through mountains, seas, and strange beings.",
-    themeColor: "#202825",
-  },
 };

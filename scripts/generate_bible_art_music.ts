@@ -13,9 +13,9 @@ import {
  * The interesting part is not the SQL: it is that every scripture reference and
  * every quoted excerpt is checked against a public-domain text before it is
  * allowed into the seed. A reference must resolve to verses that exist, and an
- * excerpt must be a literal contiguous substring of the retrieved verse — the
- * same containment rule the Shanhaijing corpus applies to its occurrence
- * quotes. A quote that cannot be proved this way never reaches the database
+ * excerpt must be a literal contiguous substring of the retrieved verse, so an
+ * editor may shorten a quotation but can never produce words the source does
+ * not have. A quote that cannot be proved this way never reaches the database
  * with `source_verified`, and a mistyped reference stops the build.
  *
  * Usage:

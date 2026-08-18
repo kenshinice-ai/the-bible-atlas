@@ -244,14 +244,14 @@ export function depictionStatusLabel(status: DepictionStatus, locale: Locale): s
 /** All fixed interface strings. Keeping them in one table makes gaps obvious. */
 export const UI = {
   title: ["圣经舆图", "The Bible Atlas"],
-  tagline: ["从起初,直到地极", "From the Beginning to the Ends of the Earth"],
+  tagline: ["从起初，直到地极", "From the Beginning to the Ends of the Earth"],
   loading: ["载入中", "Loading"],
   error: ["加载失败", "Load failed"],
   retry: ["重试", "Retry"],
   characters: ["人物", "People"], events: ["事件", "Events"], locations: ["地点", "Places"],
   routes: ["路线", "Routes"], relations: ["关系", "Relations"], artists: ["艺术家", "Artists"], artworks: ["作品", "Artworks"], movements: ["流派", "Movements"],
   compositions: ["曲目", "Compositions"], instruments: ["乐器", "Instruments"], scoreFragments: ["乐谱片段", "Score excerpts"], musicInstitutions: ["音乐机构", "Music institutions"],
-  overview: ["艺术总览", "Overview"], creatures: ["异兽与生灵", "Creatures"], passages: ["原文段落", "Passages"], textualPlaces: ["山川路线", "Textual places"],
+  overview: ["艺术总览", "Overview"],
   musicStudy: ["学习路径", "Study paths"], learningPath: ["学习路径", "Learning path"], catalog: ["音乐目录", "Music catalogue"], targetMinutes: ["目标时长", "Target time"], studyOpenComposition: ["打开曲目", "Open composition"], studyOpenFragment: ["打开乐谱片段", "Open score excerpt"],
   creationPlace: ["创作地点", "Creation place"], currentLocation: ["现藏地点", "Current collection"], medium: ["媒介", "Medium"],
   artworkDescription: ["作品简介", "About this work"],
@@ -270,7 +270,7 @@ export const UI = {
   verseVerified: ["已逐字比对公版经文", "Checked word for word against a public-domain text"],
   quoteExcerpt: ["节选", "excerpt"],
   receptionHeading: ["后世接受", "Later reception"],
-  receptionHeadingNote: ["以下是后世如何想象与谱写这一段,不是经文记载本身。", "What follows is how later ages pictured and set this passage — not the record itself."],
+  receptionHeadingNote: ["以下是后世如何想象与谱写这一段，不是经文记载本身。", "What follows is how later ages pictured and set this passage — not the record itself."],
   musicalReception: ["音乐中的这一段", "In music"],
   musicalReceptionNote: ["音频为音乐图集的学习用自产合成音，不是历史演奏。", "The audio is study synthesis from the music atlas, not a historical performance."],
   openInMusicAtlas: ["在音乐图集中打开", "Open in the music atlas"],
@@ -289,7 +289,6 @@ export const UI = {
   searchEverything: ["寻访人物、艺术家、作品、事件与地点…", "Search people, artists, artworks, events and places…"],
   kindWork: ["作品集", "Work"], kindCharacter: ["人物", "Person"], kindEvent: ["事件", "Event"], kindLocation: ["地点", "Place"], kindArtist: ["艺术家", "Artist"], kindArtwork: ["作品", "Artwork"], kindMovement: ["流派", "Movement"], kindInstitution: ["机构", "Institution"],
   kindComposition: ["曲目", "Composition"], kindMusicStyle: ["音乐风格", "Music style"], kindInstrument: ["乐器", "Instrument"], kindMusicInstitution: ["音乐机构", "Music institution"], kindScoreFragment: ["乐谱片段", "Score excerpt"],
-  kindCreature: ["异兽", "Creature"], kindPassage: ["原文段落", "Passage"], kindTextualPlace: ["文本地点", "Textual place"],
   noResults: ["没有匹配结果", "No matches"],
   clear: ["清除", "Clear"],
   clearFilters: ["清除全部筛选", "Clear all filters"],
@@ -368,7 +367,7 @@ export const UI = {
   showing: ["显示", "Showing"],
   ofTotal: ["共", "of"],
   emptyList: ["当前筛选没有内容", "Nothing matches the current filter"],
-  dataNote: ["凡近似年代与推定地点均已明确标注;摘要为原创结构化描述,悉以经文记载为本。", "Uncertain dates and inferred places are explicitly marked; summaries are original structured descriptions following the scriptural record."],
+  dataNote: ["凡近似年代与推定地点均已明确标注；摘要为原创结构化描述，悉以经文记载为本。", "Uncertain dates and inferred places are explicitly marked; summaries are original structured descriptions following the scriptural record."],
   // The site now carries two settings of the Union Version: the modern-punctuation
   // simplified text in the epigraphs, and the 1919 traditional text in the
   // verified quote cards. Citing both as plain 「和合本」 would put the same verse

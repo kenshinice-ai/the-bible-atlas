@@ -26,79 +26,79 @@ export interface Epigraph {
 /** One epigraph per Bible era, keyed by chapter slug. */
 const BIBLE_ERA_EPIGRAPHS: Record<string, Epigraph> = {
   "primeval": {
-    zh: "起初,神创造天地。",
+    zh: "起初，神创造天地。",
     zhRef: "创世记 1:1",
     en: "In the beginning, God created the heavens and the earth.",
     enRef: "Genesis 1:1",
   },
   "patriarchs": {
-    zh: "我必叫你成为大国。我必赐福给你,叫你的名为大;你也要叫别人得福。",
+    zh: "我必叫你成为大国。我必赐福给你，叫你的名为大；你也要叫别人得福。",
     zhRef: "创世记 12:2",
     en: "I will make of you a great nation. I will bless you and make your name great. You will be a blessing.",
     enRef: "Genesis 12:2",
   },
   "exodus-and-sinai": {
-    zh: "我向埃及人所行的事,你们都看见了,且看见我如鹰将你们背在翅膀上,带来归我。",
+    zh: "我向埃及人所行的事，你们都看见了，且看见我如鹰将你们背在翅膀上，带来归我。",
     zhRef: "出埃及记 19:4",
     en: "You have seen what I did to the Egyptians, and how I bore you on eagles’ wings, and brought you to myself.",
     enRef: "Exodus 19:4",
   },
   "wilderness-and-conquest": {
-    zh: "你当刚强壮胆!不要惧怕,也不要惊惶;因为你无论往哪里去,耶和华你的神必与你同在。(节选)",
+    zh: "你当刚强壮胆！不要惧怕，也不要惊惶；因为你无论往哪里去，耶和华你的神必与你同在。(节选)",
     zhRef: "约书亚记 1:9",
     en: "Be strong and courageous. Don’t be afraid. Don’t be dismayed, for Yahweh your God is with you wherever you go. (excerpt)",
     enRef: "Joshua 1:9",
   },
   "judges": {
-    zh: "那时,以色列中没有王,各人任意而行。",
+    zh: "那时，以色列中没有王，各人任意而行。",
     zhRef: "士师记 21:25",
     en: "In those days there was no king in Israel. Everyone did that which was right in his own eyes.",
     enRef: "Judges 21:25",
   },
   "united-monarchy": {
-    zh: "你的家和你的国必在我面前永远坚立。你的国位也必坚定,直到永远。",
+    zh: "你的家和你的国必在我面前永远坚立。你的国位也必坚定，直到永远。",
     zhRef: "撒母耳记下 7:16",
     en: "Your house and your kingdom will be made sure forever before you. Your throne will be established forever.",
     enRef: "2 Samuel 7:16",
   },
   "divided-kingdoms": {
-    zh: "你们心持两意要到几时呢?若耶和华是神,就当顺从耶和华;若巴力是神,就当顺从巴力。(节选)",
+    zh: "你们心持两意要到几时呢？若耶和华是神，就当顺从耶和华；若巴力是神，就当顺从巴力。(节选)",
     zhRef: "列王纪上 18:21",
     en: "How long will you waver between the two sides? If Yahweh is God, follow him; but if Baal, then follow him. (excerpt)",
     enRef: "1 Kings 18:21",
   },
   "prophetic-narrative": {
-    zh: "何况这尼尼微大城,其中不能分辨左手右手的有十二万多人,并有许多牲畜,我岂能不爱惜呢?",
+    zh: "何况这尼尼微大城，其中不能分辨左手右手的有十二万多人，并有许多牲畜，我岂能不爱惜呢？",
     zhRef: "约拿书 4:11",
     en: "Shouldn’t I be concerned for Nineveh, that great city, in which are more than one hundred twenty thousand persons who can’t discern between their right hand and their left hand; and also much livestock?",
     enRef: "Jonah 4:11",
   },
   "judah-and-exile": {
-    zh: "我们不致消灭,是出于耶和华诸般的慈爱;是因他的怜悯不致断绝。每早晨,这都是新的;你的诚实极其广大!",
+    zh: "我们不致消灭，是出于耶和华诸般的慈爱；是因他的怜悯不致断绝。每早晨，这都是新的；你的诚实极其广大！",
     zhRef: "耶利米哀歌 3:22–23",
     en: "It is because of Yahweh’s loving kindnesses that we are not consumed, because his compassion doesn’t fail. They are new every morning. Great is your faithfulness.",
     enRef: "Lamentations 3:22–23",
   },
   "return-and-restoration": {
-    zh: "当耶和华将那些被掳的带回锡安的时候,我们好像做梦的人。",
+    zh: "当耶和华将那些被掳的带回锡安的时候，我们好像做梦的人。",
     zhRef: "诗篇 126:1",
     en: "When Yahweh brought back those who returned to Zion, we were like those who dream.",
     enRef: "Psalm 126:1",
   },
   "gospels": {
-    zh: "我报给你们大喜的信息,是关乎万民的;因今天在大卫的城里,为你们生了救主,就是主基督。(节选)",
+    zh: "我报给你们大喜的信息，是关乎万民的；因今天在大卫的城里，为你们生了救主，就是主基督。(节选)",
     zhRef: "路加福音 2:10–11",
     en: "I bring you good news of great joy which will be to all the people. For there is born to you today, in David’s city, a Savior, who is Christ the Lord. (excerpt)",
     enRef: "Luke 2:10–11",
   },
   "acts": {
-    zh: "但圣灵降临在你们身上,你们就必得着能力,并要在耶路撒冷、犹太全地,和撒玛利亚,直到地极,作我的见证。",
+    zh: "但圣灵降临在你们身上，你们就必得着能力，并要在耶路撒冷、犹太全地，和撒玛利亚，直到地极，作我的见证。",
     zhRef: "使徒行传 1:8",
     en: "You will receive power when the Holy Spirit has come upon you. You will be witnesses to me in Jerusalem, in all Judea and Samaria, and to the uttermost parts of the earth.",
     enRef: "Acts 1:8",
   },
   "pauline-mission": {
-    zh: "那美好的仗我已经打过了,当跑的路我已经跑尽了,所信的道我已经守住了。",
+    zh: "那美好的仗我已经打过了，当跑的路我已经跑尽了，所信的道我已经守住了。",
     zhRef: "提摩太后书 4:7",
     en: "I have fought the good fight. I have finished the course. I have kept the faith.",
     enRef: "2 Timothy 4:7",
@@ -107,7 +107,7 @@ const BIBLE_ERA_EPIGRAPHS: Record<string, Epigraph> = {
 
 /** Shown in the hero area while no era is selected (Psalm 119:18). */
 const BIBLE_WELCOME: Epigraph = {
-  zh: "求你开我的眼睛,使我看出你律法中的奇妙。",
+  zh: "求你开我的眼睛，使我看出你律法中的奇妙。",
   zhRef: "诗篇 119:18",
   en: "Open my eyes, that I may see wondrous things out of your law.",
   enRef: "Psalm 119:18",
@@ -116,7 +116,7 @@ const BIBLE_WELCOME: Epigraph = {
 /** Rotated on the loading skeleton. */
 const BIBLE_LOADING: readonly Epigraph[] = [
   {
-    zh: "你的话是我脚前的灯,是我路上的光。",
+    zh: "你的话是我脚前的灯，是我路上的光。",
     zhRef: "诗篇 119:105",
     en: "Your word is a lamp to my feet, and a light for my path.",
     enRef: "Psalm 119:105",
@@ -128,7 +128,7 @@ const BIBLE_LOADING: readonly Epigraph[] = [
     enRef: "Psalm 119:130",
   },
   {
-    zh: "我的心哪,你当默默无声,专等候神。(节选)",
+    zh: "我的心哪，你当默默无声，专等候神。(节选)",
     zhRef: "诗篇 62:5",
     en: "My soul, wait in silence for God alone. (excerpt)",
     enRef: "Psalm 62:5",
@@ -137,7 +137,7 @@ const BIBLE_LOADING: readonly Epigraph[] = [
 
 /** Site-wide footer verse (Isaiah 40:8). */
 const BIBLE_FOOTER: Epigraph = {
-  zh: "草必枯干,花必凋残,惟有我们神的话必永远立定。",
+  zh: "草必枯干，花必凋残，惟有我们神的话必永远立定。",
   zhRef: "以赛亚书 40:8",
   en: "The grass withers, the flower fades; but the word of our God stands forever.",
   enRef: "Isaiah 40:8",
@@ -150,25 +150,25 @@ const BIBLE_FOOTER: Epigraph = {
 
 const THREE_KINGDOMS_ERA_EPIGRAPHS: Record<string, Epigraph> = {
   "yellow-turban-rising": {
-    zh: "苍天已死,黄天当立;岁在甲子,天下大吉。",
+    zh: "苍天已死，黄天当立；岁在甲子，天下大吉。",
     zhRef: "三国演义 · 第一回",
     en: "The Azure Heaven is dead; the Yellow Heaven shall rise.",
     enRef: "Romance of the Three Kingdoms, Ch. 1",
   },
   "red-cliffs": {
-    zh: "万事俱备,只欠东风。",
+    zh: "万事俱备，只欠东风。",
     zhRef: "三国演义 · 第四十九回",
     en: "All is ready — all but the east wind.",
     enRef: "Romance of the Three Kingdoms, Ch. 49",
   },
   "northern-expeditions": {
-    zh: "鞠躬尽瘁,死而后已。",
+    zh: "鞠躬尽瘁，死而后已。",
     zhRef: "后出师表",
     en: "I shall bend my back to the task until my dying day.",
     enRef: "The Later Memorial on the Expedition",
   },
   "jin-unification": {
-    zh: "鼎足三分已成梦,后人凭吊空牢骚。",
+    zh: "鼎足三分已成梦，后人凭吊空牢骚。",
     zhRef: "三国演义 · 第一百二十回",
     en: "The tripod\u2019s three legs are now a dream; those who come after mourn in vain.",
     enRef: "Romance of the Three Kingdoms, Ch. 120",
@@ -176,7 +176,7 @@ const THREE_KINGDOMS_ERA_EPIGRAPHS: Record<string, Epigraph> = {
 };
 
 const THREE_KINGDOMS_WELCOME: Epigraph = {
-  zh: "滚滚长江东逝水,浪花淘尽英雄。",
+  zh: "滚滚长江东逝水，浪花淘尽英雄。",
   zhRef: "临江仙 · 杨慎",
   en: "The Yangtze rolls ever eastward; its waves have washed away the heroes.",
   enRef: "Immortals by the River, Yang Shen",
@@ -184,19 +184,19 @@ const THREE_KINGDOMS_WELCOME: Epigraph = {
 
 const THREE_KINGDOMS_LOADING: readonly Epigraph[] = [
   {
-    zh: "老骥伏枥,志在千里。",
+    zh: "老骥伏枥，志在千里。",
     zhRef: "龟虽寿 · 曹操",
     en: "The old steed in the stable still dreams of a thousand li.",
     enRef: "Though the Tortoise Lives Long, Cao Cao",
   },
   {
-    zh: "非淡泊无以明志,非宁静无以致远。",
+    zh: "非淡泊无以明志，非宁静无以致远。",
     zhRef: "诫子书 · 诸葛亮",
     en: "Without stillness there is no reaching far.",
     enRef: "Admonition to My Son, Zhuge Liang",
   },
   {
-    zh: "山不厌高,海不厌深。",
+    zh: "山不厌高，海不厌深。",
     zhRef: "短歌行 · 曹操",
     en: "Mountains never tire of height, nor seas of depth.",
     enRef: "Short Song, Cao Cao",
@@ -204,7 +204,7 @@ const THREE_KINGDOMS_LOADING: readonly Epigraph[] = [
 ];
 
 const THREE_KINGDOMS_FOOTER: Epigraph = {
-  zh: "天下大势,分久必合,合久必分。",
+  zh: "天下大势，分久必合，合久必分。",
   zhRef: "三国演义 · 第一回",
   en: "The empire, long divided, must unite; long united, must divide.",
   enRef: "Romance of the Three Kingdoms, Ch. 1",
@@ -230,37 +230,37 @@ const HOUSE_REF: readonly [string, string] = ["本站题记", "house epigraph"];
 
 const GALAXY_ERA_EPIGRAPHS: Record<string, Epigraph> = {
   "naboo-crisis": {
-    zh: "和平的表面之下,阴影已开始移动。",
+    zh: "和平的表面之下，阴影已开始移动。",
     zhRef: HOUSE_REF[0],
     en: "Beneath the surface of peace, a shadow begins to move.",
     enRef: HOUSE_REF[1],
   },
   "clone-wars": {
-    zh: "以保卫共和国之名开始的战争,耗尽了共和国。",
+    zh: "以保卫共和国之名开始的战争，耗尽了共和国。",
     zhRef: HOUSE_REF[0],
     en: "A war fought to save the Republic slowly spent it.",
     enRef: HOUSE_REF[1],
   },
   "order-66-and-imperial-rise": {
-    zh: "一道命令传遍银河,万千灯火在同一夜熄灭。",
+    zh: "一道命令传遍银河，万千灯火在同一夜熄灭。",
     zhRef: HOUSE_REF[0],
     en: "One order crossed the galaxy, and a thousand lights went out in a single night.",
     enRef: HOUSE_REF[1],
   },
   "dark-times": {
-    zh: "火种散落荒野,等待有人俯身拾起。",
+    zh: "火种散落荒野，等待有人俯身拾起。",
     zhRef: HOUSE_REF[0],
     en: "Embers scattered in the wilderness, waiting to be gathered.",
     enRef: HOUSE_REF[1],
   },
   "rebel-alliance-rising": {
-    zh: "反抗,始于一次不肯低头。",
+    zh: "反抗，始于一次不肯低头。",
     zhRef: HOUSE_REF[0],
     en: "Rebellion begins with a single refusal to kneel.",
     enRef: HOUSE_REF[1],
   },
   "yavin-campaign": {
-    zh: "一艘小船,载着半个银河的希望。",
+    zh: "一艘小船，载着半个银河的希望。",
     zhRef: HOUSE_REF[0],
     en: "A small ship carried half the galaxy’s hope.",
     enRef: HOUSE_REF[1],
@@ -274,31 +274,31 @@ const GALAXY_ERA_EPIGRAPHS: Record<string, Epigraph> = {
     enRef: "Episode V (1980)",
   },
   "endor-and-the-fall": {
-    zh: "森林的月亮,见证一个帝国的黄昏。",
+    zh: "森林的月亮，见证一个帝国的黄昏。",
     zhRef: HOUSE_REF[0],
     en: "A forest moon watched an empire’s dusk.",
     enRef: HOUSE_REF[1],
   },
   "new-republic": {
-    zh: "战争结束了;银河开始学习和平。",
+    zh: "战争结束了；银河开始学习和平。",
     zhRef: HOUSE_REF[0],
     en: "The war ended; the galaxy began to learn peace.",
     enRef: HOUSE_REF[1],
   },
   "first-order-rising": {
-    zh: "灰烬未冷,旧的秩序换上了新的面孔。",
+    zh: "灰烬未冷，旧的秩序换上了新的面孔。",
     zhRef: HOUSE_REF[0],
     en: "From ashes not yet cold, the old order returned with a new face.",
     enRef: HOUSE_REF[1],
   },
   "last-jedi": {
-    zh: "传奇隐居海岛,火种却不肯熄灭。",
+    zh: "传奇隐居海岛，火种却不肯熄灭。",
     zhRef: HOUSE_REF[0],
     en: "The legend hid on an island, but the spark refused to die.",
     enRef: HOUSE_REF[1],
   },
   "skywalker-reborn": {
-    zh: "名字可以继承,选择必须自己作出。",
+    zh: "名字可以继承，选择必须自己作出。",
     zhRef: HOUSE_REF[0],
     en: "A name can be inherited; the choice must be one’s own.",
     enRef: HOUSE_REF[1],
@@ -306,7 +306,7 @@ const GALAXY_ERA_EPIGRAPHS: Record<string, Epigraph> = {
 };
 
 const GALAXY_WELCOME: Epigraph = {
-  zh: "群星之间,原力长存。",
+  zh: "群星之间，原力长存。",
   zhRef: HOUSE_REF[0],
   en: "Among the stars, the Force endures.",
   enRef: HOUSE_REF[1],
@@ -375,10 +375,6 @@ const SOURCE_NOTES: Record<string, readonly [string, string] | null> = {
     "来源包括数字乐谱档案、图书馆音乐馆藏、机构目录与本项目生成记录；完整总谱与商业录音不在 Foundation 范围内。",
     "Sources include digital score archives, library music collections, institutional catalogues, and project generation records. Full scores and commercial recordings are outside the Foundation scope.",
   ],
-  shanhaijing: [
-    "古籍原文、编辑归纳、学术候选与艺术演绎分层呈现；现代坐标和幻想构图都不替代原文证据。",
-    "Ancient text, editorial synthesis, scholarly candidates, and artistic interpretation are presented as separate layers; neither modern coordinates nor fantasy composition replaces textual evidence.",
-  ],
 };
 
 const ART_WELCOME: Epigraph = { zh: "艺术使时间留下形状。", zhRef: "欧洲美术史 Atlas · 策展摘要", en: "Art gives time a shape.", enRef: "European Art History Atlas · curatorial note" };
@@ -387,12 +383,6 @@ const ART_FOOTER: Epigraph = { zh: "本图集保存结构化摘要、时代信�
 const MUSIC_WELCOME: Epigraph = { zh: "时间留下事件，音乐让时代被听见。", zhRef: "欧洲古典音乐史 Atlas · 策展摘要", en: "History leaves events; music lets an era be heard.", enRef: "European Classical Music History Atlas · curatorial note" };
 const MUSIC_LOADING: readonly Epigraph[] = [MUSIC_WELCOME];
 const MUSIC_FOOTER: Epigraph = { zh: "短乐谱与自产声音用于学习和比较，不替代正式乐谱、演出或录音。", zhRef: "声音与乐谱说明", en: "Short scores and project-generated audio support study and comparison; they do not replace editions, performances, or recordings.", enRef: "Score and audio note" };
-const SHJ_WELCOME: Epigraph = { zh: "又東三百里，曰青丘之山。", zhRef: "《山海经·南山经》", en: "Three hundred li farther east lies Mount Qingqiu.", enRef: "Shanhaijing · Nanshan Jing · project rendering" };
-const SHJ_LOADING: readonly Epigraph[] = [
-  { zh: "山川次第正在展开……", zhRef: "山海经 Atlas", en: "Unfolding the mountain sequence…", enRef: "Shanhaijing Atlas" },
-  { zh: "异兽与原文正在相互定位……", zhRef: "山海经 Atlas", en: "Linking strange beings to their passages…", enRef: "Shanhaijing Atlas" },
-];
-const SHJ_FOOTER: Epigraph = { zh: "凡图像位置与比例，皆为艺术编排；原文关系与学术候选另层可查。", zhRef: "地图说明", en: "Image positions and scale are artistic composition; textual relations and scholarly candidates remain separately inspectable.", enRef: "Map disclosure" };
 
 // ---------------------------------------------------------------------------
 // Profile resolution: the rest of the app imports these four names unchanged.
@@ -405,7 +395,6 @@ export const SETS_BY_PROFILE = {
   galaxy: { era: GALAXY_ERA_EPIGRAPHS, welcome: GALAXY_WELCOME, loading: GALAXY_LOADING, footer: GALAXY_FOOTER },
   "european-art-history": { era: {}, welcome: ART_WELCOME, loading: ART_LOADING, footer: ART_FOOTER },
   "european-classical-music-history": { era: {}, welcome: MUSIC_WELCOME, loading: MUSIC_LOADING, footer: MUSIC_FOOTER },
-  shanhaijing: { era: {}, welcome: SHJ_WELCOME, loading: SHJ_LOADING, footer: SHJ_FOOTER },
 } as const;
 
 const ACTIVE = SETS_BY_PROFILE[PROFILE.id as keyof typeof SETS_BY_PROFILE] ?? SETS_BY_PROFILE.bible;

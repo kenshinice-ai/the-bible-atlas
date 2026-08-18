@@ -6,7 +6,7 @@ export const MapLayerSchema = z.enum(["real", "fictional"]);
 export const WorkCategorySchema = z.enum(["historical_document", "historical_fiction", "realist_fiction", "fantasy", "mythic_epic", "art_history", "music_history", "mythography"]);
 export const TimeTypeSchema = z.enum(["exact", "approximate", "range", "relative", "fictional_calendar", "unknown"]);
 export const LocationTypeSchema = z.enum(["country", "region", "city", "district", "street", "building", "landmark", "prison", "station", "port", "battlefield", "residence", "school", "religious_site", "fictional_place", "route_node", "planet", "moon", "space_station"]);
-export const EntityTypeSchema = z.enum(["work", "character", "event", "location", "route", "relationship", "artist", "artwork", "movement", "institution", "composition", "music_style", "instrument", "music_institution", "score_fragment", "creature", "passage", "textual_place"]);
+export const EntityTypeSchema = z.enum(["work", "character", "event", "location", "route", "relationship", "artist", "artwork", "movement", "institution", "composition", "music_style", "instrument", "music_institution", "score_fragment"]);
 
 const TranslationMetaSchema = z.object({ resolvedLocale: LocaleSchema, fallbackUsed: z.boolean(), translationStatus: z.enum(["draft", "reviewed", "published"]) });
 const WorkCoreSchema = z.object({
@@ -22,9 +22,6 @@ export const WorksResponseSchema = z.object({
     artistCount: z.number().optional(), artworkCount: z.number().optional(), movementCount: z.number().optional(),
     compositionCount: z.number().optional(), musicStyleCount: z.number().optional(), instrumentCount: z.number().optional(),
     musicInstitutionCount: z.number().optional(), scoreFragmentCount: z.number().optional(),
-    uniqueCreatureConceptCount: z.number().optional(), textualOccurrenceCount: z.number().optional(),
-    corpusCoverage: z.object({ reviewed: z.number(), total: z.number() }).optional(),
-    textualPlaceCount: z.number().optional(),
   }))),
 });
 
@@ -219,76 +216,6 @@ const CrossWorkMusicSchema = z.object({
   durationSeconds: z.coerce.number().nullable(), playbackDisclaimer: z.string(),
 });
 
-const ShanhaijingSectionSchema = z.object({
-  id: z.string().uuid(), slug: z.string(), sequence: z.number(), referenceLabel: z.string(),
-  title: z.string(), summary: z.string(), reviewStatus: z.enum(["draft", "reviewed", "published"]),
-});
-
-const ShanhaijingPassageSchema = z.object({
-  id: z.string().uuid(), slug: z.string(), referenceKey: z.string(), sequence: z.number(), sectionSlug: z.string(),
-  textZh: z.string(), sourceUrl: z.string().url(), checksumSha256: z.string().regex(/^[0-9a-f]{64}$/u),
-  reviewStatus: z.enum(["draft", "reviewed", "published"]), title: z.string(), summary: z.string(), editorialNote: z.string(),
-  creatureSlugs: z.array(z.string()), placeSlugs: z.array(z.string()),
-}).and(TranslationMetaSchema);
-
-const ShanhaijingTaxonomySchema = z.object({
-  axis: z.string(), term: z.string(), confidence: z.enum(["high", "medium", "low", "unknown"]), evidenceNote: z.string(),
-});
-
-const ShanhaijingCreatureSchema = z.object({
-  id: z.string().uuid(), slug: z.string(), conceptStatus: z.enum(["resolved", "provisional", "disputed", "superseded"]),
-  importance: z.number(), iconKey: z.string(), name: z.string(), aliases: z.array(z.string()), summary: z.string(), detail: z.string(),
-  passageSlugs: z.array(z.string()), placeSlugs: z.array(z.string()), taxonomy: z.array(ShanhaijingTaxonomySchema),
-}).and(TranslationMetaSchema);
-
-const ShanhaijingOccurrenceSchema = z.object({
-  id: z.string().uuid(), creatureSlug: z.string(), passageSlug: z.string(), placeSlug: z.string().nullable(),
-  surfaceForm: z.string(), quoteZh: z.string(), occurrenceOrder: z.number(),
-  sourceAttestation: z.enum(["text_direct", "commentary", "research", "none"]),
-  interpretationClass: z.enum(["transcription", "editorial_summary", "scholarly_hypothesis", "artistic_interpretation"]),
-  confidence: z.enum(["high", "medium", "low", "unknown"]), evidenceNote: z.string(),
-  reviewStatus: z.enum(["draft", "reviewed", "published"]),
-});
-
-const ShanhaijingPlaceSchema = z.object({
-  id: z.string().uuid(), slug: z.string(),
-  placeKind: z.enum(["mountain", "mountain_range", "river", "water_source", "marsh", "sea", "region", "route_node", "unknown"]),
-  layoutX: z.coerce.number(), layoutY: z.coerce.number(), layoutSpace: z.string(),
-  reviewStatus: z.enum(["draft", "reviewed", "published"]), name: z.string(), aliases: z.array(z.string()), summary: z.string(),
-  passageSlugs: z.array(z.string()), creatureSlugs: z.array(z.string()),
-}).and(TranslationMetaSchema);
-
-const ShanhaijingTopologyEdgeSchema = z.object({
-  id: z.string().uuid(), fromSlug: z.string(), toSlug: z.string(), passageSlug: z.string(),
-  relationKind: z.enum(["next_in_route", "distance_direction", "source_of", "flows_into", "surrounds", "passes_through", "adjacent_to", "unresolved_relation"]),
-  directionText: z.string(), distanceValue: z.coerce.number().nullable(), distanceUnit: z.string(), sequence: z.number(),
-  interpretationClass: z.enum(["transcription", "editorial_summary", "scholarly_hypothesis", "artistic_interpretation"]),
-  conflictStatus: z.enum(["none", "disputed", "unresolved"]), reviewStatus: z.enum(["draft", "reviewed", "published"]),
-});
-
-const ShanhaijingOverviewSchema = z.object({
-  id: z.string().uuid(), slug: z.string(),
-  status: z.enum(["planned", "blocked_missing_api_key", "generated", "reviewed", "published", "withdrawn"]),
-  interpretationClass: z.literal("artistic_interpretation"), coordinateSpace: z.string(), assetUrl: z.string().nullable(),
-  promptPath: z.string(), promptSha256: z.string().regex(/^[0-9a-f]{64}$/u),
-  title: z.string(), description: z.string(), disclosure: z.string(),
-});
-
-const ShanhaijingDomainSchema = z.object({
-  sections: z.array(ShanhaijingSectionSchema),
-  passages: z.array(ShanhaijingPassageSchema),
-  creatures: z.array(ShanhaijingCreatureSchema),
-  occurrences: z.array(ShanhaijingOccurrenceSchema),
-  places: z.array(ShanhaijingPlaceSchema),
-  topologyEdges: z.array(ShanhaijingTopologyEdgeSchema),
-  artisticOverview: ShanhaijingOverviewSchema.nullable(),
-  coverage: z.object({
-    passagesTotal: z.number(), passagesReviewed: z.number(),
-    passagesWithRequestedLocale: z.number(), passagesWithFallbackLocale: z.number(),
-    creatureConcepts: z.number(), textualOccurrences: z.number(),
-  }),
-});
-
 export const AtlasResponseSchema = z.object({
   requestedLocale: LocaleSchema, detail: z.enum(["lite", "full"]),
   work: WorkCoreSchema.and(z.object({ id: z.string().uuid(), default_locale: LocaleSchema })),
@@ -302,13 +229,12 @@ export const AtlasResponseSchema = z.object({
   characterEmblems: z.array(CharacterEmblemSchema).default([]), chapterEmblems: z.array(ChapterEmblemSchema).default([]),
   scriptureRefs: z.array(ScriptureRefSchema).default([]), quotes: z.array(CharacterQuoteSchema).default([]),
   crossWorkMusic: z.array(CrossWorkMusicSchema).default([]),
-  shanhaijing: ShanhaijingDomainSchema.nullable().default(null),
 });
 
 export const EntityDetailSchema = z.object({ requestedLocale: LocaleSchema, kind: z.string(), slug: z.string(), fields: z.record(z.string(), z.string()) });
 export const SearchResponseSchema = z.object({
   locale: LocaleSchema, query: z.string(),
-  items: z.array(z.object({ kind: z.enum(["work", "character", "event", "location", "artist", "artwork", "movement", "institution", "composition", "music_style", "instrument", "music_institution", "score_fragment", "creature", "passage", "textual_place"]), slug: z.string(), label: z.string(), context: z.string().nullable(), workSlug: z.string() })),
+  items: z.array(z.object({ kind: z.enum(["work", "character", "event", "location", "artist", "artwork", "movement", "institution", "composition", "music_style", "instrument", "music_institution", "score_fragment"]), slug: z.string(), label: z.string(), context: z.string().nullable(), workSlug: z.string() })),
 });
 
 export type WorksResponse = z.infer<typeof WorksResponseSchema>;
@@ -338,12 +264,6 @@ export type AtlasChapterEmblem = Atlas["chapterEmblems"][number];
 export type AtlasScriptureRef = Atlas["scriptureRefs"][number];
 export type AtlasQuote = Atlas["quotes"][number];
 export type AtlasCrossWorkMusic = Atlas["crossWorkMusic"][number];
-export type ShanhaijingDomain = NonNullable<Atlas["shanhaijing"]>;
-export type ShanhaijingCreature = ShanhaijingDomain["creatures"][number];
-export type ShanhaijingPassage = ShanhaijingDomain["passages"][number];
-export type ShanhaijingPlace = ShanhaijingDomain["places"][number];
-export type ShanhaijingOccurrence = ShanhaijingDomain["occurrences"][number];
-export type ShanhaijingTopologyEdge = ShanhaijingDomain["topologyEdges"][number];
 export type EntityDetail = z.infer<typeof EntityDetailSchema>;
 export type SearchResponse = z.infer<typeof SearchResponseSchema>;
 export type EntityType = z.infer<typeof EntityTypeSchema>;

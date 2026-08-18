@@ -119,8 +119,8 @@ CREATE TABLE character_quote_translations (
   /*
    * A quote may only claim verification when it carries a retrievable HTTPS
    * source, a timestamp, and the retrieved verse itself — and when the shown
-   * excerpt is literally contained in that verse. This is the same containment
-   * discipline the Shanhaijing corpus uses for its occurrence quotes.
+   * excerpt is literally contained in that verse: an editor may shorten a
+   * quotation but may not produce words the source does not have.
    *
    * 〔…〕 is stripped before the comparison because in the CUV those brackets
    * carry the apparatus — an alternative rendering the 1919 editors printed

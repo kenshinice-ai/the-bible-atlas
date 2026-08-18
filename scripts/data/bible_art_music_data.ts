@@ -185,6 +185,22 @@ export const CHARACTER_EMBLEMS: readonly CharacterEmblem[] = [
     noteZh: "锁链环纹对应他被掳的结局。", noteEn: "The chained border answers his captivity.",
   },
   {
+    character: "jael", symbol: "tent-peg", ring: "plain", ground: "vellum", attestation: "scriptural",
+    nameZh: "橛子与锤", nameEn: "Tent peg and mallet",
+    meaningZh: "士师记 4:21 雅亿手拿帐棚的橛子，又手拿锤子。",
+    meaningEn: "Judges 4:21: Jael takes a tent peg in her hand and a hammer in the other.",
+    noteZh: "取自经文所记的器物。她此前在本图集中只以一张杀戮版画存在，没有徽章也没有言论——那不是任何人的编辑决定，而是三条轨各自合理的选择叠加出的结果。",
+    noteEn: "The objects the text names. She had previously existed in this atlas only as an engraving of a killing, with no emblem and no saying — not anyone's editorial decision, but what three separately reasonable choices added up to.",
+  },
+  {
+    character: "jezebel", symbol: "vineyard", ring: "plain", ground: "ink", attestation: "scriptural",
+    nameZh: "拿伯的葡萄园", nameEn: "Naboth's vineyard",
+    meaningZh: "列王纪上 21 章：耶洗别设计夺取拿伯的葡萄园，是叙事中归给她的核心作为。",
+    meaningEn: "1 Kings 21: the seizure of Naboth's vineyard is the act the narrative lays to her charge.",
+    noteZh: "不采用「高窗」——列王纪下 9:30 的窗口正是她被推下摔死之处，以此为徽等于给她一枚判决。葡萄园标示她在叙事中的作为，由读者自行判断。",
+    noteEn: "The high window is deliberately not used: in 2 Kings 9:30 that window is where she is thrown to her death, and an emblem of it would be a verdict. The vineyard marks what the narrative says she did and leaves the judgement to the reader.",
+  },
+  {
     character: "ruth", symbol: "sheaf", ring: "plain", ground: "gold", attestation: "scriptural",
     nameZh: "麦穗", nameEn: "Sheaf of grain",
     meaningZh: "路得记 2:2 容我往田间去，在人的身后拾取麦穗。",
@@ -544,9 +560,27 @@ export const CHARACTER_QUOTES: readonly CharacterQuote[] = [
     contextZh: "过海之后领众妇女击鼓歌唱。", contextEn: "Her song with the women after the sea crossing.",
   },
   {
+    character: "sarah", osis: "Gen.18.12", kind: "question", importance: 3,
+    zh: "我既已衰敗，我主也老邁，豈能有這喜事呢", en: "After I have grown old will I have pleasure, my lord being old also",
+    contextZh: "在帐棚门口听见应许后暗笑所说，与她的帐棚徽章互文。",
+    contextEn: "Spoken to herself, laughing, when she overhears the promise at the tent door — the scene her emblem records.",
+  },
+  {
+    character: "hannah", osis: "1Sam.2.1", kind: "praise", importance: 4,
+    zh: "我的心因耶和華快樂", en: "My heart exults in Yahweh",
+    contextZh: "献上撒母耳后的祷告开篇；其结构与措辞是路加福音尊主颂的先声。",
+    contextEn: "The opening of her prayer after she gives up Samuel; its shape and wording stand behind the Magnificat in Luke.",
+  },
+  {
     character: "joshua", osis: "Josh.24.15", kind: "declaration", importance: 5,
     zh: "至於我和我家，我們必定事奉耶和華", en: "as for me and my house, we will serve Yahweh",
     contextZh: "示剑大会上要求百姓选择时所说。", contextEn: "At the assembly of Shechem, calling for a choice.",
+  },
+  {
+    character: "deborah", osis: "Judg.5.7", kind: "declaration", importance: 3,
+    zh: "直到我底波拉興起", en: "until I, Deborah, arose",
+    contextZh: "底波拉之歌中的自述；她此前有棕树徽章却不出声。",
+    contextEn: "From the Song of Deborah; until now she carried a palm emblem in this atlas but no voice.",
   },
   {
     character: "gideon", osis: "Judg.6.15", kind: "objection", importance: 3,

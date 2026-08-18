@@ -117,7 +117,23 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000023','10000000-0000-4000-8000-000000000005','sheaf','plain','gold','scriptural',15)
+  ('43000000-0000-4000-8005-000000000003','10000000-0000-4000-8000-000000000005','tent-peg','plain','vellum','scriptural',15)
+ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
+INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
+  ('43000000-0000-4000-8005-000000000003','zh-CN','橛子与锤','士师记 4:21 雅亿手拿帐棚的橛子，又手拿锤子。','取自经文所记的器物。她此前在本图集中只以一张杀戮版画存在，没有徽章也没有言论——那不是任何人的编辑决定，而是三条轨各自合理的选择叠加出的结果。','published'),
+  ('43000000-0000-4000-8005-000000000003','en','Tent peg and mallet','Judges 4:21: Jael takes a tent peg in her hand and a hammer in the other.','The objects the text names. She had previously existed in this atlas only as an engraving of a killing, with no emblem and no saying — not anyone''s editorial decision, but what three separately reasonable choices added up to.','published')
+ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
+
+INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
+  ('42000000-0000-4000-8000-000000000039','10000000-0000-4000-8000-000000000005','vineyard','plain','ink','scriptural',16)
+ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
+INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
+  ('42000000-0000-4000-8000-000000000039','zh-CN','拿伯的葡萄园','列王纪上 21 章：耶洗别设计夺取拿伯的葡萄园，是叙事中归给她的核心作为。','不采用「高窗」——列王纪下 9:30 的窗口正是她被推下摔死之处，以此为徽等于给她一枚判决。葡萄园标示她在叙事中的作为，由读者自行判断。','published'),
+  ('42000000-0000-4000-8000-000000000039','en','Naboth''s vineyard','1 Kings 21: the seizure of Naboth''s vineyard is the act the narrative lays to her charge.','The high window is deliberately not used: in 2 Kings 9:30 that window is where she is thrown to her death, and an emblem of it would be a verdict. The vineyard marks what the narrative says she did and leaves the judgement to the reader.','published')
+ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
+
+INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
+  ('42000000-0000-4000-8000-000000000023','10000000-0000-4000-8000-000000000005','sheaf','plain','gold','scriptural',17)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000023','zh-CN','麦穗','路得记 2:2 容我往田间去，在人的身后拾取麦穗。','拾穗之举贯穿全书。','published'),
@@ -125,7 +141,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000025','10000000-0000-4000-8000-000000000005','horn-of-oil','braided','gold','scriptural',16)
+  ('42000000-0000-4000-8000-000000000025','10000000-0000-4000-8000-000000000005','horn-of-oil','braided','gold','scriptural',18)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000025','zh-CN','膏油的角','撒母耳记上 16:13 撒母耳就用角里的膏油在他诸兄中膏了他。','他两次膏立君王，故以角为记。','published'),
@@ -133,7 +149,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000026','10000000-0000-4000-8000-000000000005','spear','plain','ink','scriptural',17)
+  ('42000000-0000-4000-8000-000000000026','10000000-0000-4000-8000-000000000005','spear','plain','ink','scriptural',19)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000026','zh-CN','枪','撒母耳记上 18:10–11 扫罗手里拿着枪，把枪一抡。','同一件器物在他的叙事中反复出现。','published'),
@@ -141,7 +157,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000027','10000000-0000-4000-8000-000000000005','bow','plain','vellum','scriptural',18)
+  ('42000000-0000-4000-8000-000000000027','10000000-0000-4000-8000-000000000005','bow','plain','vellum','scriptural',20)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000027','zh-CN','弓','撒母耳记下 1:22 约拿单的弓箭非流敌人的血不退缩。','取自大卫为他所作的哀歌。','published'),
@@ -149,7 +165,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('21000000-0000-4000-8000-000000000007','10000000-0000-4000-8000-000000000005','harp','braided','gold','scriptural',19)
+  ('21000000-0000-4000-8000-000000000007','10000000-0000-4000-8000-000000000005','harp','braided','gold','scriptural',21)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('21000000-0000-4000-8000-000000000007','zh-CN','琴','撒母耳记上 16:23 大卫就拿琴，用手而弹。','此徽同时是他与欧洲音乐史交叉链接的入口。','published'),
@@ -157,7 +173,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('21000000-0000-4000-8000-000000000008','10000000-0000-4000-8000-000000000005','crown','braided','gold','scriptural',20)
+  ('21000000-0000-4000-8000-000000000008','10000000-0000-4000-8000-000000000005','crown','braided','gold','scriptural',22)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('21000000-0000-4000-8000-000000000008','zh-CN','冠冕','列王纪上 3:9 求你赐我智慧，可以判断你的民。','冠冕在此代表王的审断之责，不是财富。','published'),
@@ -165,7 +181,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000036','10000000-0000-4000-8000-000000000005','fire-chariot','rayed','sky','scriptural',21)
+  ('42000000-0000-4000-8000-000000000036','10000000-0000-4000-8000-000000000005','fire-chariot','rayed','sky','scriptural',23)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000036','zh-CN','火车火马','列王纪下 2:11 忽有火车火马将二人隔开。','以叙事结局为记。','published'),
@@ -173,7 +189,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000037','10000000-0000-4000-8000-000000000005','mantle','plain','vellum','scriptural',22)
+  ('42000000-0000-4000-8000-000000000037','10000000-0000-4000-8000-000000000005','mantle','plain','vellum','scriptural',24)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000037','zh-CN','以利亚的外衣','列王纪下 2:13 他拾起以利亚身上掉下来的外衣。','承接之记号。','published'),
@@ -181,7 +197,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000041','10000000-0000-4000-8000-000000000005','coal','rayed','ink','scriptural',23)
+  ('42000000-0000-4000-8000-000000000041','10000000-0000-4000-8000-000000000005','coal','rayed','ink','scriptural',25)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000041','zh-CN','红炭','以赛亚书 6:6–7 手里拿着红炭，是用火剪从坛上取下来的。','呼召场景的核心意象。','published'),
@@ -189,7 +205,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000042','10000000-0000-4000-8000-000000000005','yoke','chained','ink','scriptural',24)
+  ('42000000-0000-4000-8000-000000000042','10000000-0000-4000-8000-000000000005','yoke','chained','ink','scriptural',26)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000042','zh-CN','轭','耶利米书 27:2 你做绳索与轭，加在自己的颈项上。','先知的象征行动，不是刑具描写；锁链环纹取自他自己戴上的绳索与轭。','published'),
@@ -197,7 +213,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000044','10000000-0000-4000-8000-000000000005','lion','plain','ink','scriptural',25)
+  ('42000000-0000-4000-8000-000000000044','10000000-0000-4000-8000-000000000005','lion','plain','ink','scriptural',27)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000044','zh-CN','狮子','但以理书 6:22 我的神差遣使者，封住狮子的口。','狮口封闭之记，不作现代动物学表述。','published'),
@@ -205,7 +221,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000047','10000000-0000-4000-8000-000000000005','scepter','braided','gold','scriptural',26)
+  ('42000000-0000-4000-8000-000000000047','10000000-0000-4000-8000-000000000005','scepter','braided','gold','scriptural',28)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000047','zh-CN','金杖','以斯帖记 5:2 王向她伸出手中的金杖。','接纳与冒险的双重记号。','published'),
@@ -213,7 +229,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000049','10000000-0000-4000-8000-000000000005','trowel','plain','ink','scriptural',27)
+  ('42000000-0000-4000-8000-000000000049','10000000-0000-4000-8000-000000000005','trowel','plain','ink','scriptural',29)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000049','zh-CN','泥刀','尼希米记 4:17 一手做工，一手拿兵器。','重建城墙的工具。','published'),
@@ -221,7 +237,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('21000000-0000-4000-8000-000000000009','10000000-0000-4000-8000-000000000005','fish','waved','sky','scriptural',28)
+  ('21000000-0000-4000-8000-000000000009','10000000-0000-4000-8000-000000000005','fish','waved','sky','scriptural',30)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('21000000-0000-4000-8000-000000000009','zh-CN','大鱼','约拿书 1:17 耶和华安排一条大鱼吞了约拿。','文本称大鱼，不称鲸。','published'),
@@ -229,7 +245,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000005','ark','waved','sky','scriptural',29)
+  ('42000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000005','ark','waved','sky','scriptural',31)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000001','zh-CN','方舟','创世记 6–8 章洪水叙事的核心器物。','示意性船形，不作船体考据。','published'),
@@ -237,7 +253,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('43000000-0000-4000-8001-000000000001','10000000-0000-4000-8000-000000000005','tree','plain','vellum','scriptural',30)
+  ('43000000-0000-4000-8001-000000000001','10000000-0000-4000-8000-000000000005','tree','plain','vellum','scriptural',32)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('43000000-0000-4000-8001-000000000001','zh-CN','园中的树','创世记 2:9 园子当中又有生命树和分别善恶的树。','不描绘人物形貌。','published'),
@@ -245,7 +261,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('43000000-0000-4000-8001-000000000002','10000000-0000-4000-8000-000000000005','living-branch','braided','vellum','scriptural',31)
+  ('43000000-0000-4000-8001-000000000002','10000000-0000-4000-8000-000000000005','living-branch','braided','vellum','scriptural',33)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('43000000-0000-4000-8001-000000000002','zh-CN','众生之母','创世记 3:20 亚当给他妻子起名叫夏娃，因为她是众生之母。','以经文给她的名号为记。蛇属于伊甸叙事，不是她的身份标识——把女人与蛇焊在一起是后世接受史，不是本文本的说法。','published'),
@@ -253,7 +269,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('21000000-0000-4000-8000-000000000010','10000000-0000-4000-8000-000000000005','lily','rayed','sky','iconographic',32)
+  ('21000000-0000-4000-8000-000000000010','10000000-0000-4000-8000-000000000005','lily','rayed','sky','iconographic',34)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('21000000-0000-4000-8000-000000000010','zh-CN','百合','百合是欧洲报喜图像中固定的属性物，不出自经文。','此为图像学传统，已明确标注为 iconographic。','published'),
@@ -261,7 +277,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000051','10000000-0000-4000-8000-000000000005','reed-cross','thorned','ink','iconographic',33)
+  ('42000000-0000-4000-8000-000000000051','10000000-0000-4000-8000-000000000005','reed-cross','thorned','ink','iconographic',35)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000051','zh-CN','苇杖十字','苇杖十字是欧洲艺术中施洗约翰的固定属性物；约翰福音 1:29 供其言语依据。','属性物属图像传统，经文只提供言语。','published'),
@@ -269,7 +285,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('21000000-0000-4000-8000-000000000011','10000000-0000-4000-8000-000000000005','chi-rho','rayed','gold','liturgical',34)
+  ('21000000-0000-4000-8000-000000000011','10000000-0000-4000-8000-000000000005','chi-rho','rayed','gold','liturgical',36)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('21000000-0000-4000-8000-000000000011','zh-CN','基督符号（Chi-Rho）','希腊文 ΧΡΙΣΤΟΣ 的头两个字母，四世纪起为通行的基督符号。','本图集不为耶稣绘制面容：具象描绘在多个传统中属敏感问题，符号是中立表达。','published'),
@@ -277,7 +293,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('21000000-0000-4000-8000-000000000012','10000000-0000-4000-8000-000000000005','keys','braided','gold','scriptural',35)
+  ('21000000-0000-4000-8000-000000000012','10000000-0000-4000-8000-000000000005','keys','braided','gold','scriptural',37)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('21000000-0000-4000-8000-000000000012','zh-CN','钥匙','马太福音 16:19 我要把天国的钥匙给你。','此徽在经文与后世图像传统中一致。','published'),
@@ -285,7 +301,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('21000000-0000-4000-8000-000000000013','10000000-0000-4000-8000-000000000005','sword-scroll','plain','ink','iconographic',36)
+  ('21000000-0000-4000-8000-000000000013','10000000-0000-4000-8000-000000000005','sword-scroll','plain','ink','iconographic',38)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('21000000-0000-4000-8000-000000000013','zh-CN','剑与书卷','书卷代表书信，剑为欧洲艺术中保罗的固定属性物。','剑属图像传统，不指涉暴力。','published'),
@@ -293,7 +309,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000058','10000000-0000-4000-8000-000000000005','eagle','rayed','sky','iconographic',37)
+  ('42000000-0000-4000-8000-000000000058','10000000-0000-4000-8000-000000000005','eagle','rayed','sky','iconographic',39)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000058','zh-CN','鹰','四福音书象征体系中约翰配鹰，源自以西结书 1:10 与启示录 4:7 的四活物。','该配对由教父传统确立，不出自福音书自身。','published'),
@@ -301,7 +317,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000052','10000000-0000-4000-8000-000000000005','jar','plain','vellum','scriptural',38)
+  ('42000000-0000-4000-8000-000000000052','10000000-0000-4000-8000-000000000005','jar','plain','vellum','scriptural',40)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000052','zh-CN','香膏','马可福音 16:1 抹大拉的马利亚买了香膏，要去膏耶稣的身体。','沿用欧洲艺术为她固定的容器形，但依据取她本人在马可福音 16:1 的携膏之举；不采用把她与路加福音 7 章、约翰福音 12 章的无名妇女合并的后世读法。','published'),
@@ -309,7 +325,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000055','10000000-0000-4000-8000-000000000005','coins','plain','ink','scriptural',39)
+  ('42000000-0000-4000-8000-000000000055','10000000-0000-4000-8000-000000000005','coins','plain','ink','scriptural',41)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000055','zh-CN','三十块钱','马太福音 26:15 他们就给了他三十块钱。','取自马太福音的叙事细节。该属性物在中世纪以降的欧洲艺术中与敌犹刻板形象合流，本图集只取经文所记的交易，不承接那套图像。','published'),
@@ -317,7 +333,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000056','10000000-0000-4000-8000-000000000005','basin','plain','ink','scriptural',40)
+  ('42000000-0000-4000-8000-000000000056','10000000-0000-4000-8000-000000000005','basin','plain','ink','scriptural',42)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000056','zh-CN','洗手的盆','马太福音 27:24 彼拉多拿水在众人面前洗手。','只标注叙事动作。','published'),
@@ -325,7 +341,7 @@ INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol
 ON CONFLICT (character_id,locale) DO UPDATE SET symbol_name=EXCLUDED.symbol_name,symbol_meaning=EXCLUDED.symbol_meaning,attribution_note=EXCLUDED.attribution_note,status=EXCLUDED.status;
 
 INSERT INTO character_emblems(character_id,work_id,symbol_key,ring_key,ground_key,attestation,sort_order) VALUES
-  ('42000000-0000-4000-8000-000000000045','10000000-0000-4000-8000-000000000005','statue','plain','ink','scriptural',41)
+  ('42000000-0000-4000-8000-000000000045','10000000-0000-4000-8000-000000000005','statue','plain','ink','scriptural',43)
 ON CONFLICT (character_id) DO UPDATE SET symbol_key=EXCLUDED.symbol_key,ring_key=EXCLUDED.ring_key,ground_key=EXCLUDED.ground_key,attestation=EXCLUDED.attestation,sort_order=EXCLUDED.sort_order;
 INSERT INTO character_emblem_translations(character_id,locale,symbol_name,symbol_meaning,attribution_note,status) VALUES
   ('42000000-0000-4000-8000-000000000045','zh-CN','大像','但以理书 2:31 王啊，你梦见一个大像。','取自但以理书的梦象，不是历史造像考据。','published'),

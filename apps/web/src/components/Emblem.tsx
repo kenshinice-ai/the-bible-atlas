@@ -120,6 +120,10 @@ function glyph(symbol: string, ink: string): React.ReactNode {
       return <g {...stroke}><path d="M24 37V11" /><path d="M17 19h14" /><path d="M24 11c-2-1-2-3 0-4 2 1 2 3 0 4z" /></g>;
     case "tree":
       return <g {...stroke}><path d="M24 36V22" /><circle cx="24" cy="18" r="8" /><path d="M24 26l-5-5M24 24l5-5" /></g>;
+    case "tent-peg":
+      return <g {...stroke}><path d="M22 12h8l-2 5h-4z" /><path d="M24 17v18l2-3" /><path d="M12 22l7-3 2 4-7 3z" /><path d="M12 22l-2 4" /></g>;
+    case "vineyard":
+      return <g {...stroke}><path d="M24 13v6" /><path d="M24 19c-4 0-6 2-6 5M24 19c4 0 6 2 6 5" /><g {...solid}>{[[18, 26], [24, 25], [30, 26], [21, 31], [27, 31], [24, 36]].map(([x, y]) => <circle key={`${x}-${y}`} cx={x} cy={y} r="2.3" />)}</g></g>;
     case "living-branch":
       return <g {...stroke}><path d="M24 37c0-9 1-15 4-20" /><path d="M26 25c-4 1-7-1-8-5 4-1 7 1 8 5zM27 21c4-1 6-4 5-8-4 1-6 4-5 8zM24 31c-4 0-6-2-6-6 4 0 6 2 6 6z" /><circle cx="29" cy="14" r="1.6" fill={ink} /></g>;
     case "tent":

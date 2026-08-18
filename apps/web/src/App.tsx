@@ -7,7 +7,6 @@ import { EntityList } from "./components/EntityList";
 import { GlobalSearch } from "./components/GlobalSearch";
 import { MusicStudyPanel } from "./components/MusicStudyPanel";
 import { RelationGraph } from "./components/RelationGraph";
-import { ShanhaijingWorkspace } from "./components/ShanhaijingWorkspace";
 import { TimelineRibbon } from "./components/TimelineRibbon";
 import { WorkControlCenter } from "./components/WorkControlCenter";
 import { DATA_NOTE, ERA_EPIGRAPHS, FOOTER_EPIGRAPH, LOADING_EPIGRAPHS, SOURCE_NOTE, WELCOME_EPIGRAPH, type Epigraph } from "./epigraphs";
@@ -21,10 +20,7 @@ import {
 import { type Atlas, type Locale, type WorksResponse } from "./types";
 
 function tabForEntity(entity: SelectedEntity): Tab {
-  return entity.type === "creature" ? "creatures"
-    : entity.type === "passage" ? "passages"
-      : entity.type === "textual_place" ? "textualPlaces"
-        : entity.type === "character" ? "characters"
+  return entity.type === "character" ? "characters"
     : entity.type === "artist" ? (PROFILE.canonicalArtistPeople ? "characters" : "artists")
       : entity.type === "artwork" ? "artworks"
         : entity.type === "movement" ? "movements"
@@ -271,19 +267,13 @@ export default function App() {
               <p>{activeAtlas.work.summary}</p>
               <small>
                 {originRegionLabel(activeAtlas.work.originRegion, locale)}
-                {activeAtlas.shanhaijing
-                  ? <>
-                    {" · "}{activeAtlas.shanhaijing.coverage.creatureConcepts} {t("creatures", locale)}
-                    {" · "}{activeAtlas.shanhaijing.coverage.textualOccurrences} {locale === "zh-CN" ? "文本提及" : "textual occurrences"}
-                    {" · "}{activeAtlas.shanhaijing.coverage.passagesReviewed}/{activeAtlas.shanhaijing.coverage.passagesTotal} {t("passages", locale)}
-                  </>
-                  : <>
+                <>
                     {" · "}{formatYear(defaultRange.start, locale)} – {formatYear(defaultRange.end, locale)}
                     {" · "}{activeAtlas.characters.length} {t("characters", locale)}
                     {" · "}{activeAtlas.events.length} {t("events", locale)}
                     {" · "}{activeAtlas.locations.length} {t("locations", locale)}
                     {" · "}{activeAtlas.chapters.length} {t("eraBands", locale)}
-                  </>}
+                </>
               </small>
             </div>
             <button className="copy" onClick={() => void navigator.clipboard.writeText(location.href).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500); })}>
@@ -291,18 +281,7 @@ export default function App() {
             </button>
           </section>
 
-          {PROFILE.specialization === "shanhaijing" && activeAtlas.shanhaijing
-            ? <ShanhaijingWorkspace
-              atlas={activeAtlas}
-              locale={locale}
-              tab={explore.tab}
-              query={explore.query}
-              selected={explore.selectedEntity}
-              onTab={setTab}
-              onQuery={(query) => commit({ ...explore, query })}
-              onSelect={selectEntity}
-            />
-            : <>
+
           {/* Scripture epigraph: the selected era's verse, or the welcome verse
               (Psalm 119:18) while no era is chosen. */}
           <EpigraphBlock
@@ -440,7 +419,6 @@ export default function App() {
             onChapter={setChapter}
             onSelect={(entity) => selectEntity(entity, "timeline")}
           />
-          </>}
 
           {activeAtlas.sources.length > 0 && <footer>
             <h2>{t("sources", locale)}</h2>

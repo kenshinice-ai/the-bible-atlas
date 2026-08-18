@@ -5,12 +5,11 @@ import { ZodError, z } from "zod";
 import { loadBibleArtMusic } from "./bible.js";
 import { resolveLocale, supportedLocales } from "./locale.js";
 import { loadMusicAtlas } from "./music.js";
-import { loadShanhaijingAtlas, loadShanhaijingDetail } from "./shanhaijing.js";
 
 const SlugSchema = z.string().regex(/^[a-z0-9-]+$/);
 const SearchSchema = z.object({ q: z.string().trim().min(1).max(100), locale: z.string().optional() });
 const DetailSchema = z.enum(["lite", "full"]).catch("lite");
-const EntityKindSchema = z.enum(["character", "event", "location", "route", "relationship", "artist", "artwork", "movement", "institution", "composition", "music_style", "instrument", "music_institution", "score_fragment", "creature", "passage", "textual_place"]);
+const EntityKindSchema = z.enum(["character", "event", "location", "route", "relationship", "artist", "artwork", "movement", "institution", "composition", "music_style", "instrument", "music_institution", "score_fragment"]);
 type Database = Pick<pg.Pool, "query">;
 
 /**
@@ -71,30 +70,7 @@ export function createApp(db: Database, corsOrigin: string = process.env.CORS_OR
           (SELECT count(*)::int FROM music_styles ms WHERE ms.work_id=w.id) AS "musicStyleCount",
           (SELECT count(*)::int FROM instruments i WHERE i.work_id=w.id) AS "instrumentCount",
           (SELECT count(*)::int FROM music_institutions mi WHERE mi.work_id=w.id) AS "musicInstitutionCount",
-          (SELECT count(*)::int FROM score_fragments sf WHERE sf.work_id=w.id) AS "scoreFragmentCount",
-          (SELECT count(*)::int FROM shj_creatures sc WHERE sc.work_id=w.id AND sc.concept_status<>'superseded') AS "uniqueCreatureConceptCount",
-          (SELECT count(*)::int
-             FROM shj_creature_occurrences so
-             JOIN shj_creatures soc ON soc.id=so.creature_id
-             JOIN shj_text_passages sop ON sop.id=so.passage_id
-             JOIN shj_text_sections sos ON sos.id=sop.section_id
-             JOIN shj_text_editions soe ON soe.id=sos.edition_id
-            WHERE soc.work_id=w.id AND soe.is_baseline
-              AND soe.review_status='published' AND sos.review_status='published'
-              AND sop.review_status='published' AND so.review_status='published') AS "textualOccurrenceCount",
-          (SELECT json_build_object(
-             'reviewed', count(*) FILTER (
-               WHERE sp.review_status='published'
-                 AND COALESCE(sa.audit_status,'pending_review')='reviewed'
-             )::int,
-             'total', count(*)::int
-           )
-             FROM shj_text_passages sp
-             JOIN shj_text_sections ss ON ss.id=sp.section_id
-             JOIN shj_text_editions se ON se.id=ss.edition_id
-             LEFT JOIN shj_passage_audits sa ON sa.passage_id=sp.id
-            WHERE se.work_id=w.id AND se.is_baseline) AS "corpusCoverage",
-          (SELECT count(*)::int FROM shj_textual_places sl WHERE sl.work_id=w.id AND sl.review_status='published') AS "textualPlaceCount"
+          (SELECT count(*)::int FROM score_fragments sf WHERE sf.work_id=w.id) AS "scoreFragmentCount"
         FROM works w
         LEFT JOIN work_translations req ON req.work_id=w.id AND req.locale=$1 AND req.status='published'
         LEFT JOIN work_translations fb ON fb.work_id=w.id AND fb.locale=w.default_locale AND fb.status='published'
@@ -216,14 +192,13 @@ export function createApp(db: Database, corsOrigin: string = process.env.CORS_OR
         db.query(`SELECT i.id,i.slug,i.location_id AS "locationId",i.institution_type AS "institutionType",i.founded_year AS "foundedYear",i.closed_year AS "closedYear",l.slug AS "locationSlug",COALESCE(t.name,f.name) name,COALESCE(t.summary,f.summary) summary,CASE WHEN t.name IS NULL THEN $3::locale_code ELSE $2::locale_code END AS "resolvedLocale",(t.name IS NULL) AS "fallbackUsed",COALESCE(t.status,f.status) AS "translationStatus",COALESCE((SELECT json_agg(DISTINCT a.slug) FROM artist_institutions ai JOIN artists a ON a.id=ai.artist_id WHERE ai.institution_id=i.id),'[]'::json) AS "artistSlugs",COALESCE((SELECT json_agg(${sourceTitle} ORDER BY ${sourceTitle}) FROM institution_sources isrc JOIN sources s ON s.id=isrc.source_id ${sourceJoin("s")} WHERE isrc.institution_id=i.id),'[]'::json) AS "sourceTitles" FROM art_institutions i JOIN locations l ON l.id=i.location_id LEFT JOIN art_institution_translations t ON t.institution_id=i.id AND t.locale=$2 AND t.status='published' LEFT JOIN art_institution_translations f ON f.institution_id=i.id AND f.locale=$3 AND f.status='published' WHERE i.work_id=$1 AND (t.name IS NOT NULL OR f.name IS NOT NULL) ORDER BY i.slug`, args),
       ]);
       const music = await loadMusicAtlas(db, workId, requestedLocale, fallbackLocale);
-      const shanhaijing = slug === "shanhaijing" ? await loadShanhaijingAtlas(db, workId, requestedLocale, fallbackLocale) : null;
       const artMusic = await loadBibleArtMusic(db, workId, requestedLocale, fallbackLocale);
       response.json({
         requestedLocale, detail, work,
         characters: characters.rows, locations: locations.rows, events: events.rows, routes: routes.rows,
         relations: relations.rows, sources: sources.rows, chronologies: chronologies.rows, media: media.rows,
         chapters: chapters.rows, groups: groups.rows, artists: artists.rows, artworks: artworks.rows, movements: movements.rows, institutions: institutions.rows,
-        ...music, ...artMusic, shanhaijing,
+        ...music, ...artMusic,
       });
     } catch (error) { next(error); }
   });
@@ -240,10 +215,7 @@ export function createApp(db: Database, corsOrigin: string = process.env.CORS_OR
       const fallbackLocale = z.enum(supportedLocales).parse(work.default_locale);
 
       let row: Record<string, unknown> | undefined;
-      if (kind === "creature" || kind === "passage" || kind === "textual_place") {
-        const entitySlug = SlugSchema.parse(request.params.entitySlug);
-        row = await loadShanhaijingDetail(db, workId, kind, entitySlug, requestedLocale, fallbackLocale);
-      } else if (kind === "relationship") {
+      if (kind === "relationship") {
         const id = z.string().uuid().safeParse(request.params.entitySlug);
         if (!id.success) { response.status(400).json({ error: { code: "INVALID_REQUEST", message: "Relationship detail requires a UUID" } }); return; }
         const result = await db.query(`SELECT COALESCE(t.summary,f.summary,'') AS summary FROM character_relations r
@@ -304,74 +276,7 @@ export function createApp(db: Database, corsOrigin: string = process.env.CORS_OR
         UNION ALL SELECT 'instrument',i.slug,it.name,it.summary,w.slug FROM instrument_translations it JOIN instruments i ON i.id=it.instrument_id JOIN works w ON w.id=i.work_id WHERE it.locale=$1 AND it.status='published' AND (it.name||' '||it.summary||' '||array_to_string(it.aliases,' ')||' '||i.family||' '||i.hornbostel_sachs_code) ILIKE '%'||$2||'%'
         UNION ALL SELECT 'music_institution',i.slug,it.name,it.summary,w.slug FROM music_institution_translations it JOIN music_institutions i ON i.id=it.institution_id JOIN works w ON w.id=i.work_id WHERE it.locale=$1 AND it.status='published' AND (it.name||' '||it.summary||' '||i.institution_type) ILIKE '%'||$2||'%'
         UNION ALL SELECT 'score_fragment',sf.slug,sft.title,sft.summary,w.slug FROM score_fragment_translations sft JOIN score_fragments sf ON sf.id=sft.fragment_id JOIN works w ON w.id=sf.work_id WHERE sft.locale=$1 AND sft.status='published' AND (sft.title||' '||sft.summary||' '||sft.analysis_note) ILIKE '%'||$2||'%') s LIMIT 200`, [requestedLocale, parsed.q]);
-      const shanhaijingResults = await db.query(
-        `SELECT kind,slug,label,context,"workSlug","resolvedLocale","fallbackUsed","translationStatus"
-           FROM (
-             SELECT 'creature'::text AS kind,c.slug,
-                    COALESCE(rt.name,fb.name) AS label,
-                    COALESCE(rt.summary,fb.summary) AS context,
-                    w.slug AS "workSlug",
-                    CASE WHEN rt.name IS NULL THEN $3::locale_code ELSE $2::locale_code END AS "resolvedLocale",
-                    (rt.name IS NULL) AS "fallbackUsed",
-                    COALESCE(rt.status,fb.status) AS "translationStatus"
-               FROM shj_creatures c
-               JOIN works w ON w.id=c.work_id
-               LEFT JOIN shj_creature_translations rt
-                 ON rt.creature_id=c.id AND rt.locale=$2 AND rt.status='published'
-               LEFT JOIN shj_creature_translations fb
-                 ON fb.creature_id=c.id AND fb.locale=$3 AND fb.status='published'
-              WHERE c.work_id='10000000-0000-4000-8000-000000000011'
-                AND c.concept_status<>'superseded'
-                AND (rt.name IS NOT NULL OR fb.name IS NOT NULL)
-                AND (COALESCE(rt.name,fb.name)||' '||COALESCE(rt.summary,fb.summary)||' '||
-                     array_to_string(COALESCE(rt.aliases,fb.aliases,'{}'),' '))
-                    ILIKE '%'||$1||'%'
-             UNION ALL
-             SELECT 'passage'::text,p.slug,
-                    COALESCE(rt.title,fb.title),
-                    COALESCE(rt.summary,fb.summary),
-                    w.slug,
-                    CASE WHEN rt.title IS NULL THEN $3::locale_code ELSE $2::locale_code END,
-                    (rt.title IS NULL),
-                    COALESCE(rt.status,fb.status)
-               FROM shj_text_passages p
-               JOIN shj_text_sections s ON s.id=p.section_id
-               JOIN shj_text_editions e ON e.id=s.edition_id
-               JOIN works w ON w.id=e.work_id
-               LEFT JOIN shj_passage_translations rt
-                 ON rt.passage_id=p.id AND rt.locale=$2 AND rt.status='published'
-               LEFT JOIN shj_passage_translations fb
-                 ON fb.passage_id=p.id AND fb.locale=$3 AND fb.status='published'
-              WHERE e.is_baseline AND e.review_status='published'
-                AND s.review_status='published' AND p.review_status='published'
-                AND (rt.title IS NOT NULL OR fb.title IS NOT NULL)
-                AND (COALESCE(rt.title,fb.title)||' '||COALESCE(rt.summary,fb.summary)||' '||
-                     p.text_zh||' '||p.reference_key)
-                    ILIKE '%'||$1||'%'
-             UNION ALL
-             SELECT 'textual_place'::text,p.slug,
-                    COALESCE(rt.name,fb.name),
-                    COALESCE(rt.summary,fb.summary),
-                    w.slug,
-                    CASE WHEN rt.name IS NULL THEN $3::locale_code ELSE $2::locale_code END,
-                    (rt.name IS NULL),
-                    COALESCE(rt.status,fb.status)
-               FROM shj_textual_places p
-               JOIN works w ON w.id=p.work_id
-               LEFT JOIN shj_textual_place_translations rt
-                 ON rt.place_id=p.id AND rt.locale=$2 AND rt.status='published'
-               LEFT JOIN shj_textual_place_translations fb
-                 ON fb.place_id=p.id AND fb.locale=$3 AND fb.status='published'
-              WHERE p.review_status='published'
-                AND (rt.name IS NOT NULL OR fb.name IS NOT NULL)
-                AND (COALESCE(rt.name,fb.name)||' '||COALESCE(rt.summary,fb.summary)||' '||
-                     array_to_string(COALESCE(rt.aliases,fb.aliases,'{}'),' '))
-                    ILIKE '%'||$1||'%'
-           ) shj
-          LIMIT 200`,
-        [parsed.q, requestedLocale, "zh-CN"],
-      );
-      response.json({ locale: requestedLocale, query: parsed.q, items: [...result.rows, ...shanhaijingResults.rows].slice(0, 200) });
+      response.json({ locale: requestedLocale, query: parsed.q, items: result.rows.slice(0, 200) });
     } catch (error) { next(error); }
   });
 

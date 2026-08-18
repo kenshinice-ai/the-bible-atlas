@@ -20,12 +20,6 @@
       "port": 5174
     },
     {
-      "name": "web-shanhaijing",
-      "runtimeExecutable": "bash",
-      "runtimeArgs": ["-c", "cd apps/web && VITE_WORK_PROFILE=shanhaijing npx vite --port 5176 --strictPort"],
-      "port": 5176
-    },
-    {
       "name": "web-galaxy",
       "runtimeExecutable": "bash",
       "runtimeArgs": ["-c", "cd apps/web && VITE_WORK_PROFILE=galaxy npx vite --port 5175 --strictPort"],

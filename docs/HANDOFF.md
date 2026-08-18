@@ -21,18 +21,17 @@ Git 与 Cloudflare Pages：
 - 线上抽检：首页 HTTP 200；中文 atlas JSON 947,401 bytes，含 41 徽章 / 13 时代徽章 / 59 经文引用 / 38 引文（38/38 标记节选）/ 13 音乐链接 / 28 媒体；总览 SVG、多雷版画、音乐 WAV 均 200 且 content-type 正确；约翰福音 1:29 中文为完整的「看哪，神的羔羊，除去世人罪孽的」；夏娃徽章为「众生之母」；页面无 "King James" 字样；console error = 0。
 - 回滚点：上一版 production deployment `704f69dd-a414-4031-9c9c-61c8ca796ad6`（source `583ae49`，三周前）仍保留。
 - **神职/设计双重评审**：`liturgical-design-director` 初判**暂不放行**，列 7 项阻断（页脚仍宣称 KJV 为公版、同屏两套经文系统、节录未标记、约翰福音 1:29 中英不对等、`confession` 误译为「表白」、夏娃配蛇、中文界面打印原始 OSIS 码）。**全部已修并复验**，另同批采纳 S1/S2/B1/B2/B3/B7/B9/S4/S5/S6 建议项。逐条处置见 [HANDOFF_DECISIONS_2026-08-18.md](HANDOFF_DECISIONS_2026-08-18.md) 第 9 节。
-- 已知待决：新约多雷批次评审建议**收录**（含耶稣具象描绘，附四条件），本轮未执行；《Spem in alium》所据《友第德传》属次经，profile 无对应实体，记为缺口；主 JS chunk 增至 716 KB，仍超 500 KB 建议阈值。
+- 已知待决：新约多雷批次已按四条件定稿并开抓，因 Wikimedia 限流仅完成 6/14，**未随本次发布上线**，`npm run import:bible-dore-media new-testament` 可续跑；《Spem in alium》所据《友第德传》属次经，profile 无对应实体，记为缺口；主 JS chunk 增至 716 KB，仍超 500 KB 建议阈值。
 - 环境修复：`scripts/verify_postgis.sh` 加入 `export LC_ALL=${LC_ALL:-C}`，否则 PostgreSQL 18 在 macOS 上无法启动临时实例（与本轮功能无关）。
 
-### 2026-08-18 阶段性交接：山海经 Atlas V1 垂直试点落库 + Git 检查点恢复
+### 2026-08-18 收口：山海经与红楼梦迁出本仓库
 
-第六条内容线《山海经 Atlas》已从 Gate 0 文档阶段进入 V1 垂直试点实现（用户授权，决策 SJ-D010）。详细状态以 [docs/shanhaijing/HANDOFF.md](shanhaijing/HANDOFF.md) 第 0 节为准：
+两条内容线已由用户迁入各自独立项目，本仓库相应内容整体移除（migration `023_retire_shanhaijing_domain`）。
 
-- 领域 schema（migration `020/021`，17 张 `shj_*` 表 + `mythography` 类目）、《南山经》鹊山首列 9 段审计语料（seed `064/065`，逐段 SHA-256）、API 领域 loader、`shanhaijing` profile 与工作区 UI 均已实现并装载本地库；typecheck 与 Web 33 测试通过。
-- 证据层级 `local_candidate`；隔离库 bootstrap、领域 verifier、静态 parity、性能基准、部署均未做；外部专家签署 pending。
-- 艺术总览按 SJ-D011 改走**原创程序化 SVG** 路线，ImageGen 光栅母图与外来候选图确权推迟到 Scale 阶段。
-- **Git 检查点已恢复**：2026-08-09 记录的 iCloud `.git/refs` 权限问题已消失。积压工作分四个 commit 落盘：`ec3f59b`（圣经视觉试点）、`5591228`（山海经 V1）、`36c92ad`（红楼梦蓝图与独立原型）、`7c05453`（codex 代理配置）。**未推送远程**，push 待用户确认。
-- 红楼梦（Dream of the Red Chamber）为第七条线的蓝图+独立原型，未接入任何 profile。
+- **迁出前逐项核验**：山海经语料 `nanshan_corpus_v2.json` 与程序化母图 `artistic-overview-v1.svg` 在新项目中**逐字节一致**（SHA-256 相同），文档 33 篇对本仓库 31 篇为超集，且新仓库有独立 git 历史（`c20af77` 等三个 commit）。红楼梦蓝图在新项目 `docs/blueprint/` 下为超集（多出 CHARACTER_AI_BRIEFS_12.md、NEXT_CAST_CANDIDATES.md），本仓库的原型组件无任何引用，属死代码。
+- **移除范围**：migration `020/021`、seed `064–067`、`apps/api/src/shanhaijing.ts`、`ShanhaijingWorkspace.tsx`、`RedChamberPrototype.tsx`、`red-chamber-fixture.ts`、`blueprint/dream-of-the-red-chamber/`、`docs/shanhaijing/`、四个 `*_shanhaijing_*` 脚本与冻结语料、`media/shanhaijing/` 资产，以及 profile / types / i18n / 搜索 / 抽屉 / 样式 / 部署 profile / package 脚本中的全部接线。
+- **迁移号处理**：`020/021` 直接删除而非保留——本仓库不再描述该 schema，全新 bootstrap 不应再建这些表。已装载的旧库由 `023` 幂等 `DROP IF EXISTS` 清理，两种状态都收敛。`mythography` 枚举值保留：从 Postgres 枚举中删值要重建类型与所有引用列，风险大于收益。
+- 本仓库 git 历史仍完整保留这两条线（`bad87e2`、`36c92ad`、`a6d359a` 等），需要时可取回。
 
 ### 2026-08-09 阶段性交接：Bible visual pilot（P0/P1/P2，本地候选）
 
