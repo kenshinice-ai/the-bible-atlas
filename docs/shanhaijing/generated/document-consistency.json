@@ -4,7 +4,7 @@
   "command": "npm run verify:shanhaijing-docs",
   "generatorVersion": "1.0.0",
   "generatorSha256": "4e8d55a5df39147d59a4b5a22a5cc82b40627492173fa64fc33e76f2d9de871f",
-  "generatedAt": "2026-08-18T00:32:54.274Z",
+  "generatedAt": "2026-08-18T00:47:49.130Z",
   "evidenceLevel": "local_candidate",
   "result": "pass",
   "gateTransitionAuthorized": false,

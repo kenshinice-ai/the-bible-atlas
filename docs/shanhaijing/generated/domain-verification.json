@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-08-18T00:24:17.756Z",
+  "generatedAt": "2026-08-18T00:47:10.934Z",
   "command": "npm run verify:shanhaijing",
   "evidenceLevel": "local_candidate",
   "database": "literary_atlas",
   "postgres": "PostgreSQL 18.6 (Homebrew)",
   "result": "pass",
-  "checks": 63,
+  "checks": 196,
   "errors": 0,
   "statistics": {
-    "uniqueCreatureConcepts": 9,
-    "textualOccurrences": 9,
+    "uniqueCreatureConcepts": 23,
+    "textualOccurrences": 24,
     "corpusCoverage": {
-      "passagesReviewed": 9,
-      "passagesTotal": 9
+      "passagesReviewed": 43,
+      "passagesTotal": 43
     }
   },
   "findings": []
