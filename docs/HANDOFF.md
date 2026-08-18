@@ -24,6 +24,14 @@ Git 与 Cloudflare Pages：
 - 已知待决：新约多雷批次已按四条件定稿并开抓，因 Wikimedia 限流仅完成 6/14，**未随本次发布上线**，`npm run import:bible-dore-media new-testament` 可续跑；《Spem in alium》所据《友第德传》属次经，profile 无对应实体，记为缺口；主 JS chunk 增至 716 KB，仍超 500 KB 建议阈值。
 - 环境修复：`scripts/verify_postgis.sh` 加入 `export LC_ALL=${LC_ALL:-C}`，否则 PostgreSQL 18 在 macOS 上无法启动临时实例（与本轮功能无关）。
 
+### 2026-08-18 发布：评审收尾项与两条内容线迁出（production 已更新）
+
+- commit `f78fc8f` 已推送 `origin/main`，并已烘焙发布到 Cloudflare Pages production。
+- 线上核对：首页 HTTP 200；中文静态 JSON 为 **43 徽章 / 13 时代徽章 / 41 引文 / 59 经文引用 / 13 音乐链接**，`shanhaijing` 键已不存在；多雷版画与总览母图均 HTTP 200。
+- 线上 bundle 字符串核对：`King James` 与 `KJV` 出现 **0 次**（页脚不再宣称 KJV 为公版），`World English Bible`、`和合本·新标点`、`认信` 各出现 1 次，`表白` **0 次**。
+- 耶洗别徽章为 `vineyard`（拿伯的葡萄园，`ring=plain`），夏娃为 `living-branch`（众生之母），约翰福音 1:29 中文恢复完整谓语。
+- **新约多雷批次未随本次发布上线**：14 张已定稿并通过权利探测，Wikimedia 对本地址限流（curl 与 Node 同样 429），仅抓完 6 张，seed `072` 未生成。续跑命令 `npm run import:bible-dore-media new-testament`；已下载的 6 张暂存于会话 scratchpad 的 `nt-partial/`，放回 `apps/web/public/media/bible/dore/` 可免重复抓取。
+
 ### 2026-08-18 收口：山海经与红楼梦迁出本仓库
 
 两条内容线已由用户迁入各自独立项目，本仓库相应内容整体移除（migration `023_retire_shanhaijing_domain`）。
