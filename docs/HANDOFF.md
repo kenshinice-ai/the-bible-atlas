@@ -2,6 +2,11 @@
 
 ## 项目现状
 
+### 2026-10-07 文档：写作规则与术语表
+
+- 新增根目录 `CLAUDE.md`：写作规则、范围、术语表。
+- `liturgical-design-director` 代理的英文译本由 KJV 改为 WEB，对齐 2026-08-18 的决定。
+
 ### 2026-08-18 最终交接：Bible 艺术与音乐升级 A/B/C/D（已评审、已发布 production）
 
 按用户批准的四条轨全量执行，把欧洲美术史与欧洲音乐史两条内容线积累的工程方法（公版图像权利管线、确定性资产生成 + checksum、fail-closed 校验）反向应用到圣经域。规划见 [BIBLE_ART_MUSIC_UPGRADE_PLAN_2026-08-18.md](BIBLE_ART_MUSIC_UPGRADE_PLAN_2026-08-18.md)，决策见 [HANDOFF_DECISIONS_2026-08-18.md](HANDOFF_DECISIONS_2026-08-18.md)。
