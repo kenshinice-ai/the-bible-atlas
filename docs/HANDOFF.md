@@ -216,7 +216,7 @@ v4 Bible-first 架构已落地并提交(commit `9b47ea0`):以「时代 → 人�
 
 ## 正在进行
 
--11. **银河原力舆图 The Galactic Force Atlas · M1 骨架上屏完成(2026-07-27)**:第三个图集,单 work `skywalker-saga`,profile id `galaxy`。**未部署**(等 M2 内容 + IP 审读)。
+-11. **银河原力舆图 The Galactic Force Atlas · M1 骨架上屏完成(2026-07-27)**:第三个图集,单 work `skywalker-saga`,profile id `galaxy`。**已上线**(galactic-force-atlas.pages.dev,2026-10-08 实测 200;M2 内容 + IP 审读仍待做)。
    - **实现清单**:`blueprint/star-wars/IMPLEMENTATION_CHECKLIST.md`——逐条核对代码库后写成,记录了蓝图的 8 处过时前提。其中两处最贵:①蓝图要求新建迁移删掉 `works` 的 hobbit CHECK,而 `002` 早就删了(工作不存在);②蓝图把新增 `location_type` 当成 i18n 小事,实际 `location_type` 是 **PG 枚举 + `types.ts` 严格 zod 枚举**,漏改 zod 会让整个 atlas 响应解析失败(白屏而非降级)
    - **用户拍板**:名称「银河原力舆图 / The Galactic Force Atlas」(不含商标词;CF 项目名 `galactic-force-atlas`);location_type 走新增枚举值方案(取通用词 planet/moon/space_station 以便后续更多虚构作品复用);两条 ≤15 词台词短引用保留;默认英文;顺带修三国的数据隔离缺陷
    - **代码**(12 项,全部完成):迁移 `004`(ALTER TYPE,**必须与用它的种子分文件**,同事务内新枚举值不可用)+ zod/ENUMS/zoomForLocation 同步;`profile.ts` 加 galaxy 档与 `yearLabels`;**`formatYear` 第三参默认取 `PROFILE.yearLabels`**——比清单原案(6 个调用点各自传值)更稳,漏传这个失败模式在结构上消失;`epigraphs.ts` 加 GALAXY 一组(题词配额登记在文件头供 IP 审读核对);`styles.css` 加 `[data-profile="galaxy"]` 令牌(全部对比度实测,最差 4.54:1);FictionalCanvas 重做(背景按 work 参数化、同心环带 + 确定性星场、14 候选位标签防碰撞);`deploy-static.sh` 加 galaxy 分支
